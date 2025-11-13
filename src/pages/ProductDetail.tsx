@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Minus, Plus, Heart, Package, Truck, Shield } from 'lucide-react';
 import { Product } from '@/types/models';
 import { productService } from '@/services/product.service';
 import { useCart } from '@/contexts/CartContext';
+import { useWishlist } from '@/contexts/WishlistContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ProductGallery } from '@/components/product/ProductGallery';
+import { ProductReviews } from '@/components/product/ProductReviews';
 import { toast } from 'sonner';
 import { mockProducts } from '@/lib/mockData';
 
@@ -13,6 +17,7 @@ export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -43,6 +48,18 @@ export default function ProductDetail() {
     addItem(product, quantity);
     toast.success(`${quantity} ${quantity === 1 ? 'producto añadido' : 'productos añadidos'} al carrito`);
   };
+
+  const handleToggleWishlist = () => {
+    if (!product) return;
+    
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
+
+  const productImages = product?.images || [product?.imageUrl || ''];
 
   const incrementQuantity = () => {
     if (product && quantity < product.stock) {
@@ -85,18 +102,10 @@ export default function ProductDetail() {
           Volver
         </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Product Image */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+          {/* Product Gallery */}
           <div>
-            <Card>
-              <CardContent className="p-0">
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className="w-full h-auto rounded-lg"
-                />
-              </CardContent>
-            </Card>
+            <ProductGallery images={productImages} productName={product.name} />
           </div>
 
           {/* Product Info */}
@@ -154,19 +163,49 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              {/* Add to Cart Button */}
-              <Button
-                size="lg"
-                className="w-full gap-2"
-                onClick={handleAddToCart}
-                disabled={product.stock === 0}
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {product.stock === 0 ? 'Sin Stock' : 'Añadir al Carrito'}
-              </Button>
+              {/* Add to Cart and Wishlist Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  size="lg"
+                  className="flex-1 gap-2"
+                  onClick={handleAddToCart}
+                  disabled={product.stock === 0}
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  {product.stock === 0 ? 'Sin Stock' : 'Añadir al Carrito'}
+                </Button>
+                <Button
+                  size="lg"
+                  variant={isInWishlist(product.id) ? 'default' : 'outline'}
+                  onClick={handleToggleWishlist}
+                >
+                  <Heart className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
+                </Button>
+              </div>
+
+              {/* Trust Badges */}
+              <Card className="mt-6">
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-center gap-3 text-sm">
+                    <Package className="h-5 w-5 text-primary" />
+                    <span>Envío gratis en pedidos +50€</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <Truck className="h-5 w-5 text-primary" />
+                    <span>Entrega en 2-4 días laborables</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <Shield className="h-5 w-5 text-primary" />
+                    <span>Garantía de 2 años</span>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
+
+        {/* Reviews Section */}
+        <ProductReviews productId={product.id} />
       </div>
     </div>
   );

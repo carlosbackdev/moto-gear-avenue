@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, Package } from 'lucide-react';
+import { ShoppingCart, User, LogOut, Package, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { useWishlist } from '@/contexts/WishlistContext';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,10 +10,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
 export const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const { totalItems } = useCart();
+  const { wishlist } = useWishlist();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -26,13 +29,26 @@ export const Navbar = () => {
             Accesorios
           </Link>
           
+          {isAuthenticated && (
+            <Link to="/wishlist" className="relative">
+              <Button variant="ghost" size="icon">
+                <Heart className="h-5 w-5" />
+                {wishlist.length > 0 && (
+                  <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                    {wishlist.length}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
+          )}
+          
           <Link to="/cart" className="relative">
             <Button variant="ghost" size="icon">
               <ShoppingCart className="h-5 w-5" />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-xs text-primary-foreground flex items-center justify-center">
+                <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
                   {totalItems}
-                </span>
+                </Badge>
               )}
             </Button>
           </Link>
@@ -49,6 +65,12 @@ export const Navbar = () => {
                   <Link to="/account" className="flex items-center cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Mi Cuenta
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/wishlist" className="flex items-center cursor-pointer">
+                    <Heart className="mr-2 h-4 w-4" />
+                    Mis Favoritos
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

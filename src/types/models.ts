@@ -7,10 +7,13 @@ export interface Product {
   description: string;
   price: number;
   imageUrl: string;
+  images?: string[]; // Múltiples imágenes para galería
   stock: number;
   categoryId: number;
   brand: string;
-  bikeModelCompatibility?: string; // ej. "Yamaha MT-07, Kawasaki Z900"
+  bikeModelCompatibility?: string;
+  averageRating?: number;
+  reviewCount?: number;
 }
 
 /**
@@ -95,4 +98,38 @@ export interface AuthResponse {
 export interface CreateOrderRequest {
   items: { productId: number; quantity: number }[];
   shippingAddress: ShippingAddress;
+}
+
+/**
+ * Review - Reseña de producto
+ */
+export interface Review {
+  id: number;
+  productId: number;
+  userId: number;
+  userName: string;
+  rating: number; // 1-5 estrellas
+  comment: string;
+  images?: string[];
+  createdAt: string;
+}
+
+/**
+ * CreateReviewRequest - Payload para crear reseña
+ */
+export interface CreateReviewRequest {
+  productId: number;
+  rating: number;
+  comment: string;
+  images?: string[];
+}
+
+/**
+ * WishlistItem - Item en la lista de deseos
+ */
+export interface WishlistItem {
+  id: number;
+  userId: number;
+  product: Product;
+  addedAt: string;
 }

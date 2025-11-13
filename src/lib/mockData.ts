@@ -25,10 +25,13 @@ export const mockProducts: Product[] = [
     description: 'Casco integral de alto rendimiento con aerodinámica optimizada. Calota de fibra de carbono ultra ligera. Sistema de ventilación avanzado con 7 entradas y 4 salidas de aire. Interior antibacteriano extraíble y lavable. Homologación ECE 22.06.',
     price: 349.99,
     imageUrl: helmetImg,
+    images: [helmetImg, helmetImg, helmetImg],
     stock: 15,
     categoryId: 1,
     brand: 'AGV',
     bikeModelCompatibility: 'Universal - Todas las motos deportivas',
+    averageRating: 4.5,
+    reviewCount: 28
   },
   {
     id: 2,
@@ -36,10 +39,13 @@ export const mockProducts: Product[] = [
     description: 'Guantes deportivos con protecciones de carbono en nudillos. Palma de piel de canguro para máximo tacto. Costuras reforzadas en zonas de alto impacto. Cierre micrométrico ajustable. Certificación CE nivel 1.',
     price: 129.99,
     imageUrl: glovesImg,
+    images: [glovesImg, glovesImg],
     stock: 30,
     categoryId: 2,
     brand: 'Alpinestars',
     bikeModelCompatibility: 'Universal',
+    averageRating: 4.7,
+    reviewCount: 45
   },
   {
     id: 3,
