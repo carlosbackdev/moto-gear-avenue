@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 export const Footer = () => {
@@ -15,20 +16,20 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Categorías</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="/catalog" className="hover:text-primary transition-colors">Cascos</a></li>
-              <li><a href="/catalog" className="hover:text-primary transition-colors">Guantes</a></li>
-              <li><a href="/catalog" className="hover:text-primary transition-colors">Chaquetas</a></li>
-              <li><a href="/catalog" className="hover:text-primary transition-colors">Maletas</a></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors">Cascos</Link></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors">Guantes</Link></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors">Chaquetas</Link></li>
+              <li><Link to="/catalog" className="hover:text-primary transition-colors">Maletas</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4">Información</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Sobre Nosotros</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Envíos</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Devoluciones</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Contacto</a></li>
+              <li><Link to="/shipping" className="hover:text-primary transition-colors">Envíos</Link></li>
+              <li><Link to="/returns" className="hover:text-primary transition-colors">Devoluciones</Link></li>
+              <li><Link to="/terms" className="hover:text-primary transition-colors">Términos</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors">Contacto</Link></li>
             </ul>
           </div>
 
