@@ -17,17 +17,18 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // TODO: Descomentar cuando el backend esté listo
-        // const [products, cats] = await Promise.all([
-        //   productService.getProducts(),
-        //   categoryService.getCategories(),
-        // ]);
+        const [products, cats] = await Promise.all([
+          productService.getProducts(),
+          categoryService.getCategories(),
+        ]);
         
-        // Usando datos mock por ahora
-        setFeaturedProducts(mockProducts.slice(0, 8));
-        setCategories(mockCategories);
+        setFeaturedProducts(products.slice(0, 8));
+        setCategories(cats);
       } catch (error) {
         console.error('Error fetching data:', error);
+        // Fallback a datos mock si falla
+        setFeaturedProducts(mockProducts.slice(0, 8));
+        setCategories(mockCategories);
       } finally {
         setLoading(false);
       }
@@ -69,16 +70,19 @@ export default function Home() {
               Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="h-40 bg-muted animate-pulse rounded-lg" />
               ))
+            ) : categories.length === 0 ? (
+              <div className="col-span-full text-center text-muted-foreground py-8">
+                No hay categorías disponibles
+              </div>
             ) : (
-              categories.slice(0, 4).map((category) => (
+              categories.map((category) => (
                 <Link
                   key={category.id}
                   to={`/catalog?category=${category.id}`}
-                  className="group relative h-40 rounded-lg overflow-hidden border border-border hover:shadow-hover transition-all duration-300"
+                  className="group relative h-40 rounded-lg overflow-hidden border border-border bg-gradient-to-br from-primary/10 to-primary/5 hover:shadow-hover transition-all duration-300"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
+                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
                       {category.name}
                     </h3>
                   </div>
