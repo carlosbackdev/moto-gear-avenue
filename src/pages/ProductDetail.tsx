@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Minus, Plus, Heart, Package, Truck, Shield } from 'lucide-react';
 import { Product } from '@/types/models';
 import { productService } from '@/services/product.service';
+import { imageService } from '@/services/image.service';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { Button } from '@/components/ui/button';
@@ -59,7 +60,8 @@ export default function ProductDetail() {
     }
   };
 
-  const productImages = product?.images || [product?.imageUrl || ''];
+  const productImages = product?.images?.map(img => imageService.getFullImageUrl(img)) || 
+    [imageService.getFullImageUrl(product?.imageUrl || '')];
 
   const incrementQuantity = () => {
     if (product && quantity < product.stock) {

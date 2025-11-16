@@ -4,6 +4,7 @@ import { Product } from '@/types/models';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
+import { imageService } from '@/services/image.service';
 import { toast } from 'sonner';
 
 interface ProductCardProps {
@@ -25,7 +26,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <CardContent className="p-0">
           <div className="aspect-square overflow-hidden bg-muted">
             <img
-              src={product.imageUrl}
+              src={imageService.getFullImageUrl(product.imageUrl)}
               alt={product.name}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
