@@ -67,8 +67,8 @@ class ProductService {
    * Obtiene productos filtrados por categoría
    * Backend: GET /products/category/{categoryId}?page={page}
    */
-  async getProductsByCategory(categoryId: number, page: number = 0): Promise<Product[]> {
-    const products = await apiService.get<Product[]>(`/products/category/${categoryId}?page=${page}`);
+  async getProductsByCategory(categoryId: number, page: number = 0, size: number = 20): Promise<Product[]> {
+    const products = await apiService.get<Product[]>(`/products/category/${categoryId}?page=${page}&size=${size}`);
     return products.map(p => this.normalizeProduct(p));
   }
 }
