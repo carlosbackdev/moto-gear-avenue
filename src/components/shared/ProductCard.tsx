@@ -39,7 +39,21 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </h3>
           </div>
           <div className="flex items-center justify-between w-full">
-            <span className="text-xl font-bold text-primary">{product.price.toFixed(2)}€</span>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold text-primary">{product.sellPrice.toFixed(2)}€</span>
+                {product.discount > 0 && (
+                  <span className="text-xs font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded">
+                    -{product.discount}%
+                  </span>
+                )}
+              </div>
+              {product.discount > 0 && (
+                <span className="text-sm text-muted-foreground line-through">
+                  {product.originalPrice.toFixed(2)}€
+                </span>
+              )}
+            </div>
             <Button
               size="sm"
               onClick={handleAddToCart}
