@@ -246,11 +246,50 @@ POST /products-images/get-image/home/{productId}
 
 ## 🔧 Configuración
 
-Para conectar con el backend local:
+### Variables de Entorno
 
-1. Asegúrate de que el backend esté corriendo en `http://localhost:8080`
-2. El frontend ya está configurado para usar esta URL por defecto
-3. Para cambiar la URL, crea un archivo `.env.local`:
-```
+Para conectar con el backend local, crea un archivo `.env.local`:
+
+```env
+# URL del API del backend
 VITE_API_BASE_URL=http://localhost:8080/api
+
+# URL base para imágenes
+VITE_IMAGE_BASE_URL=http://localhost:8080
 ```
+
+### Notas Importantes
+
+1. **VITE_API_BASE_URL**: Debe incluir `/api` al final
+2. **VITE_IMAGE_BASE_URL**: NO debe incluir `/api`, solo el dominio base
+3. Las rutas de imagen del backend (ej: `/uploads/products/image.webp`) se concatenan automáticamente con `VITE_IMAGE_BASE_URL`
+4. El array `images` en los productos ya viene procesado desde el backend
+5. Para el home se pueden usar directamente las imágenes del array (si existen) o usar el endpoint `/products-images/get-image/home/{productId}` para optimización
+
+### Ejecución Local
+
+1. **Inicia el backend Spring Boot**: `http://localhost:8080`
+2. **Inicia el frontend**: `npm run dev`
+3. El frontend automáticamente conectará con `http://localhost:8080/api`
+
+### Filtrado por Categoría
+
+El catálogo filtra automáticamente por categoría cuando se selecciona una:
+- **URL**: `/catalog?category={categoryId}`
+- **Backend endpoint**: `GET /products/category/{categoryId}?page=0&size=20`
+- **Resultado**: Solo productos de esa categoría
+
+---
+
+## 🐛 Debugging
+
+### Errores comunes
+
+**"Failed to fetch"**
+- Verifica que el backend esté corriendo en `http://localhost:8080`
+- Revisa la configuración CORS en el backend
+
+**"Imágenes no cargan"**
+- Verifica que `VITE_IMAGE_BASE_URL` esté configurado correctamente
+- Asegúrate que las rutas de imagen en el backend sean accesibles
+- Revisa la consola del navegador para ver las URLs completas generadas

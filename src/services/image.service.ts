@@ -54,8 +54,8 @@ class ImageService {
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
     }
-    // Si es una ruta relativa del backend, construir la URL completa
-    const baseUrl = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:8080';
+    // Si es una ruta relativa del backend, construir la URL completa usando el basePath
+    const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:8080';
     return `${baseUrl}${imageUrl}`;
   }
 }

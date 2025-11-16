@@ -32,12 +32,8 @@ export default function Catalog() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // TODO: Descomentar cuando el backend esté listo
-        // const cats = await categoryService.getCategories();
-        // setCategories(cats);
-        
-        // Usando mock data por ahora
-        setCategories(mockCategories);
+        const cats = await categoryService.getCategories();
+        setCategories(cats);
       } catch (error) {
         console.error('Error fetching categories:', error);
         setCategories(mockCategories); // Fallback a mock
@@ -51,14 +47,10 @@ export default function Catalog() {
     setLoading(true);
     const fetchProducts = async () => {
       try {
-        // TODO: Descomentar cuando el backend esté listo
-        // const data = selectedCategory
-        //   ? await productService.getProductsByCategory(selectedCategory)
-        //   : await productService.getProducts();
-        // setAllProducts(data);
-        
-        // Usando mock data por ahora
-        setAllProducts(mockProducts);
+        const data = selectedCategory
+          ? await productService.getProductsByCategory(selectedCategory, 0, 20)
+          : await productService.getProducts(0, 20);
+        setAllProducts(data);
       } catch (error) {
         console.error('Error fetching products:', error);
         setAllProducts(mockProducts); // Fallback a mock
@@ -68,7 +60,7 @@ export default function Catalog() {
     };
     
     fetchProducts();
-  }, []);
+  }, [selectedCategory]);
 
   // Obtener marcas únicas
   const availableBrands = useMemo(() => {
