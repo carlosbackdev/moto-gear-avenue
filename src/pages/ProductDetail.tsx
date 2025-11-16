@@ -25,22 +25,22 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!id) return;
     
-    // TODO: Descomentar cuando el backend esté listo
-    // const fetchProduct = async () => {
-    //   try {
-    //     const data = await productService.getProductById(Number(id));
-    //     setProduct(data);
-    //   } catch (error) {
-    //     console.error('Error fetching product:', error);
-    //     toast.error('Error al cargar el producto');
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
+    const fetchProduct = async () => {
+      try {
+        const data = await productService.getProductById(Number(id));
+        setProduct(data);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        // Fallback a mock data si falla
+        const foundProduct = mockProducts.find(p => p.id === Number(id));
+        setProduct(foundProduct || null);
+        toast.error('Error al cargar el producto desde el backend');
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    const foundProduct = mockProducts.find(p => p.id === Number(id));
-    setProduct(foundProduct || null);
-    setLoading(false);
+    fetchProduct();
   }, [id]);
 
   const handleAddToCart = () => {

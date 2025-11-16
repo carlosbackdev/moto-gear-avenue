@@ -116,12 +116,13 @@ GET /products/{id}
 
 ### Obtener productos por categoría
 ```
-GET /products/category/{categoryId}?page={page}
+GET /products/category/{categoryId}?page={page}&size={size}
 ```
 
 **Parámetros:**
 - `categoryId` (path): ID de la categoría
 - `page` (query): Número de página (por defecto: 0)
+- `size` (query): Tamaño de página (por defecto: 20)
 
 **Respuesta:**
 ```json
@@ -144,6 +145,55 @@ GET /products/category/{categoryId}?page={page}
   }
 ]
 ```
+
+---
+
+## 🖼️ Imágenes de Productos
+
+### Obtener todas las imágenes de un producto
+```
+POST /products-images/get-image/{productId}
+```
+
+**Parámetros:**
+- `productId` (path): ID del producto
+- Body: `{}` (objeto vacío)
+
+**Respuesta:**
+```json
+[
+  {
+    "id": 73,
+    "imageUrl": "/uploads/products/1005009084216121_0_3a0c1a47.webp",
+    "isPrimary": true
+  },
+  {
+    "id": 74,
+    "imageUrl": "/uploads/products/1005009084216121_1_43ef1185.webp",
+    "isPrimary": false
+  }
+]
+```
+
+### Obtener imagen primaria de un producto
+```
+POST /products-images/get-image/home/{productId}
+```
+
+**Parámetros:**
+- `productId` (path): ID del producto
+- Body: `{}` (objeto vacío)
+
+**Respuesta:**
+```json
+{
+  "id": 73,
+  "imageUrl": "/uploads/products/1005009084216121_0_3a0c1a47.webp",
+  "isPrimary": true
+}
+```
+
+**Nota:** Las URLs de las imágenes son rutas relativas del servidor. El frontend automáticamente construye la URL completa agregando el dominio del backend.
 
 ---
 
