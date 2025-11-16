@@ -29,6 +29,17 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const data = await productService.getProductById(Number(id));
+        
+        // Obtener TODAS las imágenes del producto
+        const allImages = await imageService.getProductImages(Number(id));
+        
+        if (allImages && allImages.length > 0) {
+          // Procesar todas las imágenes con la URL completa
+          const processedImages = allImages.map(img => imageService.getFullImageUrl(img.imageUrl));
+          data.images = processedImages;
+          data.imageUrl = processedImages[0];
+        }
+        
         setProduct(data);
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -60,8 +71,9 @@ export default function ProductDetail() {
     }
   };
 
-  const productImages = product?.images?.map(img => imageService.getFullImageUrl(img)) || 
-    [imageService.getFullImageUrl(product?.imageUrl || '')];
+  const productImages = product?.images && product.images.length > 0
+    ? product.images
+    : [product?.imageUrl || '/placeholder.svg'];
 
   const incrementQuantity = () => {
     if (product && quantity < product.stock) {
