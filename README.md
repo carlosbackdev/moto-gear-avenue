@@ -32,9 +32,26 @@ cd <YOUR_PROJECT_NAME>
 # Step 3: Install the necessary dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Configure environment variables (optional, for backend connection)
+# Copy the example file and edit as needed
+cp .env.example .env.local
+
+# Step 5: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
+
+### Backend Configuration
+
+This project connects to a Spring Boot backend. To configure the connection:
+
+1. Copy `.env.example` to `.env.local`
+2. Edit `.env.local` with your backend URLs:
+   ```env
+   VITE_API_BASE_URL=http://localhost:8080/api
+   VITE_IMAGE_BASE_URL=http://localhost:8080
+   ```
+
+For detailed backend API documentation, see [README_BACKEND_API.md](./README_BACKEND_API.md).
 
 **Edit a file directly in GitHub**
 

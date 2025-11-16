@@ -33,12 +33,19 @@ interface PageResponse<T> {
 class ProductService {
   /**
    * Normaliza un producto del backend para usar en el frontend
+   * Ahora procesa el array de images que viene directamente del backend
    */
-  private normalizeProduct(product: Product, primaryImageUrl?: string): Product {
+  private normalizeProduct(product: Product): Product {
+    // Procesar las imágenes del backend
+    const processedImages = product.images && product.images.length > 0
+      ? product.images.map(img => imageService.getFullImageUrl(img))
+      : ['/placeholder.svg'];
+
     return {
       ...product,
       price: product.sellPrice,
-      imageUrl: primaryImageUrl || '/placeholder.svg',
+      imageUrl: processedImages[0], // Primera imagen como imagen principal
+      images: processedImages, // Todas las imágenes procesadas
       stock: 100, // Por defecto, el backend no devuelve stock
       brand: product.sellerName,
       description: product.details,
@@ -47,73 +54,33 @@ class ProductService {
   }
 
   /**
-   * Obtiene la imagen primaria de un producto
-   */
-  private async fetchPrimaryImage(productId: number): Promise<string> {
-    const primaryImage = await imageService.getProductPrimaryImage(productId);
-    return primaryImage ? imageService.getFullImageUrl(primaryImage.imageUrl) : '/placeholder.svg';
-  }
-
-  /**
-   * Obtiene todas las imágenes de un producto
-   */
-  private async fetchAllImages(productId: number): Promise<string[]> {
-    const images = await imageService.getProductImages(productId);
-    if (images.length === 0) return ['/placeholder.svg'];
-    return images.map(img => imageService.getFullImageUrl(img.imageUrl));
-  }
-
-  /**
-   * Obtiene todos los productos paginados con sus imágenes primarias
+   * Obtiene todos los productos paginados
    * Backend: GET /products/page?page={page}&size={size}
+   * Las imágenes vienen directamente en el array del producto
    */
   async getProducts(page: number = 0, size: number = 20): Promise<Product[]> {
     const response = await apiService.get<PageResponse<Product>>(`/products/page?page=${page}&size=${size}`);
-    
-    // Obtener imagen primaria para cada producto
-    const productsWithImages = await Promise.all(
-      response.content.map(async (product) => {
-        const primaryImageUrl = await this.fetchPrimaryImage(product.id);
-        return this.normalizeProduct(product, primaryImageUrl);
-      })
-    );
-    
-    return productsWithImages;
+    return response.content.map(p => this.normalizeProduct(p));
   }
 
   /**
    * Obtiene un producto por ID con todas sus imágenes
    * Backend: GET /products/{id}
+   * Las imágenes ya vienen en el producto, solo necesitamos normalizarlas
    */
   async getProductById(id: number): Promise<Product> {
     const product = await apiService.get<Product>(`/products/${id}`);
-    
-    // Obtener todas las imágenes del producto
-    const images = await this.fetchAllImages(product.id);
-    const normalizedProduct = this.normalizeProduct(product, images[0]);
-    
-    // Asignar todas las imágenes al producto
-    normalizedProduct.images = images;
-    
-    return normalizedProduct;
+    return this.normalizeProduct(product);
   }
 
   /**
-   * Obtiene productos filtrados por categoría con sus imágenes primarias
+   * Obtiene productos filtrados por categoría
    * Backend: GET /products/category/{categoryId}?page={page}&size={size}
+   * Las imágenes vienen directamente en el producto
    */
   async getProductsByCategory(categoryId: number, page: number = 0, size: number = 20): Promise<Product[]> {
     const products = await apiService.get<Product[]>(`/products/category/${categoryId}?page=${page}&size=${size}`);
-    
-    // Obtener imagen primaria para cada producto
-    const productsWithImages = await Promise.all(
-      products.map(async (product) => {
-        const primaryImageUrl = await this.fetchPrimaryImage(product.id);
-        return this.normalizeProduct(product, primaryImageUrl);
-      })
-    );
-    
-    return productsWithImages;
+    return products.map(p => this.normalizeProduct(p));
   }
 }
 
