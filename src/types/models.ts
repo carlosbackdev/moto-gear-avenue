@@ -1,17 +1,44 @@
 /**
- * Product interface - Representa un accesorio de moto
+ * Product Variant Option - Opciones dentro de un grupo de variantes
+ */
+export interface ProductVariantOption {
+  value: string;
+  extraPrice: number;
+}
+
+/**
+ * Product Variant Group - Grupo de variantes (ej: Color, Talla)
+ */
+export interface ProductVariantGroup {
+  groupName: string;
+  options: ProductVariantOption[];
+}
+
+/**
+ * Product interface - Representa un accesorio de moto desde el backend
  */
 export interface Product {
   id: number;
   name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  images?: string[]; // Múltiples imágenes para galería
-  stock: number;
-  categoryId: number;
-  brand: string;
-  bikeModelCompatibility?: string;
+  details: string;
+  specifications: string; // JSON string
+  originalPrice: number;
+  sellPrice: number;
+  discount: number;
+  currency: string;
+  shippingCost: number;
+  deliveryEstimateDays: string;
+  variant: string; // JSON string de ProductVariantGroup[]
+  sellerName: string;
+  category: number;
+  images: string[];
+  // Campos calculados para compatibilidad con frontend
+  price?: number; // = sellPrice
+  imageUrl?: string; // = images[0] o placeholder
+  stock?: number; // Por defecto 100
+  brand?: string; // = sellerName
+  description?: string; // = details
+  categoryId?: number; // = category
   averageRating?: number;
   reviewCount?: number;
 }

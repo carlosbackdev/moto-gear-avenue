@@ -127,10 +127,27 @@ export default function ProductDetail() {
               </p>
             </div>
 
-            {product.bikeModelCompatibility && (
+            {product.specifications && (
               <div>
-                <h2 className="text-xl font-semibold mb-2">Compatibilidad</h2>
-                <p className="text-muted-foreground">{product.bikeModelCompatibility}</p>
+                <h2 className="text-xl font-semibold mb-2">Especificaciones</h2>
+                <div className="text-muted-foreground">
+                  {(() => {
+                    try {
+                      const specs = JSON.parse(product.specifications);
+                      return (
+                        <ul className="space-y-1">
+                          {Object.entries(specs).map(([key, value]) => (
+                            <li key={key}>
+                              <strong>{key}:</strong> {String(value)}
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    } catch {
+                      return <p>{product.specifications}</p>;
+                    }
+                  })()}
+                </div>
               </div>
             )}
 
