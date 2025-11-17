@@ -6,7 +6,7 @@
 export const environment = {
   production: false,
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
-  imageBaseUrl: import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:8080',
+  imageBaseUrl: import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:3001',
 };
 
 /**
