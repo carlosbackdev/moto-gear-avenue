@@ -11,7 +11,7 @@
  */
 
 import { apiService } from './api.service';
-import { LoginRequest, RegisterRequest, AuthResponse, User } from '@/types/models';
+import { LoginRequest, RegisterRequest, AuthResponse, User, FirebaseLoginRequest } from '@/types/models';
 
 class AuthService {
   private readonly TOKEN_KEY = 'authToken';
@@ -32,6 +32,16 @@ class AuthService {
    */
   async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await apiService.post<AuthResponse>('/auth/login', data);
+    this.saveToken(response.token);
+    return response;
+  }
+
+  /**
+   * Login/Registro con Google/Firebase
+   * Backend: POST /auth/firebase-login
+   */
+  async firebaseLogin(data: FirebaseLoginRequest): Promise<AuthResponse> {
+    const response = await apiService.post<AuthResponse>('/auth/firebase-login', data);
     this.saveToken(response.token);
     return response;
   }

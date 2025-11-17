@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, LoginRequest, RegisterRequest } from '@/types/models';
+import { User, LoginRequest, RegisterRequest, FirebaseLoginRequest } from '@/types/models';
 import { authService } from '@/services/auth.service';
 
 interface AuthContextType {
@@ -7,6 +7,7 @@ interface AuthContextType {
   loading: boolean;
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
+  firebaseLogin: (data: FirebaseLoginRequest) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -45,6 +46,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(response.user);
   };
 
+  const firebaseLogin = async (data: FirebaseLoginRequest) => {
+    const response = await authService.firebaseLogin(data);
+    // El backend puede retornar los datos en diferentes formatos
+    const userData: User = response.user || {
+      id: response.userId || 0,
+      email: response.email || data.email,
+      name: response.fullName || data.fullName,
+      fullName: response.fullName || data.fullName,
+      role: response.role,
+      photoUrl: response.photoUrl || data.photoUrl,
+      authProvider: 'GOOGLE',
+      createdAt: new Date().toISOString(),
+    };
+    setUser(userData);
+  };
+
   const logout = () => {
     authService.logout();
     setUser(null);
@@ -57,6 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         login,
         register,
+        firebaseLogin,
         logout,
         isAuthenticated: authService.isAuthenticated(),
       }}

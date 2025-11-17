@@ -93,6 +93,10 @@ export interface User {
   id: number;
   email: string;
   name: string;
+  fullName?: string;
+  role?: string;
+  photoUrl?: string | null;
+  authProvider?: string;
   createdAt: string;
 }
 
@@ -114,11 +118,27 @@ export interface RegisterRequest {
 }
 
 /**
+ * FirebaseLoginRequest - Payload para login con Google/Firebase
+ */
+export interface FirebaseLoginRequest {
+  email: string;
+  fullName: string;
+  firebaseToken: string;
+  firebaseUid?: string;
+  photoUrl?: string | null;
+}
+
+/**
  * AuthResponse - Respuesta del backend al hacer login
  */
 export interface AuthResponse {
   token: string;
   user: User;
+  userId?: number;
+  email?: string;
+  fullName?: string;
+  role?: string;
+  photoUrl?: string | null;
 }
 
 /**

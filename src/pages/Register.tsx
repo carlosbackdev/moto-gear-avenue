@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
 export default function Register() {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, firebaseLogin, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -17,6 +19,12 @@ export default function Register() {
     password: '',
     confirmPassword: '',
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -54,6 +62,47 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    setLoading(true);
+    try {
+      const credential = credentialResponse.credential;
+      if (!credential) {
+        throw new Error('No se recibió credencial de Google');
+      }
+
+      // Decodificar el token JWT de Google
+      const base64Url = credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      const payload = JSON.parse(jsonPayload);
+
+      await firebaseLogin({
+        email: payload.email,
+        fullName: payload.name || payload.email.split('@')[0],
+        firebaseToken: credential,
+        firebaseUid: payload.sub,
+        photoUrl: payload.picture || null,
+      });
+
+      toast.success('¡Cuenta creada con éxito!');
+      navigate('/');
+    } catch (error) {
+      console.error('Google register error:', error);
+      toast.error('Error al registrarse con Google');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    toast.error('Error al registrarse con Google');
   };
 
   return (
@@ -119,6 +168,26 @@ export default function Register() {
               {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
             </Button>
           </form>
+
+          <div className="relative my-4">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+              O continúa con
+            </span>
+          </div>
+
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              useOneTap
+              theme="outline"
+              size="large"
+              text="signup_with"
+              locale="es"
+            />
+          </div>
+
           <div className="mt-4 text-center text-sm">
             <span className="text-muted-foreground">¿Ya tienes cuenta? </span>
             <Link to="/login" className="text-primary hover:underline font-medium">
