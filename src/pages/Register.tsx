@@ -14,7 +14,7 @@ export default function Register() {
   const { register, firebaseLogin, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -50,7 +50,7 @@ export default function Register() {
 
     try {
       await register({
-        name: formData.name,
+        fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
       });
@@ -120,10 +120,10 @@ export default function Register() {
               <Label htmlFor="name">Nombre Completo</Label>
               <Input
                 id="name"
-                name="name"
+                name="fullName"
                 type="text"
                 placeholder="Juan Pérez"
-                value={formData.name}
+                value={formData.fullName}
                 onChange={handleChange}
                 required
               />

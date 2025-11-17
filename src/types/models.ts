@@ -55,9 +55,29 @@ export interface Category {
 }
 
 /**
- * CartItem interface - Item en el carrito con producto y cantidad
+ * BackendCartItem - Item del carrito desde el backend
+ */
+export interface BackendCartItem {
+  id: number;
+  productId: number;
+  userId: number;
+  quantity: number;
+  createdAt: string;
+}
+
+/**
+ * AddToCartRequest - Payload para agregar al carrito
+ */
+export interface AddToCartRequest {
+  productId: number;
+  quantity: number;
+}
+
+/**
+ * CartItem interface - Item en el carrito con producto y cantidad (para UI)
  */
 export interface CartItem {
+  id?: number; // ID del item en el backend
   product: Product;
   quantity: number;
 }
@@ -114,7 +134,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string;
   password: string;
-  name: string;
+  fullName: string;
 }
 
 /**
