@@ -56,9 +56,18 @@ export default function Catalog() {
     setLoading(true);
     const fetchProducts = async () => {
       try {
-        const data = selectedCategory
-          ? await productService.getProductsByCategory(selectedCategory, 0, 20)
-          : await productService.getProducts(0, 20);
+        let data: Product[];
+        
+        // Si hay término de búsqueda, usar el endpoint de búsqueda
+        if (searchTerm.trim()) {
+          const result = await productService.searchProducts(searchTerm, 0, 20);
+          data = result.products;
+        } else if (selectedCategory) {
+          data = await productService.getProductsByCategory(selectedCategory, 0, 20);
+        } else {
+          data = await productService.getProducts(0, 20);
+        }
+        
         setAllProducts(data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -69,7 +78,7 @@ export default function Catalog() {
     };
     
     fetchProducts();
-  }, [selectedCategory]);
+  }, [selectedCategory, searchTerm]);
 
   // Obtener marcas únicas
   const availableBrands = useMemo(() => {
@@ -81,18 +90,9 @@ export default function Catalog() {
   const filteredProducts = useMemo(() => {
     let filtered = [...allProducts];
 
-    // Filtro por categoría
-    if (selectedCategory) {
+    // Filtro por categoría (solo si no hay búsqueda activa)
+    if (selectedCategory && !searchTerm) {
       filtered = filtered.filter(p => p.categoryId === selectedCategory);
-    }
-
-    // Filtro por búsqueda
-    if (searchTerm) {
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.brand.toLowerCase().includes(searchTerm.toLowerCase())
-      );
     }
 
     // Filtro por marca
