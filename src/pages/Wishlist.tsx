@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useCart } from '@/contexts/CartContext';
@@ -8,6 +9,10 @@ import { toast } from 'sonner';
 export default function Wishlist() {
   const { wishlist, removeFromWishlist, loading } = useWishlist();
   const { addItem } = useCart();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleAddToCart = (item: any) => {
     addItem(item.product, 1);
