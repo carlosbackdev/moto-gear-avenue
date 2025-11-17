@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, Package, Heart } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, User, LogOut, Package, Heart, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -12,11 +12,28 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { SearchBar } from './SearchBar';
+import { useEffect, useState } from 'react';
+import { categoryService } from '@/services/category.service';
+import { Category } from '@/types/models';
 
 export const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const { totalItems } = useCart();
   const { wishlist } = useWishlist();
+  const navigate = useNavigate();
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const cats = await categoryService.getCategories();
+        setCategories(cats);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -30,9 +47,30 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-4 flex-shrink-0">
-          <Link to="/catalog" className="text-sm font-medium hover:text-primary transition-colors">
-            Accesorios
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="gap-2">
+                Categorías
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              {categories.map((category) => (
+                <DropdownMenuItem 
+                  key={category.id}
+                  onClick={() => navigate(`/catalog?category=${category.id}`)}
+                  className="cursor-pointer"
+                >
+                  {category.name}
+                </DropdownMenuItem>
+              ))}
+              {categories.length === 0 && (
+                <DropdownMenuItem disabled>
+                  No hay categorías disponibles
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           {isAuthenticated && (
             <Link to="/wishlist" className="relative">

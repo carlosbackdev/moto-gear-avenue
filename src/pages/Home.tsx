@@ -128,14 +128,14 @@ export default function Home() {
                 <Truck className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Envío Rápido</h3>
-              <p className="text-muted-foreground">Recibe tu pedido en 24-48h</p>
+              <p className="text-muted-foreground">Recibe tu pedido en 2-7 días</p>
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Shield className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Garantía Total</h3>
-              <p className="text-muted-foreground">2 años de garantía en todos los productos</p>
+              <h3 className="text-xl font-semibold mb-2">Devolución Gratis</h3>
+              <p className="text-muted-foreground">Devoluciones sin coste en todos los productos</p>
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
