@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { SearchBar } from './SearchBar';
 
 export const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -19,12 +20,16 @@ export const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center space-x-2">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-6">
+        <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
           <div className="text-2xl font-bold text-primary">MotoGear</div>
         </Link>
 
-        <div className="flex items-center space-x-6">
+        <div className="flex-1 max-w-2xl hidden md:block">
+          <SearchBar />
+        </div>
+
+        <div className="flex items-center space-x-4 flex-shrink-0">
           <Link to="/catalog" className="text-sm font-medium hover:text-primary transition-colors">
             Accesorios
           </Link>

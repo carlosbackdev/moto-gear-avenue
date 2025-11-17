@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Minus, Plus, Heart, Package, Truck, Shield } from 'lucide-react';
-import { Product } from '@/types/models';
+import { ArrowLeft, ShoppingCart, Minus, Plus, Heart, Package, Truck, Shield, Calendar } from 'lucide-react';
+import { Product, ProductVariantGroup } from '@/types/models';
 import { productService } from '@/services/product.service';
 import { imageService } from '@/services/image.service';
 import { useCart } from '@/contexts/CartContext';
@@ -22,6 +22,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [selectedVariant, setSelectedVariant] = useState<string>('');
 
   useEffect(() => {
     if (!id) return;
@@ -71,9 +72,54 @@ export default function ProductDetail() {
     }
   };
 
+  const parseVariants = (): ProductVariantGroup[] => {
+    if (!product?.variant) return [];
+    try {
+      const variants = JSON.parse(product.variant);
+      return variants.map((v: ProductVariantGroup) => ({
+        ...v,
+        options: v.options.slice(0, 5) // Máximo 5 opciones
+      }));
+    } catch {
+      return [];
+    }
+  };
+
+  const parseDeliveryDates = (): string => {
+    if (!product?.deliveryEstimateDays) return '';
+    
+    const match = product.deliveryEstimateDays.match(/(\d+)-(\d+)\s*días/);
+    if (!match) return product.deliveryEstimateDays;
+    
+    const [_, startDay, endDay] = match;
+    const today = new Date();
+    const currentMonth = today.toLocaleString('es-ES', { month: 'long' });
+    
+    return `${startDay}-${endDay} de ${currentMonth}`;
+  };
+
+  const cleanSpecifications = () => {
+    if (!product?.specifications) return null;
+    try {
+      const specs = JSON.parse(product.specifications);
+      // Filtrar "Producto químico de alta preocupación"
+      const filtered = Object.entries(specs).filter(([key]) => 
+        !key.toLowerCase().includes('químico') && 
+        !key.toLowerCase().includes('preocupación')
+      );
+      return filtered.length > 0 ? Object.fromEntries(filtered) : null;
+    } catch {
+      return null;
+    }
+  };
+
   const productImages = product?.images && product.images.length > 0
     ? product.images
     : [product?.imageUrl || '/placeholder.svg'];
+
+  const variants = parseVariants();
+  const deliveryDateRange = parseDeliveryDates();
+  const cleanedSpecs = cleanSpecifications();
 
   const incrementQuantity = () => {
     if (product && quantity < product.stock) {
@@ -134,41 +180,77 @@ export default function ProductDetail() {
               </p>
             </div>
 
+            {/* Delivery Info - Destacado */}
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-6 w-6 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium">Fecha estimada de entrega</p>
+                    <p className="text-lg font-bold text-primary">{deliveryDateRange}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <div>
               <h2 className="text-xl font-semibold mb-2">Descripción</h2>
               <p className="text-muted-foreground leading-relaxed">
                 {product.description}
               </p>
+              
+              {product.keywords && (
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {product.keywords.split(',').slice(0, 6).map((keyword, idx) => (
+                    <Badge key={idx} variant="outline" className="text-xs">
+                      {keyword.trim()}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {product.specifications && (
+            {/* Variantes del Producto */}
+            {variants.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-3">Opciones disponibles</h2>
+                {variants.map((variantGroup, idx) => (
+                  <div key={idx} className="mb-4">
+                    <p className="text-sm font-medium mb-2">{variantGroup.groupName}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {variantGroup.options.map((option, optIdx) => (
+                        <Button
+                          key={optIdx}
+                          variant={selectedVariant === option.value ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setSelectedVariant(option.value)}
+                        >
+                          {option.value}
+                          {option.extraPrice > 0 && ` (+${option.extraPrice.toFixed(2)}€)`}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {cleanedSpecs && (
               <div>
                 <h2 className="text-xl font-semibold mb-2">Especificaciones</h2>
                 <div className="text-muted-foreground">
-                  {(() => {
-                    try {
-                      const specs = JSON.parse(product.specifications);
-                      return (
-                        <ul className="space-y-1">
-                          {Object.entries(specs).map(([key, value]) => (
-                            <li key={key}>
-                              <strong>{key}:</strong> {String(value)}
-                            </li>
-                          ))}
-                        </ul>
-                      );
-                    } catch {
-                      return <p>{product.specifications}</p>;
-                    }
-                  })()}
+                  <ul className="space-y-1">
+                    {Object.entries(cleanedSpecs).map(([key, value]) => (
+                      <li key={key}>
+                        <strong>{key}:</strong> {String(value)}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             )}
 
             <div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Stock disponible: {product.stock} unidades
-              </p>
 
               {/* Quantity Selector */}
               <div className="flex items-center space-x-4 mb-6">
@@ -215,15 +297,15 @@ export default function ProductDetail() {
               </div>
 
               {/* Trust Badges */}
-              <Card className="mt-6">
+              <Card>
                 <CardContent className="p-4 space-y-3">
                   <div className="flex items-center gap-3 text-sm">
                     <Package className="h-5 w-5 text-primary" />
-                    <span>Envío gratis en pedidos +50€</span>
+                    <span>Envío: {product.shippingCost?.toFixed(2)}€ (Gratis en pedidos +50€)</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Truck className="h-5 w-5 text-primary" />
-                    <span>Entrega en 2-4 días laborables</span>
+                    <span>Entrega estimada: {deliveryDateRange}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Shield className="h-5 w-5 text-primary" />

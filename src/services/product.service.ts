@@ -82,6 +82,18 @@ class ProductService {
     const products = await apiService.get<Product[]>(`/products/category/${categoryId}?page=${page}&size=${size}`);
     return products.map(p => this.normalizeProduct(p));
   }
+
+  /**
+   * Busca productos por keywords
+   * Backend: GET /products/search?keywords={keywords}&page={page}&size={size}
+   */
+  async searchProducts(keywords: string, page: number = 0, size: number = 20): Promise<{ products: Product[], totalPages: number }> {
+    const response = await apiService.get<PageResponse<Product>>(`/products/search?keywords=${encodeURIComponent(keywords)}&page=${page}&size=${size}`);
+    return {
+      products: response.content.map(p => this.normalizeProduct(p)),
+      totalPages: response.totalPages
+    };
+  }
 }
 
 export const productService = new ProductService();
