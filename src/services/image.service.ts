@@ -55,7 +55,7 @@ class ImageService {
       return imageUrl;
     }
     // Si es una ruta relativa del backend, construir la URL completa usando el basePath
-    const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:8080';
+    const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:3001';
     return `${baseUrl}${imageUrl}`;
   }
 }
