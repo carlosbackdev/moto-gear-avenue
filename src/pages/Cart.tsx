@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 
 export default function Cart() {
   const { cart, removeItem, updateQuantity, clearCart, totalAmount, totalItems, totalSavings } = useCart();
+  const navigate = useNavigate();
 
   if (cart.length === 0) {
     return (
@@ -46,7 +47,8 @@ export default function Cart() {
             {cart.map((item, index) => {
               const originalPrice = item.product.originalPrice || item.product.price || 0;
               const sellPrice = item.product.sellPrice || item.product.price || 0;
-              const savings = (originalPrice - sellPrice) * item.quantity;
+              const unitSavings = originalPrice - sellPrice;
+              const totalSavingsPerItem = unitSavings * item.quantity;
               const hasDiscount = originalPrice > sellPrice;
               
               return (
@@ -56,10 +58,16 @@ export default function Cart() {
                       <img
                         src={item.product.imageUrl}
                         alt={item.product.name}
-                        className="w-24 h-24 object-cover rounded-lg"
+                        className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => navigate(`/product/${item.product.id}`)}
                       />
                       <div className="flex-1">
-                        <h3 className="font-semibold mb-1">{item.product.name}</h3>
+                        <h3 
+                          className="font-semibold mb-1 cursor-pointer hover:text-primary transition-colors"
+                          onClick={() => navigate(`/product/${item.product.id}`)}
+                        >
+                          {item.product.name}
+                        </h3>
                         <p className="text-sm text-muted-foreground mb-1">{item.product.brand}</p>
                         {item.variant && (
                           <p className="text-sm text-muted-foreground mb-2">
@@ -83,7 +91,7 @@ export default function Cart() {
                         </div>
                         {hasDiscount && (
                           <p className="text-sm text-green-600 font-medium mt-1">
-                            Ahorras: {savings.toFixed(2)}€
+                            Ahorras: {totalSavingsPerItem.toFixed(2)}€
                           </p>
                         )}
                       </div>
@@ -99,7 +107,7 @@ export default function Cart() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.variant)}
                           >
                             <Minus className="h-4 w-4" />
                           </Button>
@@ -107,7 +115,7 @@ export default function Cart() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.variant)}
                             disabled={item.quantity >= (item.product.stock || 100)}
                           >
                             <Plus className="h-4 w-4" />
@@ -131,20 +139,18 @@ export default function Cart() {
                     <span className="text-muted-foreground">Productos ({totalItems})</span>
                     <span className="font-semibold">{totalAmount.toFixed(2)}€</span>
                   </div>
-                  {totalSavings > 0 && (
-                    <div className="flex justify-between text-green-600">
-                      <span className="font-medium">Ahorros totales</span>
-                      <span className="font-semibold">-{totalSavings.toFixed(2)}€</span>
-                    </div>
-                  )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Envío</span>
-                    <span className="font-semibold text-primary">GRATIS</span>
+                    <span className="font-semibold text-primary">
+                      {totalAmount >= 50 ? 'GRATIS' : '1.99€'}
+                    </span>
                   </div>
                   <div className="border-t pt-2 mt-2">
                     <div className="flex justify-between text-lg font-bold">
                       <span>Total</span>
-                      <span className="text-primary">{totalAmount.toFixed(2)}€</span>
+                      <span className="text-primary">
+                        {(totalAmount + (totalAmount >= 50 ? 0 : 1.99)).toFixed(2)}€
+                      </span>
                     </div>
                   </div>
                 </div>

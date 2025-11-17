@@ -17,12 +17,13 @@ import { mockProducts } from '@/lib/mockData';
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addItem } = useCart();
+  const { addItem, isInCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  const [variantError, setVariantError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -60,11 +61,26 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (!product) return;
     
+    const parsedVariants = parseVariants();
+    
+    // Validar que se hayan seleccionado todas las variantes si existen
+    if (parsedVariants.length > 0) {
+      const missingVariants = parsedVariants.filter(
+        (group) => !selectedVariants[group.groupName]
+      );
+      
+      if (missingVariants.length > 0) {
+        setVariantError(`Por favor selecciona: ${missingVariants.map(g => g.groupName).join(', ')}`);
+        return;
+      }
+    }
+    
     // Crear string de variante seleccionada
     const variantString = Object.entries(selectedVariants)
       .map(([key, value]) => `${value}`)
       .join(', ');
     
+    setVariantError(null);
     addItem(product, quantity, variantString || undefined);
     toast.success(`${quantity} ${quantity === 1 ? 'producto añadido' : 'productos añadidos'} al carrito`);
   };
@@ -97,6 +113,8 @@ export default function ProductDetail() {
       ...prev,
       [groupName]: option.value
     }));
+    
+    setVariantError(null);
 
     // Si la variante tiene imagen, cambiar a esa imagen en la galería
     if (option.image && product?.images) {
@@ -286,6 +304,12 @@ export default function ProductDetail() {
                     </div>
                   </div>
                 ))}
+                
+                {variantError && (
+                  <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg mt-2">
+                    {variantError}
+                  </div>
+                )}
               </div>
             )}
 
@@ -331,23 +355,31 @@ export default function ProductDetail() {
               </div>
 
               {/* Add to Cart and Wishlist Buttons */}
-              <div className="flex gap-3">
-                <Button
-                  size="lg"
-                  className="flex-1 gap-2"
-                  onClick={handleAddToCart}
-                  disabled={product.stock === 0}
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  {product.stock === 0 ? 'Sin Stock' : 'Añadir al Carrito'}
-                </Button>
-                <Button
-                  size="lg"
-                  variant={isInWishlist(product.id) ? 'default' : 'outline'}
-                  onClick={handleToggleWishlist}
-                >
-                  <Heart className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
-                </Button>
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <Button
+                    size="lg"
+                    className="flex-1 gap-2"
+                    onClick={handleAddToCart}
+                    disabled={product.stock === 0}
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    {product.stock === 0 ? 'Sin Stock' : (isInCart(product.id) ? 'Añadir más al Carrito' : 'Añadir al Carrito')}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant={isInWishlist(product.id) ? 'default' : 'outline'}
+                    onClick={handleToggleWishlist}
+                  >
+                    <Heart className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
+                  </Button>
+                </div>
+                
+                {isInCart(product.id) && (
+                  <div className="text-sm text-green-600 bg-green-50 dark:bg-green-950/20 p-2 rounded-lg text-center font-medium">
+                    ✓ Este producto ya está en tu carrito
+                  </div>
+                )}
               </div>
 
               {/* Trust Badges */}

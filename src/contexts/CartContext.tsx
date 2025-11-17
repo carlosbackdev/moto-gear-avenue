@@ -9,13 +9,14 @@ interface CartContextType {
   cart: CartItem[];
   addItem: (product: Product, quantity: number, variant?: string) => Promise<void>;
   removeItem: (productId: number, variant?: string) => Promise<void>;
-  updateQuantity: (productId: number, quantity: number) => Promise<void>;
+  updateQuantity: (productId: number, quantity: number, variant?: string) => Promise<void>;
   clearCart: () => Promise<void>;
   loadCart: () => Promise<void>;
   totalItems: number;
   totalAmount: number;
   totalSavings: number;
   loading: boolean;
+  isInCart: (productId: number) => boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -109,36 +110,46 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!item?.id) return;
 
     try {
+      // Optimistically update UI first
+      setCart((prevCart) => prevCart.filter((cartItem) => cartItem.id !== item.id));
+      
+      // Then call backend
       await cartService.removeItem(item.id);
-      // Recargar el carrito para asegurar sincronización
-      await loadCart();
+      
       toast.success('Producto eliminado del carrito');
     } catch (error) {
       console.error('Error removing from cart:', error);
+      // Revert on error by reloading
+      await loadCart();
       toast.error('Error al eliminar producto del carrito');
     }
   };
 
-  const updateQuantity = async (productId: number, quantity: number) => {
+  const updateQuantity = async (productId: number, quantity: number, variant?: string) => {
     if (!isAuthenticated) return;
 
     if (quantity <= 0) {
-      await removeItem(productId);
+      await removeItem(productId, variant);
       return;
     }
 
-    const item = cart.find((item) => item.product.id === productId);
+    const item = cart.find((item) => item.product.id === productId && item.variant === variant);
     if (!item?.id) return;
 
     try {
-      await cartService.updateQuantity(item.id, quantity);
+      // Optimistically update UI
       setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.id === productId ? { ...item, quantity } : item
+        prevCart.map((cartItem) =>
+          cartItem.id === item.id ? { ...cartItem, quantity } : cartItem
         )
       );
+      
+      // Then call backend
+      await cartService.updateQuantity(item.id, quantity);
     } catch (error) {
       console.error('Error updating quantity:', error);
+      // Revert on error
+      await loadCart();
       toast.error('Error al actualizar cantidad');
     }
   };
@@ -164,6 +175,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return sum + (original - sell) * item.quantity;
   }, 0);
 
+  const isInCart = (productId: number) => {
+    return cart.some((item) => item.product.id === productId);
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -177,6 +192,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         totalAmount,
         totalSavings,
         loading,
+        isInCart,
       }}
     >
       {children}
