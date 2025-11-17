@@ -7,13 +7,14 @@ import { toast } from 'sonner';
 
 interface CartContextType {
   cart: CartItem[];
-  addItem: (product: Product, quantity: number) => Promise<void>;
-  removeItem: (productId: number) => Promise<void>;
+  addItem: (product: Product, quantity: number, variant?: string) => Promise<void>;
+  removeItem: (productId: number, variant?: string) => Promise<void>;
   updateQuantity: (productId: number, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
   loadCart: () => Promise<void>;
   totalItems: number;
   totalAmount: number;
+  totalSavings: number;
   loading: boolean;
 }
 
@@ -49,6 +50,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
               id: item.id,
               product,
               quantity: item.quantity,
+              variant: item.variant,
             } as CartItem;
           } catch (error) {
             console.error(`Error loading product ${item.productId}:`, error);
@@ -66,7 +68,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const addItem = async (product: Product, quantity: number) => {
+  const addItem = async (product: Product, quantity: number, variant?: string) => {
     if (!isAuthenticated) {
       toast.error('Debes iniciar sesión para agregar productos al carrito');
       return;
@@ -76,20 +78,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const backendItem = await cartService.addToCart({
         productId: product.id,
         quantity,
+        variant,
       });
 
       setCart((prevCart) => {
-        const existingItem = prevCart.find((item) => item.product.id === product.id);
+        const existingItem = prevCart.find((item) => item.product.id === product.id && item.variant === variant);
         
         if (existingItem) {
           return prevCart.map((item) =>
-            item.product.id === product.id
+            item.product.id === product.id && item.variant === variant
               ? { ...item, id: backendItem.id, quantity: backendItem.quantity }
               : item
           );
         }
         
-        return [...prevCart, { id: backendItem.id, product, quantity: backendItem.quantity }];
+        return [...prevCart, { id: backendItem.id, product, quantity: backendItem.quantity, variant: backendItem.variant }];
       });
       
       toast.success('Producto agregado al carrito');
@@ -99,15 +102,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const removeItem = async (productId: number) => {
+  const removeItem = async (productId: number, variant?: string) => {
     if (!isAuthenticated) return;
 
-    const item = cart.find((item) => item.product.id === productId);
+    const item = cart.find((item) => item.product.id === productId && item.variant === variant);
     if (!item?.id) return;
 
     try {
       await cartService.removeItem(item.id);
-      setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
+      // Recargar el carrito para asegurar sincronización
+      await loadCart();
       toast.success('Producto eliminado del carrito');
     } catch (error) {
       console.error('Error removing from cart:', error);
@@ -154,6 +158,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalAmount = cart.reduce((sum, item) => sum + (item.product.sellPrice || item.product.price || 0) * item.quantity, 0);
+  const totalSavings = cart.reduce((sum, item) => {
+    const original = item.product.originalPrice || item.product.price || 0;
+    const sell = item.product.sellPrice || item.product.price || 0;
+    return sum + (original - sell) * item.quantity;
+  }, 0);
 
   return (
     <CartContext.Provider
@@ -166,6 +175,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loadCart,
         totalItems,
         totalAmount,
+        totalSavings,
         loading,
       }}
     >

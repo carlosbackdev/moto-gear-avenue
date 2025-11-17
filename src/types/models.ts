@@ -62,6 +62,7 @@ export interface BackendCartItem {
   productId: number;
   userId: number;
   quantity: number;
+  variant?: string;
   createdAt: string;
 }
 
@@ -71,6 +72,7 @@ export interface BackendCartItem {
 export interface AddToCartRequest {
   productId: number;
   quantity: number;
+  variant?: string;
 }
 
 /**
@@ -80,6 +82,7 @@ export interface CartItem {
   id?: number; // ID del item en el backend
   product: Product;
   quantity: number;
+  variant?: string;
 }
 
 /**

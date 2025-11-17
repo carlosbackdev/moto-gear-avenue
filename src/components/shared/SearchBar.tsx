@@ -57,6 +57,15 @@ export const SearchBar = () => {
     setShowResults(false);
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim().length >= 2) {
+      navigate(`/catalog?search=${encodeURIComponent(query.trim())}`);
+      setQuery('');
+      setShowResults(false);
+    }
+  };
+
   const clearSearch = () => {
     setQuery('');
     setResults([]);
@@ -65,7 +74,7 @@ export const SearchBar = () => {
 
   return (
     <div ref={searchRef} className="relative w-full max-w-md">
-      <div className="relative">
+      <form onSubmit={handleSearch} className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
@@ -76,6 +85,7 @@ export const SearchBar = () => {
         />
         {query && (
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
@@ -84,7 +94,7 @@ export const SearchBar = () => {
             <X className="h-4 w-4" />
           </Button>
         )}
-      </div>
+      </form>
 
       {showResults && results.length > 0 && (
         <div className="absolute top-full mt-2 w-full bg-background border border-border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">

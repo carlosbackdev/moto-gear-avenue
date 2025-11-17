@@ -59,7 +59,13 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!product) return;
-    addItem(product, quantity);
+    
+    // Crear string de variante seleccionada
+    const variantString = Object.entries(selectedVariants)
+      .map(([key, value]) => `${value}`)
+      .join(', ');
+    
+    addItem(product, quantity, variantString || undefined);
     toast.success(`${quantity} ${quantity === 1 ? 'producto añadido' : 'productos añadidos'} al carrito`);
   };
 

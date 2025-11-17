@@ -3,9 +3,10 @@ import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default function Cart() {
-  const { cart, removeItem, updateQuantity, totalAmount, totalItems } = useCart();
+  const { cart, removeItem, updateQuantity, clearCart, totalAmount, totalItems, totalSavings } = useCart();
 
   if (cart.length === 0) {
     return (
@@ -22,61 +23,102 @@ export default function Cart() {
     );
   }
 
+  const handleClearCart = async () => {
+    if (window.confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+      await clearCart();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">Carrito de Compra</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold">Carrito de Compra</h1>
+          <Button variant="destructive" onClick={handleClearCart}>
+            <Trash2 className="h-4 w-4 mr-2" />
+            Vaciar Carrito
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cart.map((item) => (
-              <Card key={item.product.id}>
-                <CardContent className="p-6">
-                  <div className="flex gap-4">
-                    <img
-                      src={item.product.imageUrl}
-                      alt={item.product.name}
-                      className="w-24 h-24 object-cover rounded-lg"
-                    />
-                    <div className="flex-1">
-                      <h3 className="font-semibold mb-1">{item.product.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-2">{item.product.brand}</p>
-                      <p className="text-lg font-bold text-primary">
-                        {item.product.price.toFixed(2)}€
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end justify-between">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeItem(item.product.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                      <div className="flex items-center border border-border rounded-lg">
+            {cart.map((item, index) => {
+              const originalPrice = item.product.originalPrice || item.product.price || 0;
+              const sellPrice = item.product.sellPrice || item.product.price || 0;
+              const savings = (originalPrice - sellPrice) * item.quantity;
+              const hasDiscount = originalPrice > sellPrice;
+              
+              return (
+                <Card key={`${item.product.id}-${item.variant || 'no-variant'}-${index}`}>
+                  <CardContent className="p-6">
+                    <div className="flex gap-4">
+                      <img
+                        src={item.product.imageUrl}
+                        alt={item.product.name}
+                        className="w-24 h-24 object-cover rounded-lg"
+                      />
+                      <div className="flex-1">
+                        <h3 className="font-semibold mb-1">{item.product.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-1">{item.product.brand}</p>
+                        {item.variant && (
+                          <p className="text-sm text-muted-foreground mb-2">
+                            <span className="font-medium">Variante:</span> {item.variant}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2">
+                          {hasDiscount && (
+                            <p className="text-sm text-muted-foreground line-through">
+                              {originalPrice.toFixed(2)}€
+                            </p>
+                          )}
+                          <p className="text-lg font-bold text-primary">
+                            {sellPrice.toFixed(2)}€
+                          </p>
+                          {hasDiscount && (
+                            <Badge variant="destructive" className="text-xs">
+                              -{item.product.discount}%
+                            </Badge>
+                          )}
+                        </div>
+                        {hasDiscount && (
+                          <p className="text-sm text-green-600 font-medium mt-1">
+                            Ahorras: {savings.toFixed(2)}€
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end justify-between">
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          onClick={() => removeItem(item.product.id, item.variant)}
                         >
-                          <Minus className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
-                        <span className="px-4 py-2 font-semibold">{item.quantity}</span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          disabled={item.quantity >= item.product.stock}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center border border-border rounded-lg">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="px-4 py-2 font-semibold">{item.quantity}</span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            disabled={item.quantity >= (item.product.stock || 100)}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Order Summary */}
@@ -89,6 +131,12 @@ export default function Cart() {
                     <span className="text-muted-foreground">Productos ({totalItems})</span>
                     <span className="font-semibold">{totalAmount.toFixed(2)}€</span>
                   </div>
+                  {totalSavings > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span className="font-medium">Ahorros totales</span>
+                      <span className="font-semibold">-{totalSavings.toFixed(2)}€</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Envío</span>
                     <span className="font-semibold text-primary">GRATIS</span>
