@@ -71,6 +71,7 @@ export default function Cart() {
                         <p className="text-sm text-muted-foreground mb-1">{item.product.brand}</p>
                         {item.variant && (
                           <div className="mb-2">
+                            <p>Opcion escogida</p>
                             <Badge variant="secondary" className="text-xs">
                               {item.variant}
                             </Badge>
