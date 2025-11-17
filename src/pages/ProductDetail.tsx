@@ -9,6 +9,7 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductReviews } from '@/components/product/ProductReviews';
 import { toast } from 'sonner';
@@ -212,21 +213,40 @@ export default function ProductDetail() {
             initialIndex={currentImageIndex}
           />
           
-          {/* Specifications below images */}
-          {cleanedSpecs && Object.keys(cleanedSpecs).length > 0 && (
+          {/* Specifications and Details Tabs */}
+          {(cleanedSpecs && Object.keys(cleanedSpecs).length > 0) || product.description && (
             <Card>
               <CardHeader>
-                <CardTitle>Especificaciones Técnicas</CardTitle>
+                <CardTitle>Información del Producto</CardTitle>
               </CardHeader>
               <CardContent>
-                <dl className="space-y-2">
-                  {Object.entries(cleanedSpecs).map(([key, value], index) => (
-                    <div key={index} className="flex justify-between py-2 border-b border-border last:border-0">
-                      <dt className="font-medium text-muted-foreground">{key}</dt>
-                      <dd className="text-foreground">{String(value)}</dd>
+                <Tabs defaultValue="specifications" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="specifications">Especificaciones</TabsTrigger>
+                    <TabsTrigger value="details">Detalles</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="specifications" className="mt-4">
+                    {cleanedSpecs && Object.keys(cleanedSpecs).length > 0 ? (
+                      <dl className="space-y-2">
+                        {Object.entries(cleanedSpecs).map(([key, value], index) => (
+                          <div key={index} className="flex justify-between py-2 border-b border-border last:border-0">
+                            <dt className="font-medium text-muted-foreground">{key}</dt>
+                            <dd className="text-foreground">{String(value)}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No hay especificaciones disponibles</p>
+                    )}
+                  </TabsContent>
+                  
+                  <TabsContent value="details" className="mt-4">
+                    <div className="text-muted-foreground leading-relaxed">
+                      {product.description || 'No hay detalles disponibles'}
                     </div>
-                  ))}
-                </dl>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           )}
