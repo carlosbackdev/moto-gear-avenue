@@ -214,7 +214,7 @@ export default function ProductDetail() {
           />
           
           {/* Specifications and Details Tabs */}
-          {(cleanedSpecs && Object.keys(cleanedSpecs).length > 0) || product.description && (
+          {((cleanedSpecs && Object.keys(cleanedSpecs).length > 0) || product.description) && (
             <Card>
               <CardHeader>
                 <CardTitle>Información del Producto</CardTitle>
@@ -277,30 +277,23 @@ export default function ProductDetail() {
               </CardContent>
             </Card>
 
-            <div>
-              <h2 className="text-xl font-semibold mb-2">Descripción</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                {product.description}
-              </p>
-              
-              {product.keywords && (
-                <div className="mt-4">
-                  <h3 className="text-sm font-semibold mb-2">Relacionado</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {product.keywords.split(',').slice(0, 6).map((keyword, idx) => (
-                      <Badge 
-                        key={idx} 
-                        variant="outline" 
-                        className="text-xs cursor-pointer hover:bg-primary/10 transition-colors"
-                        onClick={() => navigate(`/catalog?search=${encodeURIComponent(keyword.trim())}`)}
-                      >
-                        {keyword.trim()}
-                      </Badge>
-                    ))}
-                  </div>
+            {product.keywords && (
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Relacionado</h3>
+                <div className="flex flex-wrap gap-1">
+                  {product.keywords.split(',').slice(0, 6).map((keyword, idx) => (
+                    <Badge 
+                      key={idx} 
+                      variant="outline" 
+                      className="text-xs cursor-pointer hover:bg-primary/10 transition-colors"
+                      onClick={() => navigate(`/catalog?search=${encodeURIComponent(keyword.trim())}`)}
+                    >
+                      {keyword.trim()}
+                    </Badge>
+                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Variantes del Producto */}
             {variants.length > 0 && (
