@@ -11,7 +11,7 @@ import { Slider } from '@/components/ui/slider';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { mockProducts, mockCategories } from '@/lib/mockData';
 
-type SortOption = 'default' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc';
+type SortOption = 'default' | 'price-asc' | 'price-desc' | 'discount-desc' | 'name-asc' | 'name-desc';
 
 export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,7 +33,6 @@ export default function Catalog() {
     setSelectedCategory(category ? Number(category) : null);
     setSearchTerm(search || '');
   }, [searchParams]);
-  const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [priceRange, setPriceRange] = useState<number[]>([500]);
   const [sortBy, setSortBy] = useState<SortOption>('default');
   const [showFilters, setShowFilters] = useState(false);
@@ -80,11 +79,6 @@ export default function Catalog() {
     fetchProducts();
   }, [selectedCategory, searchTerm]);
 
-  // Obtener marcas únicas
-  const availableBrands = useMemo(() => {
-    const brands = Array.from(new Set(allProducts.map(p => p.brand)));
-    return brands.sort();
-  }, [allProducts]);
 
   // Filtrar y ordenar productos
   const filteredProducts = useMemo(() => {
@@ -93,11 +87,6 @@ export default function Catalog() {
     // Filtro por categoría (solo si no hay búsqueda activa)
     if (selectedCategory && !searchTerm) {
       filtered = filtered.filter(p => p.categoryId === selectedCategory);
-    }
-
-    // Filtro por marca
-    if (selectedBrand !== 'all') {
-      filtered = filtered.filter(p => p.brand === selectedBrand);
     }
 
     // Filtro por precio
@@ -111,6 +100,13 @@ export default function Catalog() {
       case 'price-desc':
         filtered.sort((a, b) => b.price - a.price);
         break;
+      case 'discount-desc':
+        filtered.sort((a, b) => {
+          const discountA = ((a.originalPrice || a.price) - a.price) / (a.originalPrice || a.price) * 100;
+          const discountB = ((b.originalPrice || b.price) - b.price) / (b.originalPrice || b.price) * 100;
+          return discountB - discountA;
+        });
+        break;
       case 'name-asc':
         filtered.sort((a, b) => a.name.localeCompare(b.name));
         break;
@@ -122,7 +118,7 @@ export default function Catalog() {
     }
 
     return filtered;
-  }, [allProducts, selectedCategory, searchTerm, selectedBrand, priceRange, sortBy]);
+  }, [allProducts, selectedCategory, searchTerm, priceRange, sortBy]);
 
   const handleCategoryChange = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
@@ -186,8 +182,9 @@ export default function Catalog() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="default">Predeterminado</SelectItem>
-                <SelectItem value="price-asc">Precio: Menor a Mayor</SelectItem>
-                <SelectItem value="price-desc">Precio: Mayor a Menor</SelectItem>
+                <SelectItem value="price-asc">Precio: Más bajo</SelectItem>
+                <SelectItem value="price-desc">Precio: Más alto</SelectItem>
+                <SelectItem value="discount-desc">Mayor descuento</SelectItem>
                 <SelectItem value="name-asc">Nombre: A-Z</SelectItem>
                 <SelectItem value="name-desc">Nombre: Z-A</SelectItem>
               </SelectContent>
@@ -206,25 +203,7 @@ export default function Catalog() {
 
           {/* Advanced Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 border border-border rounded-lg bg-card">
-              {/* Brand Filter */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">Marca</label>
-                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todas las marcas" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas las marcas</SelectItem>
-                    {availableBrands.map((brand) => (
-                      <SelectItem key={brand} value={brand}>
-                        {brand}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
+            <div className="grid grid-cols-1 gap-6 p-6 border border-border rounded-lg bg-card">
               {/* Price Range Filter */}
               <div>
                 <label className="text-sm font-medium mb-2 block">
@@ -245,12 +224,11 @@ export default function Catalog() {
               </div>
 
               {/* Reset Filters */}
-              <div className="md:col-span-2 flex justify-end">
+              <div className="flex justify-end">
                 <Button
                   variant="ghost"
                   onClick={() => {
                     setSearchTerm('');
-                    setSelectedBrand('all');
                     setPriceRange([500]);
                     setSortBy('default');
                     setSelectedCategory(null);
@@ -280,7 +258,6 @@ export default function Catalog() {
               variant="outline"
               onClick={() => {
                 setSearchTerm('');
-                setSelectedBrand('all');
                 setPriceRange([500]);
                 setSortBy('default');
                 setSelectedCategory(null);

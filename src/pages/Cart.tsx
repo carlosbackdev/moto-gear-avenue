@@ -70,9 +70,11 @@ export default function Cart() {
                         </h3>
                         <p className="text-sm text-muted-foreground mb-1">{item.product.brand}</p>
                         {item.variant && (
-                          <p className="text-sm text-muted-foreground mb-2">
-                            <span className="font-medium">Opción escogida:</span> {item.variant}
-                          </p>
+                          <div className="mb-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {item.variant}
+                            </Badge>
+                          </div>
                         )}
                         <div className="flex items-center gap-2">
                           {hasDiscount && (

@@ -27,6 +27,11 @@ export default function ProductDetail() {
   const [variantError, setVariantError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // Scroll to top when entering product page
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   useEffect(() => {
     if (!id) return;
     
