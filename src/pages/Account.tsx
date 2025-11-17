@@ -1,6 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
 import { Package, User } from 'lucide-react';
 
@@ -20,10 +21,20 @@ export default function Account() {
                 Información Personal
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <div>
-                <p className="text-sm text-muted-foreground">Nombre</p>
-                <p className="font-semibold">{user?.name}</p>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-4 mb-4">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={user?.photoUrl || ''} alt={user?.name || 'Usuario'} />
+                  <AvatarFallback className="text-xl">
+                    {user?.name?.charAt(0).toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-lg font-semibold">{user?.name || user?.fullName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {user?.authProvider === 'GOOGLE' ? 'Cuenta de Google' : 'Cuenta local'}
+                  </p>
+                </div>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Email</p>
