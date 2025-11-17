@@ -8,11 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
   const { login, firebaseLogin, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -114,37 +116,54 @@ export default function Login() {
             </div>
             <div>
               <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
+              </div>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </Button>
           </form>
 
-          <div className="relative my-4">
-            <Separator />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-              O continúa con
-            </span>
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <Separator />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">O continúa con</span>
+            </div>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center p-4 bg-muted/50 rounded-lg border border-border">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
-              useOneTap
-              theme="outline"
-              size="large"
+              useOneTap={false}
               text="signin_with"
-              locale="es"
+              size="large"
+              width="300"
             />
           </div>
 
