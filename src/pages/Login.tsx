@@ -152,7 +152,7 @@ export default function Login() {
               <Separator />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">O continúa con</span>
+              <span className="bg-background px-2 text-muted-foreground font-bold">O continúa con</span>
             </div>
           </div>
 

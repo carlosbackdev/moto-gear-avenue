@@ -1,76 +1,159 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CartItem, Product } from '@/types/models';
+import { CartItem, Product, BackendCartItem } from '@/types/models';
 import { cartService } from '@/services/cart.service';
+import { productService } from '@/services/product.service';
+import { useAuth } from './AuthContext';
+import { toast } from 'sonner';
 
 interface CartContextType {
   cart: CartItem[];
-  addItem: (product: Product, quantity: number) => void;
-  removeItem: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
-  clearCart: () => void;
+  addItem: (product: Product, quantity: number) => Promise<void>;
+  removeItem: (productId: number) => Promise<void>;
+  updateQuantity: (productId: number, quantity: number) => Promise<void>;
+  clearCart: () => Promise<void>;
+  loadCart: () => Promise<void>;
   totalItems: number;
   totalAmount: number;
+  loading: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
-  // Cargar carrito del localStorage al iniciar
+  // Cargar carrito cuando el usuario se autentica
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+    if (isAuthenticated && user) {
+      loadCart();
+    } else {
+      setCart([]);
     }
-  }, []);
+  }, [isAuthenticated, user]);
 
-  // Guardar carrito en localStorage cuando cambie
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-    // Opcional: sincronizar con backend
-    // cartService.syncCartWithBackend(cart);
-  }, [cart]);
+  const loadCart = async () => {
+    if (!isAuthenticated) return;
+    
+    try {
+      setLoading(true);
+      const backendCart = await cartService.getCart();
+      
+      // Convertir BackendCartItem[] a CartItem[] obteniendo los productos
+      const cartWithProducts = await Promise.all(
+        backendCart.map(async (item) => {
+          try {
+            const product = await productService.getProductById(item.productId);
+            return {
+              id: item.id,
+              product,
+              quantity: item.quantity,
+            } as CartItem;
+          } catch (error) {
+            console.error(`Error loading product ${item.productId}:`, error);
+            return null;
+          }
+        })
+      );
 
-  const addItem = (product: Product, quantity: number) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.product.id === product.id);
-      
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      
-      return [...prevCart, { product, quantity }];
-    });
+      setCart(cartWithProducts.filter((item): item is CartItem => item !== null));
+    } catch (error) {
+      console.error('Error loading cart:', error);
+      toast.error('Error al cargar el carrito');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeItem = (productId: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-  };
-
-  const updateQuantity = (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      removeItem(productId);
+  const addItem = async (product: Product, quantity: number) => {
+    if (!isAuthenticated) {
+      toast.error('Debes iniciar sesión para agregar productos al carrito');
       return;
     }
 
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
-    );
+    try {
+      const backendItem = await cartService.addToCart({
+        productId: product.id,
+        quantity,
+      });
+
+      setCart((prevCart) => {
+        const existingItem = prevCart.find((item) => item.product.id === product.id);
+        
+        if (existingItem) {
+          return prevCart.map((item) =>
+            item.product.id === product.id
+              ? { ...item, id: backendItem.id, quantity: backendItem.quantity }
+              : item
+          );
+        }
+        
+        return [...prevCart, { id: backendItem.id, product, quantity: backendItem.quantity }];
+      });
+      
+      toast.success('Producto agregado al carrito');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast.error('Error al agregar producto al carrito');
+    }
   };
 
-  const clearCart = () => {
-    setCart([]);
+  const removeItem = async (productId: number) => {
+    if (!isAuthenticated) return;
+
+    const item = cart.find((item) => item.product.id === productId);
+    if (!item?.id) return;
+
+    try {
+      await cartService.removeItem(item.id);
+      setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
+      toast.success('Producto eliminado del carrito');
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      toast.error('Error al eliminar producto del carrito');
+    }
+  };
+
+  const updateQuantity = async (productId: number, quantity: number) => {
+    if (!isAuthenticated) return;
+
+    if (quantity <= 0) {
+      await removeItem(productId);
+      return;
+    }
+
+    const item = cart.find((item) => item.product.id === productId);
+    if (!item?.id) return;
+
+    try {
+      await cartService.updateQuantity(item.id, quantity);
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.product.id === productId ? { ...item, quantity } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      toast.error('Error al actualizar cantidad');
+    }
+  };
+
+  const clearCart = async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      await cartService.clearCart();
+      setCart([]);
+      toast.success('Carrito vaciado');
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      toast.error('Error al vaciar el carrito');
+    }
   };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalAmount = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const totalAmount = cart.reduce((sum, item) => sum + (item.product.sellPrice || item.product.price || 0) * item.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -80,8 +163,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         removeItem,
         updateQuantity,
         clearCart,
+        loadCart,
         totalItems,
         totalAmount,
+        loading,
       }}
     >
       {children}
