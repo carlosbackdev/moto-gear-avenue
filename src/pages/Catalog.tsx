@@ -23,7 +23,16 @@ export default function Catalog() {
   );
   
   // Filtros
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+
+  // Sincronizar con URL params
+  useEffect(() => {
+    const category = searchParams.get('category');
+    const search = searchParams.get('search');
+    
+    setSelectedCategory(category ? Number(category) : null);
+    setSearchTerm(search || '');
+  }, [searchParams]);
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [priceRange, setPriceRange] = useState<number[]>([500]);
   const [sortBy, setSortBy] = useState<SortOption>('default');
