@@ -7,7 +7,7 @@ import { imageService } from '@/services/image.service';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductReviews } from '@/components/product/ProductReviews';
@@ -181,12 +181,31 @@ export default function ProductDetail() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
           {/* Product Gallery */}
-        <div>
+        <div className="space-y-6">
           <ProductGallery 
             images={productImages} 
             productName={product.name}
             initialIndex={currentImageIndex}
           />
+          
+          {/* Specifications below images */}
+          {cleanedSpecs && Object.keys(cleanedSpecs).length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Especificaciones Técnicas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <dl className="space-y-2">
+                  {Object.entries(cleanedSpecs).map(([key, value], index) => (
+                    <div key={index} className="flex justify-between py-2 border-b border-border last:border-0">
+                      <dt className="font-medium text-muted-foreground">{key}</dt>
+                      <dd className="text-foreground">{String(value)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
           {/* Product Info */}
