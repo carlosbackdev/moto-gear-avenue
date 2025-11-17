@@ -31,6 +31,7 @@ export interface Product {
   variant: string; // JSON string de ProductVariantGroup[]
   sellerName: string;
   category: number;
+  keywords?: string;
   images: string[];
   // Campos calculados para compatibilidad con frontend
   price?: number; // = sellPrice
