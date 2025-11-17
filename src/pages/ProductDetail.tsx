@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Minus, Plus, Heart, Package, Truck, Shield, Calendar } from 'lucide-react';
-import { Product, ProductVariantGroup } from '@/types/models';
+import { Product, ProductVariantGroup, ProductVariantOption } from '@/types/models';
 import { productService } from '@/services/product.service';
 import { imageService } from '@/services/image.service';
 import { useCart } from '@/contexts/CartContext';
@@ -22,7 +22,8 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [selectedVariant, setSelectedVariant] = useState<string>('');
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -78,10 +79,26 @@ export default function ProductDetail() {
       const variants = JSON.parse(product.variant);
       return variants.map((v: ProductVariantGroup) => ({
         ...v,
-        options: v.options.slice(0, 5) // Máximo 5 opciones
+        options: v.options.slice(0, 12) // Máximo 12 opciones para permitir más variantes
       }));
     } catch {
       return [];
+    }
+  };
+
+  const handleVariantSelect = (groupName: string, option: ProductVariantOption) => {
+    setSelectedVariants(prev => ({
+      ...prev,
+      [groupName]: option.value
+    }));
+
+    // Si la variante tiene imagen, cambiar a esa imagen en la galería
+    if (option.image && product?.images) {
+      const fullImageUrl = imageService.getFullImageUrl(option.image);
+      const imageIndex = product.images.findIndex(img => img === fullImageUrl);
+      if (imageIndex !== -1) {
+        setCurrentImageIndex(imageIndex);
+      }
     }
   };
 
@@ -164,9 +181,13 @@ export default function ProductDetail() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
           {/* Product Gallery */}
-          <div>
-            <ProductGallery images={productImages} productName={product.name} />
-          </div>
+        <div>
+          <ProductGallery 
+            images={productImages} 
+            productName={product.name}
+            initialIndex={currentImageIndex}
+          />
+        </div>
 
           {/* Product Info */}
           <div className="space-y-6">
@@ -221,10 +242,18 @@ export default function ProductDetail() {
                       {variantGroup.options.map((option, optIdx) => (
                         <Button
                           key={optIdx}
-                          variant={selectedVariant === option.value ? 'default' : 'outline'}
+                          variant={selectedVariants[variantGroup.groupName] === option.value ? 'default' : 'outline'}
                           size="sm"
-                          onClick={() => setSelectedVariant(option.value)}
+                          onClick={() => handleVariantSelect(variantGroup.groupName, option)}
+                          className="flex items-center gap-2"
                         >
+                          {option.image && (
+                            <img 
+                              src={imageService.getFullImageUrl(option.image)}
+                              alt={option.value}
+                              className="w-6 h-6 object-cover rounded"
+                            />
+                          )}
                           {option.value}
                           {option.extraPrice > 0 && ` (+${option.extraPrice.toFixed(2)}€)`}
                         </Button>

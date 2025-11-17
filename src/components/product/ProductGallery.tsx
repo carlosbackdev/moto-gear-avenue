@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -6,11 +6,16 @@ import { Button } from '@/components/ui/button';
 interface ProductGalleryProps {
   images: string[];
   productName: string;
+  initialIndex?: number;
 }
 
-export const ProductGallery = ({ images, productName }: ProductGalleryProps) => {
-  const [selectedImage, setSelectedImage] = useState(0);
+export const ProductGallery = ({ images, productName, initialIndex = 0 }: ProductGalleryProps) => {
+  const [selectedImage, setSelectedImage] = useState(initialIndex);
   const [isZoomed, setIsZoomed] = useState(false);
+
+  useEffect(() => {
+    setSelectedImage(initialIndex);
+  }, [initialIndex]);
 
   const nextImage = () => {
     setSelectedImage((prev) => (prev + 1) % images.length);

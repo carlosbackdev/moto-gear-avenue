@@ -4,6 +4,7 @@
 export interface ProductVariantOption {
   value: string;
   extraPrice: number;
+  image?: string | null;
 }
 
 /**
