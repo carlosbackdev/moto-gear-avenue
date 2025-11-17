@@ -71,7 +71,7 @@ export default function Cart() {
                         <p className="text-sm text-muted-foreground mb-1">{item.product.brand}</p>
                         {item.variant && (
                           <p className="text-sm text-muted-foreground mb-2">
-                            <span className="font-medium">Variante:</span> {item.variant}
+                            <span className="font-medium">Opción escogida:</span> {item.variant}
                           </p>
                         )}
                         <div className="flex items-center gap-2">

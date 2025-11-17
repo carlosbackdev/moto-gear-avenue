@@ -264,12 +264,20 @@ export default function ProductDetail() {
               </p>
               
               {product.keywords && (
-                <div className="mt-3 flex flex-wrap gap-1">
-                  {product.keywords.split(',').slice(0, 6).map((keyword, idx) => (
-                    <Badge key={idx} variant="outline" className="text-xs">
-                      {keyword.trim()}
-                    </Badge>
-                  ))}
+                <div className="mt-4">
+                  <h3 className="text-sm font-semibold mb-2">Relacionado</h3>
+                  <div className="flex flex-wrap gap-1">
+                    {product.keywords.split(',').slice(0, 6).map((keyword, idx) => (
+                      <Badge 
+                        key={idx} 
+                        variant="outline" 
+                        className="text-xs cursor-pointer hover:bg-primary/10 transition-colors"
+                        onClick={() => navigate(`/catalog?search=${encodeURIComponent(keyword.trim())}`)}
+                      >
+                        {keyword.trim()}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -313,20 +321,6 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {cleanedSpecs && (
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Especificaciones</h2>
-                <div className="text-muted-foreground">
-                  <ul className="space-y-1">
-                    {Object.entries(cleanedSpecs).map(([key, value]) => (
-                      <li key={key}>
-                        <strong>{key}:</strong> {String(value)}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
 
             <div>
 
@@ -395,7 +389,7 @@ export default function ProductDetail() {
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Shield className="h-5 w-5 text-primary" />
-                    <span>Garantía de 2 años</span>
+                    <span>Devolución Gratis - Devoluciones sin coste en todos los productos</span>
                   </div>
                 </CardContent>
               </Card>
