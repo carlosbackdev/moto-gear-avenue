@@ -21,6 +21,10 @@ export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(
     searchParams.get('category') ? Number(searchParams.get('category')) : null
   );
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   // Filtros
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');

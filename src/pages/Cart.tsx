@@ -4,10 +4,15 @@ import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useEffect } from 'react';
 
 export default function Cart() {
   const { cart, removeItem, updateQuantity, clearCart, totalAmount, totalItems, totalSavings } = useCart();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (cart.length === 0) {
     return (

@@ -10,6 +10,10 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const fetchOrders = async () => {
       try {
         const data = await orderService.getUserOrders();
