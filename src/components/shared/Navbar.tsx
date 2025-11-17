@@ -74,28 +74,30 @@ export const Navbar = () => {
           </DropdownMenu>
           
           {isAuthenticated && (
-            <Link to="/wishlist" className="relative">
-              <Button variant="ghost" size="icon">
-                <Heart className="h-5 w-5" />
-                {wishlist.length > 0 && (
-                  <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                    {wishlist.length}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
+            <>
+              <Link to="/wishlist" className="relative">
+                <Button variant="ghost" size="icon">
+                  <Heart className="h-5 w-5" />
+                  {wishlist.length > 0 && (
+                    <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                      {wishlist.length}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+              
+              <Link to="/cart" className="relative">
+                <Button variant="ghost" size="icon">
+                  <ShoppingCart className="h-5 w-5" />
+                  {totalItems > 0 && (
+                    <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                      {totalItems}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+            </>
           )}
-          
-          <Link to="/cart" className="relative">
-            <Button variant="ghost" size="icon">
-              <ShoppingCart className="h-5 w-5" />
-              {totalItems > 0 && (
-                <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                  {totalItems}
-                </Badge>
-              )}
-            </Button>
-          </Link>
 
           {isAuthenticated ? (
             <DropdownMenu>
