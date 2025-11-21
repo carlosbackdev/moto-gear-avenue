@@ -9,12 +9,17 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { ShippingAddress } from '@/types/models';
+import { environment } from '@/config/environment';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { cart, totalAmount, clearCart } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [loading, setLoading] = useState(false);
+  
+  // Calculate shipping cost: 1.99€ if total < 50€, free otherwise
+  const shippingCost = totalAmount < 50 ? 1.99 : 0;
+  const finalTotal = totalAmount + shippingCost;
   const [formData, setFormData] = useState<ShippingAddress>({
     fullName: user?.name || '',
     address: '',
@@ -177,13 +182,25 @@ export default function Checkout() {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   {cart.map((item) => (
-                    <div key={item.product.id} className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {item.product.name} x{item.quantity}
-                      </span>
-                      <span className="font-semibold">
-                        {(item.product.price * item.quantity).toFixed(2)}€
-                      </span>
+                    <div key={item.product.id} className="flex gap-3 text-sm">
+                      <img
+                        src={`${environment.imageBaseUrl}${item.product.imageUrl}`}
+                        alt={item.product.name}
+                        className="w-16 h-16 object-cover rounded-md"
+                      />
+                      <div className="flex-1 flex justify-between items-start">
+                        <div>
+                          <p className="text-muted-foreground font-medium">
+                            {item.product.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Cantidad: {item.quantity}
+                          </p>
+                        </div>
+                        <span className="font-semibold">
+                          {(item.product.price * item.quantity).toFixed(2)}€
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -194,12 +211,16 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Envío</span>
-                    <span className="font-semibold text-primary">GRATIS</span>
+                    {shippingCost === 0 ? (
+                      <span className="font-semibold text-primary">GRATIS</span>
+                    ) : (
+                      <span className="font-semibold">{shippingCost.toFixed(2)}€</span>
+                    )}
                   </div>
                   <div className="border-t pt-2">
                     <div className="flex justify-between text-lg font-bold">
                       <span>Total</span>
-                      <span className="text-primary">{totalAmount.toFixed(2)}€</span>
+                      <span className="text-primary">{finalTotal.toFixed(2)}€</span>
                     </div>
                   </div>
                 </div>
