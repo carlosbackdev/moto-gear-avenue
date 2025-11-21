@@ -177,7 +177,7 @@ export interface AuthResponse {
  */
 export interface CreateOrderRequest {
   checkoutId: number;
-  cartShadedIds: number[];
+  cartShadedItemIds: number[];
   total: number;
   notes?: string;
 }
