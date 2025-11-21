@@ -101,9 +101,7 @@ export default function Order() {
     try {
       await orderService.deleteOrder(order.id);
       toast.success('Pedido eliminado correctamente');
-      // Recargar navegando al carrito
-      navigate('/cart');
-      window.location.reload();
+      navigate(-1); // Volver a la página anterior
     } catch (error) {
       console.error('Error al eliminar el pedido:', error);
       toast.error('Error al eliminar el pedido');
