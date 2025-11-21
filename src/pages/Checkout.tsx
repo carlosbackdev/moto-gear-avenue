@@ -113,7 +113,7 @@ export default function Checkout() {
       // 4. Crear orden con los IDs del carrito sombreado
       const orderData = {
         checkoutId: checkout.id,
-        cartShadedIds: shadedItems.map(item => item.id),
+        cartShadedItemIds: shadedItems.map(item => item.id),
         total: parseFloat(finalTotal.toFixed(2)),
         notes: orderNotes || undefined
       };
