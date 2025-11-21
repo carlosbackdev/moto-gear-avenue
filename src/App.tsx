@@ -58,8 +58,8 @@ const App = () => (
                     
                     {/* Protected Routes */}
                     <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-                    <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-                    <Route path="/payment/:checkoutId" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+          <Route path="/payment/:orderId" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
                     <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
                     <Route path="/account/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
                     
