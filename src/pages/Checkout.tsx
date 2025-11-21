@@ -120,7 +120,7 @@ export default function Checkout() {
 
       const order = await orderService.createOrder(orderData);
 
-      // 5. Limpiar el carrito normal (esto actualiza el contexto automáticamente)
+      // 5. Limpiar el carrito normal y recargar para actualizar el icono
       await clearCart();
       
       toast.success('Orden creada correctamente');
@@ -274,8 +274,11 @@ export default function Checkout() {
                     </div>
                   </div>
 
-                  <div>
-                    <Label htmlFor="orderNotes">Notas del Pedido (Opcional)</Label>
+                  <div className="pt-6 mt-6 border-t">
+                    <Label htmlFor="orderNotes" className="text-base">Notas del Pedido (Opcional)</Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Añade instrucciones especiales para la entrega
+                    </p>
                     <textarea
                       id="orderNotes"
                       value={orderNotes}
