@@ -2,25 +2,27 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { orderService } from '@/services/order.service';
+import { checkoutService, type Checkout, type CreateCheckoutRequest } from '@/services/checkout.service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ShippingAddress } from '@/types/models';
 import { environment } from '@/config/environment';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { cart, totalAmount, clearCart } = useCart();
+  const { cart, totalAmount } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [savedCheckouts, setSavedCheckouts] = useState<Checkout[]>([]);
+  const [selectedCheckoutId, setSelectedCheckoutId] = useState<number | null>(null);
   
   // Calculate shipping cost: 1.99€ if total < 50€, free otherwise
   const shippingCost = totalAmount < 50 ? 1.99 : 0;
   const finalTotal = totalAmount + shippingCost;
-  const [formData, setFormData] = useState<ShippingAddress>({
+  
+  const [formData, setFormData] = useState({
     fullName: user?.name || '',
     address: '',
     city: '',
@@ -31,7 +33,29 @@ export default function Checkout() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadSavedCheckouts();
   }, []);
+
+  const loadSavedCheckouts = async () => {
+    try {
+      const checkouts = await checkoutService.getUserCheckouts();
+      setSavedCheckouts(checkouts);
+    } catch (error) {
+      console.error('Error loading saved checkouts:', error);
+    }
+  };
+
+  const handleSelectCheckout = (checkout: Checkout) => {
+    setSelectedCheckoutId(checkout.id);
+    setFormData({
+      fullName: checkout.customerName,
+      address: checkout.address,
+      city: checkout.city,
+      postalCode: checkout.postalCode,
+      country: checkout.country,
+      phone: checkout.phoneNumber,
+    });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -44,7 +68,7 @@ export default function Checkout() {
     e.preventDefault();
     
     if (!isAuthenticated) {
-      toast.error('Debes iniciar sesión para completar el pedido');
+      toast.error('Debes iniciar sesión para continuar');
       navigate('/login');
       return;
     }
@@ -52,22 +76,30 @@ export default function Checkout() {
     setLoading(true);
 
     try {
-      const orderPayload = {
-        items: cart.map((item) => ({
-          productId: item.product.id,
-          quantity: item.quantity,
-        })),
-        shippingAddress: formData,
+      const checkoutData: CreateCheckoutRequest = {
+        customerName: formData.fullName,
+        customerEmail: user?.email || '',
+        address: formData.address,
+        city: formData.city,
+        country: formData.country,
+        postalCode: formData.postalCode,
+        phoneNumber: formData.phone,
       };
 
-      const order = await orderService.createOrder(orderPayload);
+      let checkout: Checkout;
       
-      clearCart();
-      toast.success('¡Pedido realizado con éxito!');
-      navigate(`/account/orders`);
+      if (selectedCheckoutId) {
+        checkout = await checkoutService.updateCheckout(selectedCheckoutId, checkoutData);
+        toast.success('Dirección actualizada');
+      } else {
+        checkout = await checkoutService.createCheckout(checkoutData);
+        toast.success('Dirección guardada');
+      }
+
+      navigate(`/payment/${checkout.id}`);
     } catch (error) {
-      console.error('Error creating order:', error);
-      toast.error('Error al crear el pedido. Inténtalo de nuevo.');
+      console.error('Error saving checkout:', error);
+      toast.error('Error al guardar los datos. Inténtalo de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -78,6 +110,14 @@ export default function Checkout() {
     return null;
   }
 
+  // Fix image URL duplication
+  const getImageUrl = (imageUrl: string) => {
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    return `${environment.imageBaseUrl}${imageUrl}`;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -85,10 +125,54 @@ export default function Checkout() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Shipping Form */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Saved Checkouts */}
+            {savedCheckouts.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Direcciones Guardadas</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {savedCheckouts.map((checkout) => (
+                    <Card 
+                      key={checkout.id} 
+                      className={`cursor-pointer transition-all ${
+                        selectedCheckoutId === checkout.id 
+                          ? 'border-primary bg-primary/5' 
+                          : 'hover:border-primary/50'
+                      }`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <p className="font-semibold">{checkout.customerName}</p>
+                            <p className="text-sm text-muted-foreground">{checkout.address}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {checkout.postalCode} {checkout.city}, {checkout.country}
+                            </p>
+                            <p className="text-sm text-muted-foreground">{checkout.phoneNumber}</p>
+                          </div>
+                          <Button
+                            variant={selectedCheckoutId === checkout.id ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handleSelectCheckout(checkout)}
+                          >
+                            {selectedCheckoutId === checkout.id ? 'Seleccionada' : 'Usar esta dirección'}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Form */}
             <Card>
               <CardHeader>
-                <CardTitle>Datos de Envío</CardTitle>
+                <CardTitle>
+                  {selectedCheckoutId ? 'Editar Datos de Envío' : 'Nuevos Datos de Envío'}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -162,11 +246,8 @@ export default function Checkout() {
 
                   <div className="pt-4">
                     <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                      {loading ? 'Procesando...' : 'Confirmar Pedido'}
+                      {loading ? 'Guardando...' : 'Guardar y Pagar'}
                     </Button>
-                    <p className="text-xs text-muted-foreground mt-2 text-center">
-                      * El sistema de pago se integrará próximamente
-                    </p>
                   </div>
                 </form>
               </CardContent>
@@ -182,9 +263,9 @@ export default function Checkout() {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   {cart.map((item) => (
-                    <div key={item.product.id} className="flex gap-3 text-sm">
+                    <div key={`${item.product.id}-${item.variant || 'default'}`} className="flex gap-3 text-sm">
                       <img
-                        src={`${environment.imageBaseUrl}${item.product.imageUrl}`}
+                        src={getImageUrl(item.product.imageUrl)}
                         alt={item.product.name}
                         className="w-16 h-16 object-cover rounded-md"
                       />
@@ -196,6 +277,11 @@ export default function Checkout() {
                           <p className="text-xs text-muted-foreground">
                             Cantidad: {item.quantity}
                           </p>
+                          {item.variant && (
+                            <p className="text-xs text-muted-foreground">
+                              Opción: {item.variant}
+                            </p>
+                          )}
                         </div>
                         <span className="font-semibold">
                           {(item.product.price * item.quantity).toFixed(2)}€
