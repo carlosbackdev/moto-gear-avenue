@@ -4,6 +4,8 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { checkoutService, type Checkout, type CreateCheckoutRequest } from '@/services/checkout.service';
 import { orderService } from '@/services/order.service';
+import { cartService } from '@/services/cart.service';
+import { cartShadedService } from '@/services/cart-shaded.service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -102,18 +104,28 @@ export default function Checkout() {
         checkout = await checkoutService.createCheckout(checkoutData);
       }
 
-      // 2. Crear orden con los items del carrito
+      // 2. Obtener los items actuales del carrito desde el backend
+      const currentCartItems = await cartService.getCart();
+
+      // 3. Clonar el carrito al carrito-shaded
+      const shadedItems = await cartShadedService.cloneFromCart(currentCartItems);
+
+      // 4. Crear orden con los IDs del carrito sombreado
       const orderData = {
         checkoutId: checkout.id,
-        cartItemIds: cart.map(item => item.id!),
+        cartShadedIds: shadedItems.map(item => item.id),
         total: parseFloat(finalTotal.toFixed(2)),
         notes: orderNotes || undefined
       };
 
       const order = await orderService.createOrder(orderData);
+
+      // 5. Limpiar el carrito normal
+      await cartService.clearCart();
+      
       toast.success('Orden creada correctamente');
 
-      // 3. Navegar a la página de orden con el ID de la orden
+      // 6. Navegar a la página de orden con el ID de la orden
       navigate(`/order/${order.id}`);
     } catch (error) {
       console.error('Error saving checkout:', error);

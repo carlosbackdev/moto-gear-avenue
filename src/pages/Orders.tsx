@@ -113,7 +113,7 @@ export default function Orders() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Productos:</span>
-                      <span className="font-medium">{order.cartItemIds.length} items</span>
+                      <span className="font-medium">{order.cartShadedIds.length} items</span>
                     </div>
                     {order.notes && (
                       <div className="text-sm">

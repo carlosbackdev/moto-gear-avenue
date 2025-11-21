@@ -97,7 +97,7 @@ export interface Order {
   id: number;
   userId: number;
   checkoutId: number;
-  cartItemIds: number[];
+  cartShadedIds: number[];
   status: OrderStatus;
   total: number;
   notes?: string;
@@ -177,7 +177,7 @@ export interface AuthResponse {
  */
 export interface CreateOrderRequest {
   checkoutId: number;
-  cartItemIds: number[];
+  cartShadedIds: number[];
   total: number;
   notes?: string;
 }
