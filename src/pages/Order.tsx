@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { orderService } from '@/services/order.service';
 import { checkoutService, Checkout } from '@/services/checkout.service';
 import { cartService } from '@/services/cart.service';
-import { paymentService } from '@/services/payment.service';
+
 import { type Order } from '@/types/models';
 import { toast } from 'sonner';
 import { Loader2, Trash2 } from 'lucide-react';
@@ -32,7 +32,6 @@ export default function Order() {
   const { user } = useAuth();
   const { clearCart: clearCartContext, cart } = useCart();
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
   const [checkout, setCheckout] = useState<Checkout | null>(null);
@@ -70,29 +69,14 @@ export default function Order() {
     }
   };
 
-  const handleConfirmPayment = async () => {
-    if (!order) return;
-
-    setProcessing(true);
-    try {
-      const currentUrl = window.location.origin;
-      const successUrl = `${currentUrl}/account/orders`;
-      const cancelUrl = `${currentUrl}/order/${order.id}`;
-
-      // Create Stripe Checkout Session
-      const { url } = await paymentService.createCheckoutSession({
-        orderId: order.id,
-        successUrl,
-        cancelUrl,
-      });
-
-      // Redirect to Stripe
-      window.location.href = url;
-    } catch (error) {
-      console.error('Error al crear la sesión de pago:', error);
-      toast.error('Error al iniciar el pago. Por favor, inténtalo de nuevo.');
-      setProcessing(false);
+  const handleConfirmPayment = () => {
+    if (!order || !environment.stripePaymentLink) {
+      toast.error('Error: Payment Link no configurado');
+      return;
     }
+
+    // Redirigir directamente al Payment Link de Stripe
+    window.open(environment.stripePaymentLink, '_blank');
   };
 
   const handleDeleteOrder = async () => {
@@ -183,18 +167,11 @@ export default function Order() {
             <div className="flex gap-3">
               <Button
                 onClick={handleConfirmPayment}
-                disabled={processing || order.status !== 'PENDING'}
+                disabled={order.status !== 'PENDING'}
                 className="flex-1"
                 size="lg"
               >
-                {processing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Procesando...
-                  </>
-                ) : (
-                  'Pagar con Tarjeta'
-                )}
+                Pagar con Tarjeta
               </Button>
 
               {order.status === 'PENDING' && (
