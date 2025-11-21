@@ -5,10 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Package } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -28,6 +41,21 @@ export default function Orders() {
 
     fetchOrders();
   }, []);
+
+  const handleCancelOrder = async (orderId: number) => {
+    try {
+      setDeleting(orderId);
+      await orderService.deleteOrder(orderId);
+      toast.success('Pedido cancelado correctamente');
+      // Actualizar la lista de pedidos
+      setOrders(orders.filter(order => order.id !== orderId));
+    } catch (error) {
+      console.error('Error canceling order:', error);
+      toast.error('Error al cancelar el pedido');
+    } finally {
+      setDeleting(null);
+    }
+  };
 
   const getStatusColor = (status: Order['status']) => {
     switch (status) {
@@ -129,13 +157,38 @@ export default function Orders() {
                       </div>
                     </div>
                     {order.status === 'PENDING' && (
-                      <div className="pt-2">
+                      <div className="pt-2 space-y-2">
                         <Button 
                           className="w-full" 
                           onClick={() => window.location.href = `/order/${order.id}`}
                         >
                           Completar Pago
                         </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              className="w-full"
+                              disabled={deleting === order.id}
+                            >
+                              {deleting === order.id ? 'Cancelando...' : 'Cancelar Pedido'}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Esta acción cancelará el pedido #{order.id}. Esta acción no se puede deshacer.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>No, mantener pedido</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleCancelOrder(order.id)}>
+                                Sí, cancelar pedido
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     )}
                   </div>

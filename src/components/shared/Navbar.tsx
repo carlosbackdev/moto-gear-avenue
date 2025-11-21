@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchBar } from './SearchBar';
 import { useEffect, useState } from 'react';
 import { categoryService } from '@/services/category.service';
+import { orderService } from '@/services/order.service';
 import { Category } from '@/types/models';
 
 export const Navbar = () => {
@@ -23,6 +24,7 @@ export const Navbar = () => {
   const { wishlist } = useWishlist();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [ordersCount, setOrdersCount] = useState(0);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -35,6 +37,20 @@ export const Navbar = () => {
     };
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (isAuthenticated) {
+        try {
+          const orders = await orderService.getUserOrders();
+          setOrdersCount(orders.length);
+        } catch (error) {
+          console.error('Error fetching orders:', error);
+        }
+      }
+    };
+    fetchOrders();
+  }, [isAuthenticated]);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -86,9 +102,14 @@ export const Navbar = () => {
                 </Button>
               </Link>
 
-              <Link to="/orders">
+              <Link to="/orders" className="relative">
                 <Button variant="ghost" size="icon">
                   <Package className="h-5 w-5" />
+                  {ordersCount > 0 && (
+                    <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                      {ordersCount}
+                    </Badge>
+                  )}
                 </Button>
               </Link>
               
