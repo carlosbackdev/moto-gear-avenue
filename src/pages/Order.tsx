@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { orderService } from '@/services/order.service';
 import { checkoutService, Checkout } from '@/services/checkout.service';
 import { cartService } from '@/services/cart.service';
+import { paymentService } from '@/services/payment.service';
 import { type Order } from '@/types/models';
 import { toast } from 'sonner';
 import { Loader2, Trash2 } from 'lucide-react';
@@ -74,22 +75,22 @@ export default function Order() {
 
     setProcessing(true);
     try {
-      // Actualizar estado de la orden a PAID
-      await orderService.updateOrderStatus(order.id, {
-        status: 'PAID',
-        notes: 'Pago confirmado (simulado)'
+      const currentUrl = window.location.origin;
+      const successUrl = `${currentUrl}/account/orders`;
+      const cancelUrl = `${currentUrl}/order/${order.id}`;
+
+      // Create Stripe Checkout Session
+      const { url } = await paymentService.createCheckoutSession({
+        orderId: order.id,
+        successUrl,
+        cancelUrl,
       });
 
-      // Limpiar el carrito
-      await cartService.clearCart();
-      clearCartContext();
-
-      toast.success('¡Pago confirmado! Tu pedido ha sido procesado');
-      navigate('/account/orders');
+      // Redirect to Stripe
+      window.location.href = url;
     } catch (error) {
-      console.error('Error al confirmar el pago:', error);
-      toast.error('Error al procesar el pago');
-    } finally {
+      console.error('Error al crear la sesión de pago:', error);
+      toast.error('Error al iniciar el pago. Por favor, inténtalo de nuevo.');
       setProcessing(false);
     }
   };
@@ -274,7 +275,7 @@ export default function Order() {
                     Procesando...
                   </>
                 ) : (
-                  'Confirmar Pago (Simulado)'
+                  'Pagar con Tarjeta'
                 )}
               </Button>
 
