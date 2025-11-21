@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { orderService } from '@/services/order.service';
 import { checkoutService, Checkout } from '@/services/checkout.service';
 import { cartService } from '@/services/cart.service';
-
+import { paymentService } from '@/services/payment.service';
 import { type Order } from '@/types/models';
 import { toast } from 'sonner';
 import { Loader2, Trash2 } from 'lucide-react';
@@ -32,6 +32,7 @@ export default function Order() {
   const { user } = useAuth();
   const { clearCart: clearCartContext, cart } = useCart();
   const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
   const [checkout, setCheckout] = useState<Checkout | null>(null);
@@ -69,14 +70,21 @@ export default function Order() {
     }
   };
 
-  const handleConfirmPayment = () => {
-    if (!order || !environment.stripePaymentLink) {
-      toast.error('Error: Payment Link no configurado');
-      return;
-    }
+  const handleConfirmPayment = async () => {
+    if (!order) return;
 
-    // Redirigir directamente al Payment Link de Stripe
-    window.open(environment.stripePaymentLink, '_blank');
+    setProcessing(true);
+    try {
+      // Crear sesión de Stripe Checkout con la orden completa
+      const { url } = await paymentService.createCheckoutSession(order);
+
+      // Redirigir a Stripe Checkout
+      window.location.href = url;
+    } catch (error) {
+      console.error('Error al crear la sesión de pago:', error);
+      toast.error('Error al iniciar el pago. Por favor, inténtalo de nuevo.');
+      setProcessing(false);
+    }
   };
 
   const handleDeleteOrder = async () => {
@@ -167,11 +175,18 @@ export default function Order() {
             <div className="flex gap-3">
               <Button
                 onClick={handleConfirmPayment}
-                disabled={order.status !== 'PENDING'}
+                disabled={processing || order.status !== 'PENDING'}
                 className="flex-1"
                 size="lg"
               >
-                Pagar con Tarjeta
+                {processing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Procesando...
+                  </>
+                ) : (
+                  'Pagar con Tarjeta'
+                )}
               </Button>
 
               {order.status === 'PENDING' && (
