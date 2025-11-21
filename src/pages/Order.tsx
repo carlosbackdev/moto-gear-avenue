@@ -196,55 +196,21 @@ export default function Order() {
               </svg>
             </div>
 
-            <div className="flex gap-3">
-              <Button
-                onClick={handleConfirmPayment}
-                disabled={processing || order.status !== 'PENDING'}
-                className="flex-1"
-                size="lg"
-              >
-                {processing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Procesando...
-                  </>
-                ) : (
-                  'Pagar con Tarjeta'
-                )}
-              </Button>
-
-              {order.status === 'PENDING' && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      size="lg"
-                      disabled={deleting}
-                    >
-                      {deleting ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>¿Eliminar pedido?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Esta acción no se puede deshacer. El pedido será eliminado permanentemente.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDeleteOrder}>
-                        Eliminar
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+            <Button
+              onClick={handleConfirmPayment}
+              disabled={processing || order.status !== 'PENDING'}
+              className="w-full"
+              size="lg"
+            >
+              {processing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Procesando...
+                </>
+              ) : (
+                'Pagar con Tarjeta'
               )}
-            </div>
+            </Button>
           </CardContent>
         </Card>
 
@@ -336,6 +302,48 @@ export default function Order() {
             )}
           </CardContent>
         </Card>
+
+        {/* Eliminar Pedido */}
+        {order.status === 'PENDING' && (
+          <div className="flex justify-center">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={deleting}
+                  className="text-muted-foreground hover:text-destructive"
+                >
+                  {deleting ? (
+                    <>
+                      <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                      Eliminando...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="mr-2 h-3 w-3" />
+                      Cancelar pedido
+                    </>
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Eliminar pedido?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta acción no se puede deshacer. El pedido será eliminado permanentemente.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteOrder}>
+                    Eliminar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -89,12 +89,46 @@ export default function Orders() {
   }, []);
 
   const handleCancelOrder = async (orderId: number) => {
+    setDeleting(orderId);
     try {
-      setDeleting(orderId);
       await orderService.deleteOrder(orderId);
       toast.success('Pedido cancelado correctamente');
-      // Actualizar la lista de pedidos
-      setOrders(orders.filter(order => order.id !== orderId));
+      // Recargar la lista de pedidos desde el servidor
+      const data = await orderService.getUserOrders();
+      const ordersWithProducts = await Promise.all(
+        data.map(async (order) => {
+          try {
+            const cartItems = await cartShadedService.getItems();
+            const orderCartItems = cartItems.filter(item => 
+              order.cartShadedIds.includes(item.id)
+            );
+            
+            const products = await Promise.all(
+              orderCartItems.map(async (cartItem) => {
+                try {
+                  const product = await productService.getProductById(cartItem.productId);
+                  return { cartItem, product };
+                } catch (error) {
+                  console.error(`Error fetching product ${cartItem.productId}:`, error);
+                  return null;
+                }
+              })
+            );
+            
+            return {
+              ...order,
+              products: products.filter(p => p !== null) as Array<{
+                cartItem: BackendCartItem;
+                product: Product;
+              }>
+            };
+          } catch (error) {
+            console.error(`Error fetching products for order ${order.id}:`, error);
+            return { ...order, products: [] };
+          }
+        })
+      );
+      setOrders(ordersWithProducts);
     } catch (error) {
       console.error('Error canceling order:', error);
       toast.error('Error al cancelar el pedido');
