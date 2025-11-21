@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { orderService } from '@/services/order.service';
@@ -10,8 +11,19 @@ import { checkoutService, Checkout } from '@/services/checkout.service';
 import { cartService } from '@/services/cart.service';
 import { Order } from '@/types/models';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trash2 } from 'lucide-react';
 import { environment } from '@/config/environment';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function Payment() {
   const { orderId } = useParams<{ orderId: string }>();
@@ -20,6 +32,7 @@ export default function Payment() {
   const { clearCart: clearCartContext, cart } = useCart();
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
   const [checkout, setCheckout] = useState<Checkout | null>(null);
 
@@ -81,6 +94,22 @@ export default function Payment() {
     }
   };
 
+  const handleDeleteOrder = async () => {
+    if (!order) return;
+
+    setDeleting(true);
+    try {
+      await orderService.deleteOrder(order.id);
+      toast.success('Pedido eliminado correctamente');
+      navigate('/cart');
+    } catch (error) {
+      console.error('Error al eliminar el pedido:', error);
+      toast.error('Error al eliminar el pedido');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const getImageUrl = (imageUrl: string): string => {
     if (!imageUrl) return '';
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -109,9 +138,25 @@ export default function Payment() {
   }, 0);
   const shippingCost = subtotal >= 50 ? 0 : 1.99;
 
+  const getStatusBadge = (status: string) => {
+    const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+      PENDING: { label: 'Pendiente', variant: 'outline' },
+      PAID: { label: 'Pagado', variant: 'default' },
+      PROCESSING: { label: 'Procesando', variant: 'secondary' },
+      SHIPPED: { label: 'Enviado', variant: 'secondary' },
+      DELIVERED: { label: 'Entregado', variant: 'default' },
+      CANCELLED: { label: 'Cancelado', variant: 'destructive' },
+    };
+    const config = statusConfig[status] || { label: status, variant: 'outline' };
+    return <Badge variant={config.variant}>{config.label}</Badge>;
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-8">Confirmar Pago</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Confirmar Pago</h1>
+        {order && getStatusBadge(order.status)}
+      </div>
 
       <div className="grid gap-8">
         {/* Método de Pago (Placeholder) */}
@@ -209,21 +254,62 @@ export default function Payment() {
               </div>
             </div>
 
-            <Button
-              onClick={handleConfirmPayment}
-              disabled={processing}
-              className="w-full"
-              size="lg"
-            >
-              {processing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Procesando...
-                </>
-              ) : (
-                'Confirmar Pago (Simulado)'
+            {order.notes && (
+              <div className="border-t pt-4">
+                <p className="text-sm font-semibold text-muted-foreground mb-1">Notas del Pedido:</p>
+                <p className="text-sm">{order.notes}</p>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <Button
+                onClick={handleConfirmPayment}
+                disabled={processing || order.status !== 'PENDING'}
+                className="flex-1"
+                size="lg"
+              >
+                {processing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Procesando...
+                  </>
+                ) : (
+                  'Confirmar Pago (Simulado)'
+                )}
+              </Button>
+
+              {order.status === 'PENDING' && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      size="lg"
+                      disabled={deleting}
+                    >
+                      {deleting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>¿Eliminar pedido?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta acción no se puede deshacer. El pedido será eliminado permanentemente.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteOrder}>
+                        Eliminar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
-            </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -31,6 +31,7 @@ export default function Checkout() {
     country: 'España',
     phone: '',
   });
+  const [orderNotes, setOrderNotes] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -106,7 +107,7 @@ export default function Checkout() {
         checkoutId: checkout.id,
         cartItemIds: cart.map(item => item.id!),
         total: parseFloat(finalTotal.toFixed(2)),
-        notes: ''
+        notes: orderNotes || undefined
       };
 
       const order = await orderService.createOrder(orderData);
@@ -259,6 +260,17 @@ export default function Checkout() {
                         required
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="orderNotes">Notas del Pedido (Opcional)</Label>
+                    <textarea
+                      id="orderNotes"
+                      value={orderNotes}
+                      onChange={(e) => setOrderNotes(e.target.value)}
+                      placeholder="Ej: Entregar por la mañana, llamar antes de entregar, etc."
+                      className="w-full min-h-[100px] px-3 py-2 border border-input rounded-md bg-background text-foreground resize-y"
+                    />
                   </div>
 
                   <div className="pt-4">
