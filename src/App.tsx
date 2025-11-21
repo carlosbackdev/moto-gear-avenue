@@ -19,7 +19,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Account from "./pages/Account";
 import Orders from "./pages/Orders";
-import Payment from "./pages/Payment";
+import Order from "./pages/Order";
 import Wishlist from "./pages/Wishlist";
 import Contact from "./pages/Contact";
 import ShippingPolicy from "./pages/legal/ShippingPolicy";
@@ -59,7 +59,7 @@ const App = () => (
                     {/* Protected Routes */}
                     <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="/payment/:orderId" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+          <Route path="/order/:orderId" element={<ProtectedRoute><Order /></ProtectedRoute>} />
                     <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
                     <Route path="/account/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
                     

@@ -113,8 +113,8 @@ export default function Checkout() {
       const order = await orderService.createOrder(orderData);
       toast.success('Orden creada correctamente');
 
-      // 3. Navegar a la página de pago con el ID de la orden
-      navigate(`/payment/${order.id}`);
+      // 3. Navegar a la página de orden con el ID de la orden
+      navigate(`/order/${order.id}`);
     } catch (error) {
       console.error('Error saving checkout:', error);
       toast.error('Error al guardar los datos. Inténtalo de nuevo.');

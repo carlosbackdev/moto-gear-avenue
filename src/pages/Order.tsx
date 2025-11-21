@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { orderService } from '@/services/order.service';
 import { checkoutService, Checkout } from '@/services/checkout.service';
 import { cartService } from '@/services/cart.service';
-import { Order } from '@/types/models';
+import { type Order } from '@/types/models';
 import { toast } from 'sonner';
 import { Loader2, Trash2 } from 'lucide-react';
 import { environment } from '@/config/environment';
@@ -25,7 +25,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
-export default function Payment() {
+export default function Order() {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -101,7 +101,9 @@ export default function Payment() {
     try {
       await orderService.deleteOrder(order.id);
       toast.success('Pedido eliminado correctamente');
+      // Recargar navegando al carrito
       navigate('/cart');
+      window.location.reload();
     } catch (error) {
       console.error('Error al eliminar el pedido:', error);
       toast.error('Error al eliminar el pedido');
