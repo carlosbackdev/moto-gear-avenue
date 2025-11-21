@@ -59,10 +59,10 @@ class CartService {
 
   /**
    * Vacía el carrito completo
-   * Backend: DELETE /cart
+   * Backend: DELETE /cart/clear
    */
   async clearCart(): Promise<void> {
-    return apiService.delete('/cart', true);
+    return apiService.delete('/cart/clear', true);
   }
 }
 
