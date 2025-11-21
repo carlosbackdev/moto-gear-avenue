@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Order } from '@/types/models';
+import { Order, BackendCartItem, Product } from '@/types/models';
 import { orderService } from '@/services/order.service';
+import { cartShadedService } from '@/services/cart-shaded.service';
+import { productService } from '@/services/product.service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Package } from 'lucide-react';
 import { toast } from 'sonner';
+import { environment } from '@/config/environment';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,8 +21,15 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
+interface OrderWithProducts extends Order {
+  products?: Array<{
+    cartItem: BackendCartItem;
+    product: Product;
+  }>;
+}
+
 export default function Orders() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderWithProducts[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<number | null>(null);
 
@@ -31,7 +41,43 @@ export default function Orders() {
     const fetchOrders = async () => {
       try {
         const data = await orderService.getUserOrders();
-        setOrders(data);
+        
+        // Obtener productos para cada pedido
+        const ordersWithProducts = await Promise.all(
+          data.map(async (order) => {
+            try {
+              const cartItems = await cartShadedService.getItems();
+              const orderCartItems = cartItems.filter(item => 
+                order.cartShadedIds.includes(item.id)
+              );
+              
+              const products = await Promise.all(
+                orderCartItems.map(async (cartItem) => {
+                  try {
+                    const product = await productService.getProductById(cartItem.productId);
+                    return { cartItem, product };
+                  } catch (error) {
+                    console.error(`Error fetching product ${cartItem.productId}:`, error);
+                    return null;
+                  }
+                })
+              );
+              
+              return {
+                ...order,
+                products: products.filter(p => p !== null) as Array<{
+                  cartItem: BackendCartItem;
+                  product: Product;
+                }>
+              };
+            } catch (error) {
+              console.error(`Error fetching products for order ${order.id}:`, error);
+              return { ...order, products: [] };
+            }
+          })
+        );
+        
+        setOrders(ordersWithProducts);
       } catch (error) {
         console.error('Error fetching orders:', error);
       } finally {
@@ -91,8 +137,15 @@ export default function Orders() {
       case 'CANCELLED':
         return 'Cancelado';
       default:
-        return status;
+    return status;
+  }
+};
+
+  const getImageUrl = (imageUrl: string) => {
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
     }
+    return `${environment.imageBaseUrl}${imageUrl}`;
   };
 
   if (loading) {
@@ -135,21 +188,53 @@ export default function Orders() {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Checkout ID:</span>
-                      <span className="font-medium">#{order.checkoutId}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Productos:</span>
-                      <span className="font-medium">{order.cartShadedIds.length} items</span>
-                    </div>
-                    {order.notes && (
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">Notas:</span>
-                        <p className="text-sm mt-1">{order.notes}</p>
+                  <div className="space-y-4">
+                    {/* Productos del pedido */}
+                    {order.products && order.products.length > 0 && (
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-muted-foreground">Productos del pedido:</h4>
+                        <div className="space-y-2">
+                          {order.products.map(({ cartItem, product }) => (
+                            <div key={cartItem.id} className="flex items-center gap-3 p-2 rounded-lg border bg-muted/50">
+                              <img 
+                                src={getImageUrl(product.imageUrl)} 
+                                alt={product.name}
+                                className="w-16 h-16 object-cover rounded"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-sm truncate">{product.name}</p>
+                                {cartItem.variant && (
+                                  <p className="text-xs text-muted-foreground">
+                                    Opción: {cartItem.variant}
+                                  </p>
+                                )}
+                                <p className="text-xs text-muted-foreground">
+                                  Cantidad: {cartItem.quantity}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-medium text-sm">
+                                  {(product.sellPrice * cartItem.quantity).toFixed(2)}€
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
+
+                    <div className="space-y-2 border-t pt-3">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Checkout ID:</span>
+                        <span className="font-medium">#{order.checkoutId}</span>
+                      </div>
+                      {order.notes && (
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">Notas:</span>
+                          <p className="text-sm mt-1">{order.notes}</p>
+                        </div>
+                      )}
+                    </div>
                     <div className="border-t pt-2 mt-2">
                       <div className="flex justify-between font-bold">
                         <span>Total</span>
