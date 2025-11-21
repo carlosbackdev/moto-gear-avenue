@@ -3,6 +3,7 @@ import { Order } from '@/types/models';
 import { orderService } from '@/services/order.service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Package } from 'lucide-react';
 
 export default function Orders() {
@@ -127,6 +128,16 @@ export default function Orders() {
                         <span className="text-primary">{order.total.toFixed(2)}€</span>
                       </div>
                     </div>
+                    {order.status === 'PENDING' && (
+                      <div className="pt-2">
+                        <Button 
+                          className="w-full" 
+                          onClick={() => window.location.href = `/order/${order.id}`}
+                        >
+                          Completar Pago
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

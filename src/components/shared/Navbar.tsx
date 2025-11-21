@@ -85,6 +85,12 @@ export const Navbar = () => {
                   )}
                 </Button>
               </Link>
+
+              <Link to="/orders">
+                <Button variant="ghost" size="icon">
+                  <Package className="h-5 w-5" />
+                </Button>
+              </Link>
               
               <Link to="/cart" className="relative">
                 <Button variant="ghost" size="icon">
@@ -125,7 +131,7 @@ export const Navbar = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/account/orders" className="flex items-center cursor-pointer">
+                  <Link to="/orders" className="flex items-center cursor-pointer">
                     <Package className="mr-2 h-4 w-4" />
                     Mis Pedidos
                   </Link>
