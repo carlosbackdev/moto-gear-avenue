@@ -160,18 +160,75 @@ export default function Order() {
       </div>
 
       <div className="grid gap-8">
-        {/* Método de Pago (Placeholder) */}
+        {/* Método de Pago */}
         <Card>
           <CardHeader>
             <CardTitle>Método de Pago</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              La integración de pasarela de pago se agregará próximamente.
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Por ahora, puedes simular el pago presionando el botón de confirmación.
-            </p>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3 p-4 border rounded-lg bg-muted/50">
+              <div className="flex-1">
+                <p className="font-semibold">Pago con Tarjeta</p>
+                <p className="text-sm text-muted-foreground">
+                  Procesado de forma segura por Stripe
+                </p>
+              </div>
+              <svg className="h-8 w-auto" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M59.6 12.5c0-6.4-5.2-11.6-11.6-11.6S36.4 6.1 36.4 12.5 41.6 24.1 48 24.1 59.6 18.9 59.6 12.5z" fill="#EB001B"/>
+                <path d="M48 .9c-3.3 0-6.3 1.4-8.4 3.6 2.1 2.2 3.4 5.2 3.4 8.5s-1.3 6.3-3.4 8.5c2.1 2.2 5.1 3.6 8.4 3.6 6.4 0 11.6-5.2 11.6-11.6S54.4.9 48 .9z" fill="#F79E1B"/>
+                <path d="M12 .9C5.6.9.4 6.1.4 12.5S5.6 24.1 12 24.1c3.3 0 6.3-1.4 8.4-3.6-2.1-2.2-3.4-5.2-3.4-8.5s1.3-6.3 3.4-8.5C18.3 2.3 15.3.9 12 .9z" fill="#00A1DF"/>
+              </svg>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                onClick={handleConfirmPayment}
+                disabled={processing || order.status !== 'PENDING'}
+                className="flex-1"
+                size="lg"
+              >
+                {processing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Procesando...
+                  </>
+                ) : (
+                  'Pagar con Tarjeta'
+                )}
+              </Button>
+
+              {order.status === 'PENDING' && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      size="lg"
+                      disabled={deleting}
+                    >
+                      {deleting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>¿Eliminar pedido?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta acción no se puede deshacer. El pedido será eliminado permanentemente.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteOrder}>
+                        Eliminar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -261,56 +318,6 @@ export default function Order() {
                 <p className="text-sm">{order.notes}</p>
               </div>
             )}
-
-            <div className="flex gap-3">
-              <Button
-                onClick={handleConfirmPayment}
-                disabled={processing || order.status !== 'PENDING'}
-                className="flex-1"
-                size="lg"
-              >
-                {processing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Procesando...
-                  </>
-                ) : (
-                  'Pagar con Tarjeta'
-                )}
-              </Button>
-
-              {order.status === 'PENDING' && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      size="lg"
-                      disabled={deleting}
-                    >
-                      {deleting ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>¿Eliminar pedido?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Esta acción no se puede deshacer. El pedido será eliminado permanentemente.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDeleteOrder}>
-                        Eliminar
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
-            </div>
           </CardContent>
         </Card>
       </div>
