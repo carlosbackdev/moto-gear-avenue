@@ -8,8 +8,9 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { orderService } from '@/services/order.service';
 import { checkoutService, Checkout } from '@/services/checkout.service';
-import { cartService } from '@/services/cart.service';
+import { cartShadedService } from '@/services/cart-shaded.service';
 import { paymentService } from '@/services/payment.service';
+import { productService } from '@/services/product.service';
 import { type Order } from '@/types/models';
 import { toast } from 'sonner';
 import { Loader2, Trash2 } from 'lucide-react';
@@ -30,12 +31,13 @@ export default function Order() {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { clearCart: clearCartContext, cart } = useCart();
+  const { clearCart: clearCartContext } = useCart();
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
   const [checkout, setCheckout] = useState<Checkout | null>(null);
+  const [shadedCartItems, setShadedCartItems] = useState<any[]>([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -61,6 +63,29 @@ export default function Order() {
       // Cargar datos del checkout
       const checkoutData = await checkoutService.getCheckoutById(orderData.checkoutId);
       setCheckout(checkoutData);
+
+      // Cargar items del carrito sombreado
+      const shadedItems = await cartShadedService.getItems();
+      
+      // Filtrar solo los items que pertenecen a esta orden
+      const orderItems = shadedItems.filter(item => 
+        orderData.cartShadedIds.includes(item.id)
+      );
+
+      // Cargar detalles completos de cada producto
+      const itemsWithProducts = await Promise.all(
+        orderItems.map(async (item) => {
+          const product = await productService.getProductById(item.productId);
+          return {
+            id: item.id,
+            product,
+            quantity: item.quantity,
+            variant: item.variant
+          };
+        })
+      );
+
+      setShadedCartItems(itemsWithProducts);
     } catch (error) {
       console.error('Error al cargar los datos:', error);
       toast.error('Error al cargar los datos del pedido');
@@ -123,9 +148,8 @@ export default function Order() {
     return null;
   }
 
-  // Calcular totales basados en los items del carrito
-  const cartItems = cart.filter(item => order.cartItemIds.includes(item.id!));
-  const subtotal = cartItems.reduce((sum, item) => {
+  // Calcular totales basados en los items del carrito sombreado
+  const subtotal = shadedCartItems.reduce((sum, item) => {
     const price = item.product.sellPrice || item.product.price;
     return sum + (price * item.quantity);
   }, 0);
@@ -253,7 +277,7 @@ export default function Order() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
-              {cartItems.map((item) => {
+              {shadedCartItems.map((item) => {
                 const price = item.product.sellPrice || item.product.price;
                 return (
                   <div key={item.id} className="flex gap-3 text-sm">
