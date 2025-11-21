@@ -15,7 +15,7 @@ import { environment } from '@/config/environment';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { cart, totalAmount } = useCart();
+  const { cart, totalAmount, clearCart } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [savedCheckouts, setSavedCheckouts] = useState<Checkout[]>([]);
@@ -120,8 +120,8 @@ export default function Checkout() {
 
       const order = await orderService.createOrder(orderData);
 
-      // 5. Limpiar el carrito normal
-      await cartService.clearCart();
+      // 5. Limpiar el carrito normal (esto actualiza el contexto automáticamente)
+      await clearCart();
       
       toast.success('Orden creada correctamente');
 
