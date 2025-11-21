@@ -30,12 +30,16 @@ export default function Orders() {
 
   const getStatusColor = (status: Order['status']) => {
     switch (status) {
-      case 'CREATED':
-        return 'bg-blue-500';
+      case 'PENDING':
+        return 'bg-yellow-500';
       case 'PAID':
         return 'bg-green-500';
+      case 'PROCESSING':
+        return 'bg-blue-500';
       case 'SHIPPED':
         return 'bg-purple-500';
+      case 'DELIVERED':
+        return 'bg-green-600';
       case 'CANCELLED':
         return 'bg-red-500';
       default:
@@ -45,12 +49,16 @@ export default function Orders() {
 
   const getStatusText = (status: Order['status']) => {
     switch (status) {
-      case 'CREATED':
-        return 'Creado';
+      case 'PENDING':
+        return 'Pendiente';
       case 'PAID':
         return 'Pagado';
+      case 'PROCESSING':
+        return 'En procesamiento';
       case 'SHIPPED':
         return 'Enviado';
+      case 'DELIVERED':
+        return 'Entregado';
       case 'CANCELLED':
         return 'Cancelado';
       default:
@@ -99,20 +107,24 @@ export default function Orders() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {order.items.map((item, index) => (
-                      <div key={index} className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          {item.product.name} x{item.quantity}
-                        </span>
-                        <span className="font-semibold">
-                          {(item.product.price * item.quantity).toFixed(2)}€
-                        </span>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Checkout ID:</span>
+                      <span className="font-medium">#{order.checkoutId}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Productos:</span>
+                      <span className="font-medium">{order.cartItemIds.length} items</span>
+                    </div>
+                    {order.notes && (
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">Notas:</span>
+                        <p className="text-sm mt-1">{order.notes}</p>
                       </div>
-                    ))}
+                    )}
                     <div className="border-t pt-2 mt-2">
                       <div className="flex justify-between font-bold">
                         <span>Total</span>
-                        <span className="text-primary">{order.totalAmount.toFixed(2)}€</span>
+                        <span className="text-primary">{order.total.toFixed(2)}€</span>
                       </div>
                     </div>
                   </div>

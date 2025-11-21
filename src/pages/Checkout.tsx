@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { checkoutService, type Checkout, type CreateCheckoutRequest } from '@/services/checkout.service';
+import { orderService } from '@/services/order.service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -73,9 +74,15 @@ export default function Checkout() {
       return;
     }
 
+    if (cart.length === 0) {
+      toast.error('Tu carrito está vacío');
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // 1. Guardar/actualizar checkout
       const checkoutData: CreateCheckoutRequest = {
         customerName: formData.fullName,
         customerEmail: user?.email || '',
@@ -90,13 +97,23 @@ export default function Checkout() {
       
       if (selectedCheckoutId) {
         checkout = await checkoutService.updateCheckout(selectedCheckoutId, checkoutData);
-        toast.success('Dirección actualizada');
       } else {
         checkout = await checkoutService.createCheckout(checkoutData);
-        toast.success('Dirección guardada');
       }
 
-      navigate(`/payment/${checkout.id}`);
+      // 2. Crear orden con los items del carrito
+      const orderData = {
+        checkoutId: checkout.id,
+        cartItemIds: cart.map(item => item.id!),
+        total: parseFloat(finalTotal.toFixed(2)),
+        notes: ''
+      };
+
+      const order = await orderService.createOrder(orderData);
+      toast.success('Orden creada correctamente');
+
+      // 3. Navegar a la página de pago con el ID de la orden
+      navigate(`/payment/${order.id}`);
     } catch (error) {
       console.error('Error saving checkout:', error);
       toast.error('Error al guardar los datos. Inténtalo de nuevo.');

@@ -86,15 +86,23 @@ export interface CartItem {
 }
 
 /**
+ * OrderStatus - Estados de una orden
+ */
+export type OrderStatus = 'PENDING' | 'PAID' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+
+/**
  * Order interface - Pedido realizado
  */
 export interface Order {
   id: number;
-  items: CartItem[];
-  totalAmount: number;
+  userId: number;
+  checkoutId: number;
+  cartItemIds: number[];
+  status: OrderStatus;
+  total: number;
+  notes?: string;
   createdAt: string;
-  status: 'CREATED' | 'PAID' | 'SHIPPED' | 'CANCELLED';
-  shippingAddress?: ShippingAddress;
+  updatedAt: string;
 }
 
 /**
@@ -168,8 +176,18 @@ export interface AuthResponse {
  * CreateOrderRequest - Payload para crear pedido
  */
 export interface CreateOrderRequest {
-  items: { productId: number; quantity: number }[];
-  shippingAddress: ShippingAddress;
+  checkoutId: number;
+  cartItemIds: number[];
+  total: number;
+  notes?: string;
+}
+
+/**
+ * UpdateOrderStatusRequest - Payload para actualizar estado de orden
+ */
+export interface UpdateOrderStatusRequest {
+  status: OrderStatus;
+  notes?: string;
 }
 
 /**
