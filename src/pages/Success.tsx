@@ -37,37 +37,58 @@ export default function Success() {
   const loadOrderData = async (orderId: number) => {
     try {
       setLoading(true);
+      
+      // Cargar datos de la orden
       const orderData = await orderService.getOrderById(orderId);
       setOrder(orderData);
 
       // Cargar datos del checkout
-      const checkoutData = await checkoutService.getCheckoutById(orderData.checkoutId);
-      setCheckout(checkoutData);
+      try {
+        const checkoutData = await checkoutService.getCheckoutById(orderData.checkoutId);
+        setCheckout(checkoutData);
+      } catch (checkoutError) {
+        console.error('Error al cargar checkout:', checkoutError);
+        toast.error('No se pudieron cargar los datos de envío');
+      }
 
-      // Cargar items del carrito sombreado
-      const shadedItems = await cartShadedService.getItems();
-      
-      // Filtrar solo los items que pertenecen a esta orden
-      const orderItems = shadedItems.filter(item => 
-        orderData.cartShadedIds.includes(item.id)
-      );
+      // Intentar cargar items del carrito sombreado
+      try {
+        const shadedItems = await cartShadedService.getItems();
+        
+        // Filtrar solo los items que pertenecen a esta orden
+        const orderItems = shadedItems.filter(item => 
+          orderData.cartShadedIds.includes(item.id)
+        );
 
-      // Cargar detalles completos de cada producto
-      const itemsWithProducts = await Promise.all(
-        orderItems.map(async (item) => {
-          const product = await productService.getProductById(item.productId);
-          return {
-            id: item.id,
-            product,
-            quantity: item.quantity,
-            variant: item.variant
-          };
-        })
-      );
+        if (orderItems.length > 0) {
+          // Cargar detalles completos de cada producto
+          const itemsWithProducts = await Promise.all(
+            orderItems.map(async (item) => {
+              try {
+                const product = await productService.getProductById(item.productId);
+                return {
+                  id: item.id,
+                  product,
+                  quantity: item.quantity,
+                  variant: item.variant
+                };
+              } catch (productError) {
+                console.error(`Error al cargar producto ${item.productId}:`, productError);
+                return null;
+              }
+            })
+          );
 
-      setShadedCartItems(itemsWithProducts);
+          setShadedCartItems(itemsWithProducts.filter(item => item !== null));
+        } else {
+          console.warn('No se encontraron items para esta orden en cart-shaded');
+        }
+      } catch (cartError) {
+        console.error('Error al cargar items del carrito:', cartError);
+        // No mostramos toast aquí porque es normal que el cart-shaded esté vacío después del pago
+      }
     } catch (error) {
-      console.error('Error al cargar los datos:', error);
+      console.error('Error al cargar los datos de la orden:', error);
       toast.error('Error al cargar los datos del pedido');
     } finally {
       setLoading(false);
@@ -90,7 +111,7 @@ export default function Success() {
     );
   }
 
-  if (!order || !checkout) {
+  if (!order) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Card>
@@ -172,26 +193,28 @@ export default function Success() {
         </Card>
 
         {/* Dirección de Envío */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Dirección de Envío</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div>
-              <p className="font-semibold">{checkout.customerName}</p>
-              <p className="text-sm text-muted-foreground">{checkout.customerEmail}</p>
-            </div>
-            <Separator />
-            <div className="text-sm">
-              <p>{checkout.address}</p>
-              <p>
-                {checkout.city}, {checkout.postalCode}
-              </p>
-              <p>{checkout.country}</p>
-              <p className="mt-2">Tel: {checkout.phoneNumber}</p>
-            </div>
-          </CardContent>
-        </Card>
+        {checkout && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Dirección de Envío</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div>
+                <p className="font-semibold">{checkout.customerName}</p>
+                <p className="text-sm text-muted-foreground">{checkout.customerEmail}</p>
+              </div>
+              <Separator />
+              <div className="text-sm">
+                <p>{checkout.address}</p>
+                <p>
+                  {checkout.city}, {checkout.postalCode}
+                </p>
+                <p>{checkout.country}</p>
+                <p className="mt-2">Tel: {checkout.phoneNumber}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Resumen del Pedido */}
         <Card>
@@ -199,57 +222,73 @@ export default function Success() {
             <CardTitle>Resumen del Pedido</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-3">
-              {shadedCartItems.map((item) => {
-                const price = item.product.sellPrice || item.product.price;
-                return (
-                  <div key={item.id} className="flex gap-3 text-sm">
-                    <img
-                      src={getImageUrl(item.product.imageUrl || '')}
-                      alt={item.product.name}
-                      className="w-16 h-16 object-cover rounded-md"
-                    />
-                    <div className="flex-1 flex justify-between items-start">
-                      <div>
-                        <p className="text-foreground font-medium">
-                          {item.product.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Cantidad: {item.quantity}
-                        </p>
-                        {item.variant && (
-                          <p className="text-xs text-muted-foreground">
-                            Opción: {item.variant}
-                          </p>
-                        )}
+            {shadedCartItems.length > 0 ? (
+              <>
+                <div className="space-y-3">
+                  {shadedCartItems.map((item) => {
+                    const price = item.product.sellPrice || item.product.price;
+                    return (
+                      <div key={item.id} className="flex gap-3 text-sm">
+                        <img
+                          src={getImageUrl(item.product.imageUrl || '')}
+                          alt={item.product.name}
+                          className="w-16 h-16 object-cover rounded-md"
+                        />
+                        <div className="flex-1 flex justify-between items-start">
+                          <div>
+                            <p className="text-foreground font-medium">
+                              {item.product.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Cantidad: {item.quantity}
+                            </p>
+                            {item.variant && (
+                              <p className="text-xs text-muted-foreground">
+                                Opción: {item.variant}
+                              </p>
+                            )}
+                          </div>
+                          <span className="font-semibold">
+                            {(price * item.quantity).toFixed(2)}€
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-semibold">
-                        {(price * item.quantity).toFixed(2)}€
-                      </span>
+                    );
+                  })}
+                </div>
+
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-semibold">{subtotal.toFixed(2)}€</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Envío</span>
+                    <span className="font-semibold">
+                      {shippingCost === 0 ? 'GRATIS' : `${shippingCost.toFixed(2)}€`}
+                    </span>
+                  </div>
+                  <div className="border-t pt-2">
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Total Pagado</span>
+                      <span className="text-primary">{order.total.toFixed(2)}€</span>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-semibold">{subtotal.toFixed(2)}€</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Envío</span>
-                <span className="font-semibold">
-                  {shippingCost === 0 ? 'GRATIS' : `${shippingCost.toFixed(2)}€`}
-                </span>
-              </div>
-              <div className="border-t pt-2">
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total Pagado</span>
-                  <span className="text-primary">{order.total.toFixed(2)}€</span>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-muted-foreground mb-2">
+                  No se pudieron cargar los detalles de los productos
+                </p>
+                <div className="border-t pt-4 mt-4">
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total Pagado</span>
+                    <span className="text-primary">{order.total.toFixed(2)}€</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {order.notes && (
               <div className="border-t pt-4">
