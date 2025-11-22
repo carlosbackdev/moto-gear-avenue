@@ -27,12 +27,12 @@ export default function Success() {
 
     if (!orderId) {
       toast.error('No se encontró el ID del pedido');
-      navigate('/');
+      setLoading(false);
       return;
     }
 
     loadOrderData(Number(orderId));
-  }, [searchParams, navigate]);
+  }, [searchParams]);
 
   const loadOrderData = async (orderId: number) => {
     try {
@@ -69,7 +69,6 @@ export default function Success() {
     } catch (error) {
       console.error('Error al cargar los datos:', error);
       toast.error('Error al cargar los datos del pedido');
-      navigate('/');
     } finally {
       setLoading(false);
     }
@@ -92,7 +91,28 @@ export default function Success() {
   }
 
   if (!order || !checkout) {
-    return null;
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <p className="text-muted-foreground">No se pudieron cargar los datos del pedido</p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button onClick={() => window.location.reload()}>
+                  Reintentar
+                </Button>
+                <Button onClick={() => navigate('/orders')} variant="outline">
+                  Ver Mis Pedidos
+                </Button>
+                <Button onClick={() => navigate('/')} variant="outline">
+                  Volver al Inicio
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   // Calcular totales basados en los items del carrito sombreado
