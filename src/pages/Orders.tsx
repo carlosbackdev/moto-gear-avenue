@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Order, BackendCartItem, Product } from '@/types/models';
 import { orderService } from '@/services/order.service';
 import { cartShadedService } from '@/services/cart-shaded.service';
@@ -6,7 +7,8 @@ import { productService } from '@/services/product.service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Package } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Package, Search, Truck } from 'lucide-react';
 import { toast } from 'sonner';
 import { environment } from '@/config/environment';
 import {
@@ -29,9 +31,11 @@ interface OrderWithProducts extends Order {
 }
 
 export default function Orders() {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<OrderWithProducts[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<number | null>(null);
+  const [searchOrderId, setSearchOrderId] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -190,10 +194,45 @@ export default function Orders() {
     );
   }
 
+  const handleSearchTracking = () => {
+    const orderId = searchOrderId.trim();
+    if (!orderId) {
+      toast.error('Por favor ingresa un número de pedido');
+      return;
+    }
+    navigate(`/track/${orderId}`);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">Mis Pedidos</h1>
+        <h1 className="text-4xl font-bold mb-6">Mis Pedidos</h1>
+        
+        {/* Buscador de seguimiento */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Search className="h-5 w-5" />
+              Buscar Seguimiento
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="Ingresa el número de pedido..."
+                value={searchOrderId}
+                onChange={(e) => setSearchOrderId(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearchTracking()}
+                className="flex-1"
+              />
+              <Button onClick={handleSearchTracking}>
+                <Search className="h-4 w-4 mr-2" />
+                Buscar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {orders.length === 0 ? (
           <Card>
@@ -308,6 +347,17 @@ export default function Orders() {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
+                      </div>
+                    )}
+                    {order.status === 'SHIPPED' && (
+                      <div className="pt-2">
+                        <Button 
+                          className="w-full" 
+                          onClick={() => navigate(`/track/${order.id}`)}
+                        >
+                          <Truck className="h-4 w-4 mr-2" />
+                          Ver Seguimiento
+                        </Button>
                       </div>
                     )}
                   </div>
