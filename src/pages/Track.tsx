@@ -29,7 +29,9 @@ export default function Track() {
 
       try {
         setLoading(true);
-        const data = await trackingService.getAndUpdateTracking(Number(orderId));
+        
+        // Primero obtener los datos existentes (GET) - rápido
+        const data = await trackingService.getTrackingByOrderId(Number(orderId));
         setTracking(data);
 
         // Parse timeline JSON
@@ -52,10 +54,18 @@ export default function Track() {
           console.error('Error parsing couriers:', error);
           setCourier('');
         }
+        
+        setLoading(false);
+        
+        // Luego actualizar en background (POST) - asíncrono, máximo 2 veces al día
+        // No esperamos el resultado, el backend controla la frecuencia
+        trackingService.updateTracking(Number(orderId)).catch(error => {
+          console.log('Background tracking update:', error);
+          // No mostramos error al usuario, es background
+        });
       } catch (error) {
         console.error('Error loading tracking:', error);
         toast.error('Error al cargar la información de seguimiento');
-      } finally {
         setLoading(false);
       }
     };
