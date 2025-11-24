@@ -20,6 +20,7 @@ import Register from "./pages/Register";
 import Account from "./pages/Account";
 import Orders from "./pages/Orders";
 import Order from "./pages/Order";
+import Track from "./pages/Track";
 import Success from "./pages/Success";
 import Wishlist from "./pages/Wishlist";
 import Contact from "./pages/Contact";
@@ -61,6 +62,7 @@ const App = () => (
                     <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
           <Route path="/order/:orderId" element={<ProtectedRoute><Order /></ProtectedRoute>} />
+          <Route path="/track/:orderId" element={<ProtectedRoute><Track /></ProtectedRoute>} />
           <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
                     <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
                     <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />

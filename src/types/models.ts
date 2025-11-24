@@ -223,3 +223,33 @@ export interface WishlistItem {
   product: Product;
   addedAt: string;
 }
+
+/**
+ * TimelineEvent - Evento en la línea temporal de seguimiento
+ */
+export interface TimelineEvent {
+  date: string;
+  title: string;
+  location: string | null;
+  isActive: boolean;
+}
+
+/**
+ * Tracking - Información de seguimiento de pedido
+ */
+export interface Tracking {
+  id: number;
+  trackingNumber: string;
+  orderId: number;
+  status: string;
+  statusDescription: string;
+  origin: string;
+  destination: string;
+  weight: string | null;
+  daysOnRoute: number;
+  sourceUrl: string;
+  couriers: string; // JSON string array
+  timeline: string; // JSON string array de TimelineEvent
+  createdAt: string;
+  updatedAt: string;
+}
