@@ -10,7 +10,6 @@ import { imageService } from '@/services/image.service';
 import { mockProducts, mockCategories } from '@/lib/mockData';
 import heroImage from '@/assets/hero-moto.jpg';
 import heroBlackFriday from '@/assets/hero-blackfriday.jpg';
-import heroBlackFridaySale from '@/assets/hero-blackfriday-sale.jpg';
 import heroSafety from '@/assets/hero-safety.jpg';
 import {
   Carousel,
@@ -22,11 +21,6 @@ import {
 import Autoplay from 'embla-carousel-autoplay';
 
 const heroSlides = [
-  {
-    image: heroBlackFridaySale,
-    title: 'Black Friday\nDescuentos en Toda la Web',
-    description: 'Aprovecha los mejores descuentos del año en todo nuestro catálogo de accesorios para moto',
-  },
   {
     image: heroImage,
     title: 'Equipamiento de\nAlta Velocidad',
@@ -121,6 +115,34 @@ export default function Home() {
         </Carousel>
       </section>
 
+      {/* Featured Products */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Ofertas Destacadas <span className="text-primary">Black Friday</span>
+            </h2>
+            <Link to="/catalog">
+              <Button variant="outline" className="gap-2">
+                Ver Todos
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {loading ? (
+              Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="h-80 bg-muted animate-pulse rounded-lg" />
+              ))
+            ) : (
+              featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+      
       {/* Categories Section */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
@@ -162,33 +184,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Ofertas Destacadas <span className="text-primary">Black Friday</span>
-            </h2>
-            <Link to="/catalog">
-              <Button variant="outline" className="gap-2">
-                Ver Todos
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {loading ? (
-              Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-80 bg-muted animate-pulse rounded-lg" />
-              ))
-            ) : (
-              featuredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))
-            )}
-          </div>
-        </div>
-      </section>
 
       {/* Features */}
       <section className="py-16 bg-background">
