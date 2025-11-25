@@ -225,10 +225,10 @@ export default function ProductDetail() {
                 <CardTitle>Información del Producto</CardTitle>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="specifications" className="w-full">
+                <Tabs defaultValue="details" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="specifications">Especificaciones</TabsTrigger>
                     <TabsTrigger value="details">Detalles</TabsTrigger>
+                    <TabsTrigger value="specifications">Especificaciones</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="specifications" className="mt-4">

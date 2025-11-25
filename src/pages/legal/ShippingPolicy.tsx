@@ -25,10 +25,9 @@ export default function ShippingPolicy() {
             <section>
               <h2 className="text-xl font-semibold mb-3">Plazos de Entrega</h2>
               <ul className="space-y-2 text-muted-foreground">
-                <li>• <strong>España Peninsular:</strong> 2-4 días laborables</li>
-                <li>• <strong>Islas Baleares:</strong> 3-5 días laborables</li>
+                <li>• <strong>España Peninsular:</strong> 2-7 días laborables</li>
+                <li>• <strong>Islas Baleares:</strong> 2-7 días laborables</li>
                 <li>• <strong>Canarias, Ceuta y Melilla:</strong> 5-7 días laborables</li>
-                <li>• <strong>Unión Europea:</strong> 5-10 días laborables</li>
               </ul>
               <p className="text-muted-foreground mt-3">
                 Los plazos pueden variar según disponibilidad del producto y temporada.
@@ -39,8 +38,7 @@ export default function ShippingPolicy() {
               <h2 className="text-xl font-semibold mb-3">Costes de Envío</h2>
               <ul className="space-y-2 text-muted-foreground">
                 <li>• Envío GRATIS en pedidos superiores a 50€ (España peninsular)</li>
-                <li>• Envío estándar: 4,95€</li>
-                <li>• Envío urgente (24-48h): 9,95€</li>
+                <li>• Envío estándar: 1,99€</li>
                 <li>• Islas y resto de Europa: Consultar en checkout</li>
               </ul>
             </section>
@@ -56,7 +54,7 @@ export default function ShippingPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-3">Productos en Dropshipping</h2>
+              <h2 className="text-xl font-semibold mb-3">Productos en Almacen Internacional</h2>
               <p className="text-muted-foreground">
                 Algunos productos se envían directamente desde nuestros proveedores internacionales. 
                 En estos casos, el plazo de entrega puede ser de 10-15 días laborables. 
@@ -69,8 +67,8 @@ export default function ShippingPolicy() {
               <p className="text-muted-foreground">
                 Si tu pedido no llega en el plazo estimado o hay algún problema con la entrega, 
                 contacta con nuestro servicio de atención al cliente en{' '}
-                <a href="mailto:soporte@motoaccesorios.com" className="text-primary hover:underline">
-                  soporte@motoaccesorios.com
+                <a href="mailto:soporte@motogearspain.com" className="text-primary hover:underline">
+                  motogearspain@gmail.com
                 </a>
               </p>
             </section>

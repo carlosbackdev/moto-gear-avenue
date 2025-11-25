@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import { usersService } from '@/services/users.service';
 
 interface ProductReviewsProps {
   productId: number;
@@ -60,6 +61,19 @@ export const ProductReviews = ({ productId }: ProductReviewsProps) => {
   const loadReviews = async () => {
     try {
       const data = await reviewService.getProductReviews(productId);
+      
+      await Promise.all(
+      data.map(async (review) => {
+        try {
+          const name = await usersService.getUserName(review.userId);
+          console.log('Fetched user name:', name);
+          review.userFullName = name;
+        } catch (error) {
+          console.error(`Error loading user ${review.userId}:`, error);
+          review.userFullName = 'Usuario'; // Valor por defecto si falla
+        }
+      })
+    );
       setReviews(data);
     } catch (error) {
       console.error('Error loading reviews:', error);
@@ -195,7 +209,7 @@ export const ProductReviews = ({ productId }: ProductReviewsProps) => {
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold">Usuario {review.userId}</p>
+                      <p className="font-semibold">{review.userFullName}</p>
                     </div>
                     <StarRating rating={review.rating} />
                   </div>

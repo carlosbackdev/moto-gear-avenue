@@ -199,6 +199,7 @@ export interface Review {
   productId: number;
   content: string;
   rating: number; // 1-5 estrellas
+  userFullName?: string;
 }
 
 /**

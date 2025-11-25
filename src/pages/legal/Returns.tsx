@@ -39,7 +39,6 @@ export default function Returns() {
               <p className="text-muted-foreground mb-3">Por razones de higiene y seguridad, no se aceptan devoluciones de:</p>
               <ul className="space-y-2 text-muted-foreground">
                 <li>• Cascos que hayan sido usados o probados sin protección higiénica</li>
-                <li>• Ropa interior o productos higiénicos descintados</li>
                 <li>• Productos personalizados o hechos a medida</li>
                 <li>• Artículos en liquidación o con descuento superior al 40%</li>
               </ul>
@@ -49,7 +48,7 @@ export default function Returns() {
               <h2 className="text-xl font-semibold mb-3">Cómo Realizar una Devolución</h2>
               <div className="space-y-2 text-muted-foreground">
                 <p>1. Accede a tu cuenta y ve a "Mis Pedidos"</p>
-                <p>2. Selecciona el pedido que deseas devolver</p>
+                <p>2. Selecciona el pedido 'YA ENTRGADO' que deseas devolver</p>
                 <p>3. Indica el motivo de la devolución</p>
                 <p>4. Recibirás una etiqueta de devolución por email</p>
                 <p>5. Empaqueta el producto con todos sus accesorios</p>
@@ -63,10 +62,6 @@ export default function Returns() {
                 Una vez recibamos y verifiquemos el estado del producto devuelto, procesaremos el reembolso en un 
                 plazo máximo de 14 días naturales. El importe se abonará utilizando el mismo método de pago que usaste 
                 en la compra original.
-              </p>
-              <p className="text-muted-foreground mt-3">
-                Los gastos de envío de la devolución corren a cargo del cliente, salvo en caso de producto defectuoso 
-                o error en el envío.
               </p>
             </section>
 
@@ -84,9 +79,9 @@ export default function Returns() {
                 Si recibes un producto defectuoso o con daños, contacta inmediatamente con nuestro servicio de atención 
                 al cliente en{' '}
                 <a href="mailto:soporte@motoaccesorios.com" className="text-primary hover:underline">
-                  soporte@motoaccesorios.com
+                  motogearspain@gmail.com
                 </a>
-                {' '}adjuntando fotos del producto. Nos haremos cargo de todos los gastos de devolución y te enviaremos 
+                {' '}adjuntando fotos del producto. Nos haremos cargo de y te enviaremos 
                 un reemplazo sin coste adicional.
               </p>
             </section>

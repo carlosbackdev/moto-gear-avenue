@@ -45,7 +45,7 @@ export default function Contact() {
                 <Mail className="h-10 w-10 text-primary mb-3" />
                 <h3 className="font-semibold mb-2">Email</h3>
                 <a href="mailto:soporte@motoaccesorios.com" className="text-sm text-muted-foreground hover:text-primary">
-                  soporte@motoaccesorios.com
+                  motogearspain@gmail.com
                 </a>
               </CardContent>
             </Card>
@@ -55,7 +55,7 @@ export default function Contact() {
                 <Phone className="h-10 w-10 text-primary mb-3" />
                 <h3 className="font-semibold mb-2">Teléfono</h3>
                 <a href="tel:+34912345678" className="text-sm text-muted-foreground hover:text-primary">
-                  +34 912 345 678
+                  +34 67 996 708
                 </a>
                 <p className="text-xs text-muted-foreground mt-1">L-V: 9:00 - 18:00</p>
               </CardContent>
@@ -66,8 +66,7 @@ export default function Contact() {
                 <MapPin className="h-10 w-10 text-primary mb-3" />
                 <h3 className="font-semibold mb-2">Dirección</h3>
                 <p className="text-sm text-muted-foreground">
-                  Calle Ejemplo 123<br />
-                  28001 Madrid, España
+                  28030 Madrid, España
                 </p>
               </CardContent>
             </Card>
@@ -146,7 +145,7 @@ export default function Contact() {
               <div>
                 <h3 className="font-semibold mb-1">¿Cuánto tarda en llegar mi pedido?</h3>
                 <p className="text-sm text-muted-foreground">
-                  Los pedidos a España peninsular tardan 2-4 días laborables. Para otros destinos, consulta nuestra política de envíos.
+                  Los pedidos a España peninsular tardan 2-7 días laborables. Para otros destinos, consulta nuestra política de envíos.
                 </p>
               </div>
               <div>
@@ -164,7 +163,7 @@ export default function Contact() {
               <div>
                 <h3 className="font-semibold mb-1">¿Envían internacionalmente?</h3>
                 <p className="text-sm text-muted-foreground">
-                  Sí, enviamos a toda la Unión Europea. Los plazos de entrega varían según el destino.
+                  Sí, enviamos a toda España y Portugal. Los plazos de entrega varían según el destino.
                 </p>
               </div>
             </CardContent>

@@ -17,8 +17,8 @@ export default function Terms() {
             <section>
               <h2 className="text-xl font-semibold mb-3">1. Información General</h2>
               <p className="text-muted-foreground">
-                Este sitio web es operado por MotoAccesorios S.L., con CIF B-12345678, domicilio social en 
-                Calle Ejemplo 123, 28001 Madrid, España. Al acceder y utilizar este sitio web, aceptas estar 
+                Este sitio web es operado por MotoGearSpain S.L.,  domicilio social en 
+                Calle avenida vinateros 28, 28030 Madrid, España. Al acceder y utilizar este sitio web, aceptas estar 
                 vinculado por estos términos y condiciones.
               </p>
             </section>
@@ -86,7 +86,7 @@ export default function Terms() {
               <h2 className="text-xl font-semibold mb-3">8. Propiedad Intelectual</h2>
               <p className="text-muted-foreground">
                 Todos los contenidos de este sitio web (textos, imágenes, logotipos, diseño) son propiedad de 
-                MotoAccesorios S.L. o de sus proveedores y están protegidos por las leyes de propiedad intelectual. 
+                MotoGearSpain S.L. o de sus proveedores y están protegidos por las leyes de propiedad intelectual. 
                 Queda prohibida su reproducción sin autorización expresa.
               </p>
             </section>
@@ -106,7 +106,7 @@ export default function Terms() {
                 <a href="mailto:info@motoaccesorios.com" className="text-primary hover:underline">
                   info@motoaccesorios.com
                 </a>{' '}
-                o llamando al +34 912 345 678.
+                o llamando al +34 67 996 708.
               </p>
             </section>
 
