@@ -378,13 +378,6 @@ export default function ProductDetail() {
                     <ShoppingCart className="h-5 w-5" />
                     {product.stock === 0 ? 'Sin Stock' : (isInCart(product.id) ? 'Añadir más al Carrito' : 'Añadir al Carrito')}
                   </Button>
-                  <Button
-                    size="lg"
-                    variant={isInWishlist(product.id) ? 'default' : 'outline'}
-                    onClick={handleToggleWishlist}
-                  >
-                    <Heart className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
-                  </Button>
                 </div>
                 
                 {isInCart(product.id) && (
