@@ -211,6 +211,15 @@ export interface CreateReviewRequest {
   rating: number;
 }
 
+export interface ChangePasswordRequest {
+  email: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  message: string;
+}
+
 /**
  * WishlistItem - Item en la lista de deseos
  */
