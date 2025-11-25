@@ -56,7 +56,7 @@ export const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-6">
         <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-          <img src={logoMotogear} alt="MotoGear Logo" className="h-10 w-auto" />
+          <img src={logoMotogear} alt="MotoGear Logo" className="h-14 w-auto" />
         </Link>
 
         <div className="flex-1 max-w-2xl hidden md:block">
@@ -139,10 +139,6 @@ export const Navbar = () => {
                     <Package className="mr-2 h-4 w-4" />
                     Mis Pedidos
                   </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={logout} className="cursor-pointer">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Cerrar Sesión
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/cart" className="flex items-center cursor-pointer">

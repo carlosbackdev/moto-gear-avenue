@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { Eye, EyeOff } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { usersService } from '@/services/users.service';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -18,6 +20,14 @@ export default function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+  });
+  
+  const [recoverDialogOpen, setRecoverDialogOpen] = useState(false);
+  const [recoverLoading, setRecoverLoading] = useState(false);
+  const [showRecoverPassword, setShowRecoverPassword] = useState(false);
+  const [recoverData, setRecoverData] = useState({
+    email: '',
+    newPassword: '',
   });
 
   useEffect(() => {
@@ -89,6 +99,36 @@ export default function Login() {
 
   const handleGoogleError = () => {
     toast.error('Error al iniciar sesión con Google');
+  };
+
+  const handleRecoverAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!recoverData.email || !recoverData.newPassword) {
+      toast.error('Por favor completa todos los campos');
+      return;
+    }
+
+    if (recoverData.newPassword.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    setRecoverLoading(true);
+    try {
+      await usersService.changePassword({
+        email: recoverData.email,
+        newPassword: recoverData.newPassword,
+      });
+      toast.success('Contraseña cambiada exitosamente');
+      setRecoverDialogOpen(false);
+      setRecoverData({ email: '', newPassword: '' });
+    } catch (error) {
+      console.error('Error al recuperar cuenta:', error);
+      toast.error('Error al cambiar la contraseña. Verifica que el email sea correcto.');
+    } finally {
+      setRecoverLoading(false);
+    }
   };
 
   return (
@@ -167,11 +207,73 @@ export default function Login() {
             />
           </div>
 
-          <div className="mt-4 text-center text-sm">
-            <span className="text-muted-foreground">¿No tienes cuenta? </span>
-            <Link to="/register" className="text-primary hover:underline font-medium">
-              Regístrate aquí
-            </Link>
+          <div className="mt-4 text-center text-sm space-y-2">
+            <div>
+              <span className="text-muted-foreground">¿No tienes cuenta? </span>
+              <Link to="/register" className="text-primary hover:underline font-medium">
+                Regístrate aquí
+              </Link>
+            </div>
+            <div>
+              <Dialog open={recoverDialogOpen} onOpenChange={setRecoverDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="link" className="text-primary p-0 h-auto font-medium">
+                    ¿Olvidaste tu contraseña?
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Recuperar Cuenta</DialogTitle>
+                    <DialogDescription>
+                      Ingresa tu email y una nueva contraseña para recuperar tu cuenta
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleRecoverAccount} className="space-y-4">
+                    <div>
+                      <Label htmlFor="recover-email">Email</Label>
+                      <Input
+                        id="recover-email"
+                        type="email"
+                        placeholder="tu@email.com"
+                        value={recoverData.email}
+                        onChange={(e) => setRecoverData({ ...recoverData, email: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="recover-password">Nueva Contraseña</Label>
+                      <div className="relative">
+                        <Input
+                          id="recover-password"
+                          type={showRecoverPassword ? "text" : "password"}
+                          placeholder="••••••••"
+                          value={recoverData.newPassword}
+                          onChange={(e) => setRecoverData({ ...recoverData, newPassword: e.target.value })}
+                          required
+                          className="pr-10"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                          onClick={() => setShowRecoverPassword(!showRecoverPassword)}
+                        >
+                          {showRecoverPassword ? (
+                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                    <Button type="submit" className="w-full" disabled={recoverLoading}>
+                      {recoverLoading ? 'Cambiando contraseña...' : 'Cambiar Contraseña'}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </CardContent>
       </Card>
