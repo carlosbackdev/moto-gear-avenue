@@ -10,6 +10,7 @@ import { imageService } from '@/services/image.service';
 import { mockProducts, mockCategories } from '@/lib/mockData';
 import heroImage from '@/assets/hero-moto.jpg';
 import heroBlackFriday from '@/assets/hero-blackfriday.jpg';
+import heroBlackFridaySale from '@/assets/hero-blackfriday-sale.jpg';
 import heroSafety from '@/assets/hero-safety.jpg';
 import {
   Carousel,
@@ -21,6 +22,11 @@ import {
 import Autoplay from 'embla-carousel-autoplay';
 
 const heroSlides = [
+  {
+    image: heroBlackFridaySale,
+    title: 'Black Friday\nDescuentos en Toda la Web',
+    description: 'Aprovecha los mejores descuentos del año en todo nuestro catálogo de accesorios para moto',
+  },
   {
     image: heroImage,
     title: 'Equipamiento de\nAlta Velocidad',
