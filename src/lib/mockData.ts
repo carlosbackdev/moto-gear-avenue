@@ -10,12 +10,12 @@ import helmetImg from '@/assets/placeholder-helmet.jpg';
 import glovesImg from '@/assets/placeholder-gloves.jpg';
 
 export const mockCategories: Category[] = [
-  { id: 1, name: 'Cascos', slug: 'cascos' },
-  { id: 2, name: 'Guantes', slug: 'guantes' },
-  { id: 3, name: 'Chaquetas', slug: 'chaquetas' },
-  { id: 4, name: 'Maletas y Baúles', slug: 'maletas' },
-  { id: 5, name: 'Escapes', slug: 'escapes' },
-  { id: 6, name: 'Protecciones', slug: 'protecciones' },
+  { id: 1, name: 'Cascos', logo: '' },
+  { id: 2, name: 'Guantes', logo: '' },
+  { id: 3, name: 'Chaquetas', logo: '' },
+  { id: 4, name: 'Maletas y Baúles', logo: '' },
+  { id: 5, name: 'Escapes', logo: '' },
+  { id: 6, name: 'Protecciones', logo: '' },
 ];
 
 export const mockProducts: Product[] = [

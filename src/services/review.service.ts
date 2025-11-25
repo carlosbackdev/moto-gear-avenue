@@ -15,26 +15,26 @@ import { Review, CreateReviewRequest } from '@/types/models';
 class ReviewService {
   /**
    * Obtiene las reseñas de un producto
-   * Backend: GET /products/{productId}/reviews
+   * Backend: GET /api/review/list/{productId}
    */
   async getProductReviews(productId: number): Promise<Review[]> {
-    return apiService.get<Review[]>(`/products/${productId}/reviews`);
+    return apiService.get<Review[]>(`/review/list/${productId}`);
+  }
+
+  /**
+   * Verifica si el usuario puede dejar una reseña para un producto
+   * Backend: GET /api/review/can/{productId}
+   */
+  async canReview(productId: number): Promise<boolean> {
+    return apiService.get<boolean>(`/review/can/${productId}`, true);
   }
 
   /**
    * Crea una nueva reseña
-   * Backend: POST /reviews
+   * Backend: POST /api/review/create
    */
   async createReview(reviewData: CreateReviewRequest): Promise<Review> {
-    return apiService.post<Review>('/reviews', reviewData, true);
-  }
-
-  /**
-   * Obtiene las reseñas del usuario autenticado
-   * Backend: GET /users/me/reviews
-   */
-  async getUserReviews(): Promise<Review[]> {
-    return apiService.get<Review[]>('/users/me/reviews', true);
+    return apiService.post<Review>('/review/create', reviewData, true);
   }
 }
 

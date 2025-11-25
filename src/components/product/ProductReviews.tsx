@@ -5,22 +5,36 @@ import { reviewService } from '@/services/review.service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
 
 interface ProductReviewsProps {
   productId: number;
 }
 
-const StarRating = ({ rating }: { rating: number }) => {
+const StarRating = ({ rating, interactive = false, onRatingChange }: { 
+  rating: number; 
+  interactive?: boolean;
+  onRatingChange?: (rating: number) => void;
+}) => {
+  const [hoverRating, setHoverRating] = useState(0);
+
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          className={`h-4 w-4 ${
-            star <= rating
+          className={`h-5 w-5 cursor-pointer transition-colors ${
+            star <= (interactive ? (hoverRating || rating) : rating)
               ? 'fill-yellow-400 text-yellow-400'
               : 'text-muted-foreground'
           }`}
+          onMouseEnter={() => interactive && setHoverRating(star)}
+          onMouseLeave={() => interactive && setHoverRating(0)}
+          onClick={() => interactive && onRatingChange?.(star)}
         />
       ))}
     </div>
@@ -30,10 +44,18 @@ const StarRating = ({ rating }: { rating: number }) => {
 export const ProductReviews = ({ productId }: ProductReviewsProps) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [canReview, setCanReview] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newReview, setNewReview] = useState({ rating: 5, content: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     loadReviews();
-  }, [productId]);
+    if (isAuthenticated) {
+      checkCanReview();
+    }
+  }, [productId, isAuthenticated]);
 
   const loadReviews = async () => {
     try {
@@ -41,10 +63,57 @@ export const ProductReviews = ({ productId }: ProductReviewsProps) => {
       setReviews(data);
     } catch (error) {
       console.error('Error loading reviews:', error);
-      // TODO: Remove mock data when backend is ready
       setReviews([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkCanReview = async () => {
+    try {
+      const can = await reviewService.canReview(productId);
+      setCanReview(can);
+    } catch (error) {
+      console.error('Error checking review permission:', error);
+      setCanReview(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!newReview.content.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Por favor, escribe un comentario',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await reviewService.createReview({
+        productId,
+        rating: newReview.rating,
+        content: newReview.content,
+      });
+      
+      toast({
+        title: 'Reseña enviada',
+        description: 'Tu reseña ha sido publicada correctamente',
+      });
+
+      setIsDialogOpen(false);
+      setNewReview({ rating: 5, content: '' });
+      loadReviews();
+      setCanReview(false);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo enviar la reseña',
+        variant: 'destructive',
+      });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -70,6 +139,45 @@ export const ProductReviews = ({ productId }: ProductReviewsProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {canReview && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="w-full">Escribir una reseña</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Escribe tu reseña</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Calificación</label>
+                  <StarRating
+                    rating={newReview.rating}
+                    interactive
+                    onRatingChange={(rating) => setNewReview({ ...newReview, rating })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Comentario</label>
+                  <Textarea
+                    placeholder="Comparte tu experiencia con este producto..."
+                    value={newReview.content}
+                    onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
+                    rows={4}
+                  />
+                </div>
+                <Button 
+                  onClick={handleSubmitReview} 
+                  disabled={submitting}
+                  className="w-full"
+                >
+                  {submitting ? 'Enviando...' : 'Publicar reseña'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
         {reviews.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">
             No hay reseñas todavía. ¡Sé el primero en valorar este producto!
@@ -87,30 +195,11 @@ export const ProductReviews = ({ productId }: ProductReviewsProps) => {
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold">{review.userName}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(review.createdAt).toLocaleDateString('es-ES', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
-                      </p>
+                      <p className="font-semibold">Usuario {review.userId}</p>
                     </div>
                     <StarRating rating={review.rating} />
                   </div>
-                  <p className="text-sm text-foreground">{review.comment}</p>
-                  {review.images && review.images.length > 0 && (
-                    <div className="flex gap-2 mt-3">
-                      {review.images.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={img}
-                          alt={`Review image ${idx + 1}`}
-                          className="w-20 h-20 object-cover rounded-md"
-                        />
-                      ))}
-                    </div>
-                  )}
+                  <p className="text-sm text-foreground">{review.content}</p>
                 </div>
               </div>
             </div>

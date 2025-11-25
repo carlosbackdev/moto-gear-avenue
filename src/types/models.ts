@@ -195,13 +195,10 @@ export interface UpdateOrderStatusRequest {
  */
 export interface Review {
   id: number;
-  productId: number;
   userId: number;
-  userName: string;
+  productId: number;
+  content: string;
   rating: number; // 1-5 estrellas
-  comment: string;
-  images?: string[];
-  createdAt: string;
 }
 
 /**
@@ -209,9 +206,8 @@ export interface Review {
  */
 export interface CreateReviewRequest {
   productId: number;
+  content: string;
   rating: number;
-  comment: string;
-  images?: string[];
 }
 
 /**
