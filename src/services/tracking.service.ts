@@ -19,6 +19,15 @@ class TrackingService {
   async updateTracking(orderId: number): Promise<Tracking> {
     return apiService.post<Tracking>(`/track/track-udpate/${orderId}`, {}, true);
   }
+  
+  /**
+   * Obtiene el tracking por número de seguimiento
+   * Backend: GET /api/track/{trackId}
+   */
+  async getTrackingByTrackingId(trackId: string): Promise<Tracking> {
+    const encodedTrackId = encodeURIComponent(trackId);
+    return apiService.get<Tracking>(`/track/track-number/${encodedTrackId}`, true);
+  }
 
   /**
    * Obtiene el tracking de un pedido
@@ -28,14 +37,6 @@ class TrackingService {
     return apiService.get<Tracking>(`/track/track-order/${orderId}`, true);
   }
 
-  /**
-   * Obtiene y actualiza el tracking de forma secuencial
-   * Primero actualiza, luego obtiene los datos actualizados
-   */
-  async getAndUpdateTracking(orderId: number): Promise<Tracking> {
-    await this.updateTracking(orderId);
-    return this.getTrackingByOrderId(orderId);
-  }
 }
 
 export const trackingService = new TrackingService();

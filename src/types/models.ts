@@ -51,7 +51,7 @@ export interface Product {
 export interface Category {
   id: number;
   name: string; // Casco, Guantes, Escape, Maletas, etc.
-  slug: string;
+  logo: string;
 }
 
 /**

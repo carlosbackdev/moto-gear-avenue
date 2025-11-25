@@ -4,6 +4,7 @@ import { ProductCard } from '@/components/shared/ProductCard';
 import { Product, Category } from '@/types/models';
 import { productService } from '@/services/product.service';
 import { categoryService } from '@/services/category.service';
+import { imageService } from '@/services/image.service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -157,7 +158,15 @@ export default function Catalog() {
                 key={category.id}
                 variant={selectedCategory === category.id ? 'default' : 'outline'}
                 onClick={() => handleCategoryChange(category.id)}
+                className="flex items-center gap-2"
               >
+                {category.logo && (
+                  <img
+                    src={imageService.getFullImageUrl(category.logo)}
+                    alt={category.name}
+                    className="h-5 w-5 object-contain"
+                  />
+                )}
                 {category.name}
               </Button>
             ))}

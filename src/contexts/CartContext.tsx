@@ -76,14 +76,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      console.log('[CartContext] Adding to cart:', { productId: product.id, quantity, variant });
+      
       const backendItem = await cartService.addToCart({
         productId: product.id,
         quantity,
         variant,
       });
+      
+      console.log('[CartContext] Backend response:', backendItem);
 
       setCart((prevCart) => {
         const existingItem = prevCart.find((item) => item.product.id === product.id && item.variant === variant);
+        
+        console.log('[CartContext] Existing item found:', existingItem);
+        console.log('[CartContext] Current cart:', prevCart.map(i => ({ id: i.id, productId: i.product.id, variant: i.variant })));
         
         if (existingItem) {
           return prevCart.map((item) =>

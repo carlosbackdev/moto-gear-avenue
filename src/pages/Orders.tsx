@@ -220,7 +220,7 @@ export default function Orders() {
             <div className="flex gap-2">
               <Input
                 type="text"
-                placeholder="Ingresa el número de pedido..."
+                placeholder="Ingresa el número de seguimiento o de pedido..."
                 value={searchOrderId}
                 onChange={(e) => setSearchOrderId(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearchTracking()}

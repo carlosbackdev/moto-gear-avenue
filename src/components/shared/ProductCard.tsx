@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
-import { Product } from '@/types/models';
+import { Product, ProductVariantGroup } from '@/types/models';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
@@ -16,7 +16,24 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    addItem(product, 1);
+    
+    // Si el producto tiene variantes, seleccionar la primera opción
+    let variantString: string | undefined;
+    
+    try {
+      if (product.variant) {
+        const variantGroups = JSON.parse(product.variant) as ProductVariantGroup[];
+        
+        if (variantGroups.length > 0 && variantGroups[0].options && variantGroups[0].options.length > 0) {
+          // Guardar solo el valor de la primera opción del primer grupo
+          variantString = variantGroups[0].options[0].value;
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing variants:', error);
+    }
+    
+    addItem(product, 1, variantString);
     toast.success('Producto añadido al carrito');
   };
 

@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { trackingService } from '@/services/tracking.service';
-import { Tracking, TimelineEvent } from '@/types/models';
+import { Tracking, TimelineEvent, Order } from '@/types/models';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Package, MapPin, Calendar, Truck, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import { orderService } from '@/services/order.service';
+import { Checkout, checkoutService } from '@/services/checkout.service';
 
 export default function Track() {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const [tracking, setTracking] = useState<Tracking | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [checkout, setCheckout] = useState<Checkout | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
   const [courier, setCourier] = useState<string>('');
@@ -31,8 +35,26 @@ export default function Track() {
         setLoading(true);
         
         // Primero obtener los datos existentes (GET) - rápido
-        const data = await trackingService.getTrackingByOrderId(Number(orderId));
+        let data: Tracking;
+        let orderData: Order;
+        let checkoutData: Checkout;
+        if(orderId.length > 11){
+          data = await trackingService.getTrackingByTrackingId(orderId);
+          var order = data.orderId;
+          orderData = await orderService.getOrderById(Number(order));
+          var checkoutId = orderData.checkoutId;
+          checkoutData = await checkoutService.getCheckoutById(Number(checkoutId));
+          
+        }else{
+          data = await trackingService.getTrackingByOrderId(Number(orderId));
+          orderData = await orderService.getOrderById(Number(orderId));
+          var checkoutId = orderData.checkoutId;
+          checkoutData = await checkoutService.getCheckoutById(Number(checkoutId));
+          
+        }
         setTracking(data);
+        setOrder(orderData);
+        setCheckout(checkoutData);
 
         // Parse timeline JSON
         try {
@@ -115,7 +137,7 @@ export default function Track() {
             <Badge variant="outline" className="text-lg px-4 py-2">
               {tracking.trackingNumber}
             </Badge>
-            {tracking.sourceUrl && (
+            {/* {tracking.sourceUrl && (
               <a
                 href={tracking.sourceUrl}
                 target="_blank"
@@ -124,7 +146,7 @@ export default function Track() {
               >
                 Ver en sitio externo <ExternalLink className="h-4 w-4" />
               </a>
-            )}
+            )} */}
           </div>
         </div>
 
@@ -191,6 +213,63 @@ export default function Track() {
               )}
             </CardContent>
           </Card>
+
+          {/* Dirección de envío */}
+          {checkout && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Dirección de Envío
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div>
+                  <p className="text-sm text-muted-foreground">Destinatario</p>
+                  <p className="font-medium">{checkout.customerName}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Dirección</p>
+                  <p className="font-medium">{checkout.address}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Ciudad</p>
+                    <p className="font-medium">{checkout.city}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Código Postal</p>
+                    <p className="font-medium">{checkout.postalCode}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">País</p>
+                    <p className="font-medium">{checkout.country}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Teléfono</p>
+                    <p className="font-medium">{checkout.phoneNumber}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Notas del pedido */}
+          {order?.notes && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Notas del Pedido
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">{order.notes}</p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Línea temporal */}
           {timeline.length > 0 && (

@@ -6,6 +6,7 @@ import { ProductCard } from '@/components/shared/ProductCard';
 import { Product, Category } from '@/types/models';
 import { productService } from '@/services/product.service';
 import { categoryService } from '@/services/category.service';
+import { imageService } from '@/services/image.service';
 import { mockProducts, mockCategories } from '@/lib/mockData';
 import heroImage from '@/assets/hero-moto.jpg';
 import heroBlackFriday from '@/assets/hero-blackfriday.jpg';
@@ -136,8 +137,15 @@ export default function Home() {
                   to={`/catalog?category=${category.id}`}
                   className="group relative h-40 rounded-lg overflow-hidden border border-border bg-gradient-to-br from-primary/10 to-primary/5 hover:shadow-hover transition-all duration-300"
                 >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4">
+                    {category.logo && (
+                      <img
+                        src={imageService.getFullImageUrl(category.logo)}
+                        alt={category.name}
+                        className="h-16 w-16 object-contain transition-transform duration-300 group-hover:scale-110"
+                      />
+                    )}
+                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors text-center">
                       {category.name}
                     </h3>
                   </div>
