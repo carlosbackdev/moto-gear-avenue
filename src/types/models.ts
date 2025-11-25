@@ -250,3 +250,18 @@ export interface Tracking {
   createdAt: string;
   updatedAt: string;
 }
+
+/**
+ * Change Password Request
+ */
+export interface ChangePasswordRequest {
+  email: string;
+  newPassword: string;
+}
+
+/**
+ * Change Password Response
+ */
+export interface ChangePasswordResponse {
+  message: string;
+}

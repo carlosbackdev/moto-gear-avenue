@@ -9,6 +9,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { SearchBar } from './SearchBar';
@@ -16,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { categoryService } from '@/services/category.service';
 import { orderService } from '@/services/order.service';
 import { Category } from '@/types/models';
+import logoMotogear from '@/assets/logo-motogear.png';
 
 export const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -54,7 +56,7 @@ export const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-6">
         <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-          <div className="text-2xl font-bold text-primary">MotoGear</div>
+          <img src={logoMotogear} alt="MotoGear Logo" className="h-10 w-auto" />
         </Link>
 
         <div className="flex-1 max-w-2xl hidden md:block">
@@ -138,6 +140,22 @@ export const Navbar = () => {
                     Mis Pedidos
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Cerrar Sesión
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/cart" className="flex items-center cursor-pointer">
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Mi Carrito
+                    {totalItems > 0 && (
+                      <Badge variant="default" className="ml-auto">
+                        {totalItems}
+                      </Badge>
+                    )}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
                   Cerrar Sesión
