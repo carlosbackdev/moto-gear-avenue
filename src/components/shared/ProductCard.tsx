@@ -39,35 +39,38 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <Link to={`/product/${product.id}`}>
-      <Card className="group overflow-hidden border-border hover:shadow-hover transition-all duration-300">
+      <Card className="group relative overflow-hidden border-border hover:shadow-xl hover:border-primary/50 transition-all duration-500 hover:-translate-y-1">
         <CardContent className="p-0">
-          <div className="aspect-square overflow-hidden bg-muted">
+          <div className="aspect-square overflow-hidden bg-muted relative">
+            {product.discount > 0 && (
+              <div className="absolute top-2 right-2 z-10 bg-destructive text-destructive-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
+                -{product.discount}%
+              </div>
+            )}
             <img
               src={imageService.getFullImageUrl(product.imageUrl)}
               alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="h-full w-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:rotate-1"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col items-start p-4 space-y-2">
+        <CardFooter className="flex flex-col items-start p-4 space-y-3 bg-card">
           <div className="w-full">
-            <p className="text-xs text-muted-foreground font-medium uppercase">{product.brand}</p>
-            <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{product.brand}</p>
+            <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors duration-300 mt-1">
               {product.name}
             </h3>
           </div>
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-primary">{product.sellPrice.toFixed(2)}€</span>
-                {product.discount > 0 && (
-                  <span className="text-xs font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded">
-                    -{product.discount}%
-                  </span>
-                )}
+                <span className="text-xl font-bold text-primary group-hover:scale-110 transition-transform duration-300 inline-block">
+                  {product.sellPrice.toFixed(2)}€
+                </span>
               </div>
               {product.discount > 0 && (
-                <span className="text-sm text-muted-foreground line-through">
+                <span className="text-sm text-muted-foreground line-through opacity-70">
                   {product.originalPrice.toFixed(2)}€
                 </span>
               )}
@@ -75,9 +78,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <Button
               size="sm"
               onClick={handleAddToCart}
-              className="gap-2"
+              className="gap-2 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300"
             >
-              <ShoppingCart className="h-4 w-4" />
+              <ShoppingCart className="h-4 w-4 group-hover:animate-bounce" />
               Añadir
             </Button>
           </div>
