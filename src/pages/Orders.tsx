@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Order, BackendCartItem, Product } from '@/types/models';
 import { orderService } from '@/services/order.service';
 import { cartShadedService } from '@/services/cart-shaded.service';
@@ -268,7 +268,11 @@ export default function Orders() {
                         <h4 className="font-medium text-sm text-muted-foreground">Productos del pedido:</h4>
                         <div className="space-y-2">
                           {order.products.map(({ cartItem, product }) => (
-                            <div key={cartItem.id} className="flex items-center gap-3 p-2 rounded-lg border bg-muted/50">
+                            <Link
+                              key={cartItem.id}
+                              to={`/product/${product.id}`}
+                              className="flex items-center gap-3 p-2 rounded-lg border bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
+                            >
                               <img 
                                 src={getImageUrl(product.imageUrl)} 
                                 alt={product.name}
@@ -290,7 +294,7 @@ export default function Orders() {
                                   {(product.sellPrice * cartItem.quantity).toFixed(2)}€
                                 </p>
                               </div>
-                            </div>
+                            </Link>
                           ))}
                         </div>
                       </div>
@@ -349,7 +353,7 @@ export default function Orders() {
                         </AlertDialog>
                       </div>
                     )}
-                    {order.status === 'SHIPPED' && (
+                    {order.status === 'SHIPPED' ? (
                       <div className="pt-2">
                         <Button 
                           className="w-full" 
@@ -359,7 +363,13 @@ export default function Orders() {
                           Ver Seguimiento
                         </Button>
                       </div>
-                    )}
+                    ) : order.status === 'PAID' ? (
+                      <div className="pt-2">
+                        <Badge variant="secondary" className="w-full justify-center py-3 bg-gray-500 text-white hover:bg-gray-500">
+                          Procesando - En espera de seguimiento
+                        </Badge>
+                      </div>
+                    ) : null}
                   </div>
                 </CardContent>
               </Card>

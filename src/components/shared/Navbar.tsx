@@ -1,8 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, Package, Heart, ChevronDown } from 'lucide-react';
+import { ShoppingCart, User, LogOut, Package, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
-import { useWishlist } from '@/contexts/WishlistContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -21,7 +20,6 @@ import { Category } from '@/types/models';
 export const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const { totalItems } = useCart();
-  const { wishlist } = useWishlist();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [ordersCount, setOrdersCount] = useState(0);
@@ -91,17 +89,6 @@ export const Navbar = () => {
           
           {isAuthenticated && (
             <>
-              <Link to="/wishlist" className="relative">
-                <Button variant="ghost" size="icon">
-                  <Heart className="h-5 w-5" />
-                  {wishlist.length > 0 && (
-                    <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                      {wishlist.length}
-                    </Badge>
-                  )}
-                </Button>
-              </Link>
-
               <Link to="/orders" className="relative">
                 <Button variant="ghost" size="icon">
                   <Package className="h-5 w-5" />
@@ -143,12 +130,6 @@ export const Navbar = () => {
                   <Link to="/account" className="flex items-center cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Mi Cuenta
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/wishlist" className="flex items-center cursor-pointer">
-                    <Heart className="mr-2 h-4 w-4" />
-                    Mis Favoritos
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 export const Footer = () => {
   return (
@@ -34,18 +33,10 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Síguenos</h4>
-            <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-            </div>
+            <h4 className="font-semibold mb-4">Atención al Cliente</h4>
+            <p className="text-sm text-muted-foreground">
+              ¿Tienes alguna duda? Contáctanos y te ayudaremos con tu pedido.
+            </p>
           </div>
         </div>
 
