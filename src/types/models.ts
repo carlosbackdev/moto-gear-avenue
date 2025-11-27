@@ -29,6 +29,8 @@ export interface Product {
   currency: string;
   shippingCost: number;
   deliveryEstimateDays: string;
+  deliveryMinDate: string; // ISO date string
+  deliveryMaxDate: string; // ISO date string
   variant: string; // JSON string de ProductVariantGroup[]
   sellerName: string;
   category: number;

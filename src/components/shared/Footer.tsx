@@ -40,7 +40,9 @@ export const Footer = () => {
             </p>
           </div>
         </div>
-
+ <div className="mt-8 pt-8 border-t border-border/30 text-center text-sm text-muted-foreground/80">
+          <p> Todos los productos están homologados por la normativa europea (UE).</p>
+        </div>
         <div className="mt-8 pt-8 border-t border-border/30 text-center text-sm text-muted-foreground/80">
           <p>&copy; 2024 MotoGear. Todos los derechos reservados.</p>
         </div>

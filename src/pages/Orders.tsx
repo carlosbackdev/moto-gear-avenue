@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import repartidorImg from '@/assets/repartidor.png';
 import { useNavigate, Link } from 'react-router-dom';
 import { Order, BackendCartItem, Product } from '@/types/models';
 import { orderService } from '@/services/order.service';
@@ -354,7 +355,8 @@ export default function Orders() {
                       </div>
                     )}
                     {order.status === 'SHIPPED' ? (
-                      <div className="pt-2">
+                      <div className="pt-2 flex flex-col items-center">
+                        <img src={repartidorImg} alt="En reparto" className="h-12 w-12 mb-2" />
                         <Button 
                           className="w-full" 
                           onClick={() => navigate(`/track/${order.id}`)}

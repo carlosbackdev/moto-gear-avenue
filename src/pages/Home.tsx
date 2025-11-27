@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Shield, Truck, HeadphonesIcon } from 'lucide-react';
+import { ArrowRight, Shield, Truck, HeadphonesIcon, Heart, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/shared/ProductCard';
 import { Product, Category } from '@/types/models';
@@ -194,7 +194,7 @@ export default function Home() {
       {/* Features */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Truck className="h-8 w-8 text-primary" />
@@ -205,6 +205,13 @@ export default function Home() {
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Shield className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Productos Seguros</h3>
+              <p className="text-muted-foreground">Los productos siguen los estandares europeos de seguridad</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <Package className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Devolución Gratis</h3>
               <p className="text-muted-foreground">Devoluciones sin coste en todos los productos</p>

@@ -132,18 +132,55 @@ export default function ProductDetail() {
     }
   };
 
-  const parseDeliveryDates = (): string => {
-    if (!product?.deliveryEstimateDays) return '';
-    
-    const match = product.deliveryEstimateDays.match(/(\d+)-(\d+)\s*días/);
-    if (!match) return product.deliveryEstimateDays;
-    
-    const [_, startDay, endDay] = match;
-    const today = new Date();
-    const currentMonth = today.toLocaleString('es-ES', { month: 'long' });
-    
-    return `${startDay}-${endDay} de ${currentMonth}`;
+    const parseDeliveryDates = (): string => {
+    if (!product) return '';
+
+    const { deliveryMinDate, deliveryMaxDate, deliveryEstimateDays } = product;
+
+    // 1) Si tenemos fechas ISO del backend, usamos esas
+    if (deliveryMinDate && deliveryMaxDate) {
+      const minDate = new Date(deliveryMinDate);
+      const maxDate = new Date(deliveryMaxDate);
+
+      if (isNaN(minDate.getTime()) || isNaN(maxDate.getTime())) {
+        // Si algo viene mal, usamos el string antiguo si existe
+        return deliveryEstimateDays || '';
+      }
+
+      const dayMin = minDate.getDate();
+      const dayMax = maxDate.getDate();
+
+      const monthMin = minDate.toLocaleString('es-ES', { month: 'long' });
+      const monthMax = maxDate.toLocaleString('es-ES', { month: 'long' });
+
+      const yearMin = minDate.getFullYear();
+      const yearMax = maxDate.getFullYear();
+
+      // Mismo mes y año → "19-23 de noviembre"
+      if (monthMin === monthMax && yearMin === yearMax) {
+        return `${dayMin}-${dayMax} de ${monthMin}`;
+      }
+
+      // Mes o año distinto → "30 de noviembre - 3 de diciembre"
+      return `${dayMin} de ${monthMin} - ${dayMax} de ${monthMax}`;
+    }
+
+    // 2) Compatibilidad: si no hay fechas ISO, usamos el formato viejo "19-23 días"
+    if (deliveryEstimateDays) {
+      const match = deliveryEstimateDays.match(/(\d+)-(\d+)\s*días/);
+      if (!match) return deliveryEstimateDays;
+
+      const [, startDay, endDay] = match;
+      const today = new Date();
+      const currentMonth = today.toLocaleString('es-ES', { month: 'long' });
+
+      return `${startDay}-${endDay} de ${currentMonth}`;
+    }
+
+    // 3) No hay info
+    return '';
   };
+
 
   const cleanSpecifications = () => {
     if (!product?.specifications) return null;
