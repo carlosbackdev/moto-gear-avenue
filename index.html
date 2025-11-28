@@ -5,33 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>MotoGear - Accesorios Premium para Motoristas</title>
-    <meta name="title" content="MotoGear - Accesorios Premium para Motoristas" />
-    <meta name="description" content="Tienda online especializada en accesorios y equipamiento premium para motocicletas. Cascos, guantes, chaquetas, maletas y más. Envío rápido en 2-7 días." />
-    <meta name="keywords" content="accesorios moto, cascos moto, guantes moto, equipamiento motorista, tienda moto online, cascos integrales, guantes racing, chaquetas moto" />
+    <title>MotoGear - Accesorios Premium para Motoristas | Cascos, Guantes y Equipamiento</title>
+    <meta name="title" content="MotoGear - Accesorios Premium para Motoristas | Cascos, Guantes y Equipamiento" />
+    <meta name="description" content="✓ Tienda online de accesorios y equipamiento premium para motos ✓ Cascos, guantes, chaquetas, maletas y más ✓ Envío en 2-7 días ✓ Devolución gratis ✓ Los mejores precios" />
+    <meta name="keywords" content="accesorios moto, cascos moto, guantes moto, equipamiento motorista, tienda moto online, cascos integrales, guantes racing, chaquetas moto, maletas moto, protecciones moto, botas moto, escapesoria moto" />
     <meta name="author" content="MotoGear" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
     <link rel="canonical" href="https://motogear.com" />
+    
+    <!-- Language and Region -->
+    <meta http-equiv="content-language" content="es-ES" />
+    <link rel="alternate" hreflang="es" href="https://motogear.com" />
+    <link rel="alternate" hreflang="x-default" href="https://motogear.com" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/favicon.png" />
+    <!-- Favicon - Compatible con todos los navegadores y dispositivos -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/favicon.png" color="#FF6B35" />
+    <meta name="msapplication-TileColor" content="#FF6B35" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://motogear.com" />
     <meta property="og:title" content="MotoGear - Accesorios Premium para Motoristas" />
-    <meta property="og:description" content="Equipamiento de alta calidad para motoristas. Envío rápido y devolución gratis en todos los productos." />
-    <meta property="og:image" content="https://motogear.com/og-image.jpg" />
+    <meta property="og:description" content="✓ Equipamiento de alta calidad para motoristas ✓ Envío rápido en 2-7 días ✓ Devolución gratis ✓ Los mejores precios en accesorios para moto" />
+    <meta property="og:image" content="https://motogear.com/icon-512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="MotoGear - Accesorios para Moto" />
     <meta property="og:site_name" content="MotoGear" />
     <meta property="og:locale" content="es_ES" />
 
-    <!-- Twitter -->
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://motogear.com" />
     <meta name="twitter:title" content="MotoGear - Accesorios Premium para Motoristas" />
-    <meta name="twitter:description" content="Equipamiento de alta calidad para motoristas. Envío rápido y devolución gratis." />
-    <meta name="twitter:image" content="https://motogear.com/og-image.jpg" />
+    <meta name="twitter:description" content="✓ Equipamiento de alta calidad para motoristas ✓ Envío rápido ✓ Devolución gratis" />
+    <meta name="twitter:image" content="https://motogear.com/icon-512.png" />
+    <meta name="twitter:image:alt" content="MotoGear - Accesorios para Moto" />
     <meta name="twitter:site" content="@MotoGear" />
     <meta name="twitter:creator" content="@MotoGear" />
 
@@ -55,9 +73,13 @@
       "name": "MotoGear",
       "url": "https://motogear.com",
       "description": "Tienda online especializada en accesorios y equipamiento premium para motocicletas",
+      "inLanguage": "es-ES",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://motogear.com/catalog?search={search_term_string}",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://motogear.com/catalog?search={search_term_string}"
+        },
         "query-input": "required name=search_term_string"
       }
     }
@@ -68,18 +90,34 @@
       "@type": "Organization",
       "name": "MotoGear",
       "url": "https://motogear.com",
-      "logo": "https://motogear.com/logo-motogear.png",
+      "logo": "https://motogear.com/icon-512.png",
+      "image": "https://motogear.com/icon-512.png",
+      "description": "Tienda online de accesorios premium para motocicletas",
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+34-XXX-XXX-XXX",
         "contactType": "customer service",
-        "availableLanguage": ["es"]
+        "availableLanguage": ["es", "Spanish"],
+        "areaServed": "ES"
       },
       "sameAs": [
         "https://www.facebook.com/motogear",
         "https://www.instagram.com/motogear",
         "https://twitter.com/motogear"
       ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "MotoGear",
+      "url": "https://motogear.com",
+      "description": "Tienda online de accesorios y equipamiento para motocicletas",
+      "image": "https://motogear.com/icon-512.png",
+      "priceRange": "€€",
+      "paymentAccepted": "Credit Card, Debit Card, Online Payment",
+      "currenciesAccepted": "EUR"
     }
     </script>
 
