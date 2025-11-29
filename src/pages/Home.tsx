@@ -53,7 +53,7 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const [products, cats] = await Promise.all([
-          productService.getProducts(),
+          productService.getBestProducts(),
           categoryService.getCategories(),
         ]);
         

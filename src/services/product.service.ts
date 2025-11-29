@@ -62,6 +62,12 @@ class ProductService {
     const response = await apiService.get<PageResponse<Product>>(`/products/page?page=${page}&size=${size}`);
     return response.content.map(p => this.normalizeProduct(p));
   }
+  async getBestProducts(): Promise<Product[]> {
+    const response = await apiService.get<Product[]>('/best/get-products');
+    return response.map(p => this.normalizeProduct(p));
+  }
+  
+
 
   /**
    * Obtiene un producto por ID con todas sus imágenes
