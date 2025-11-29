@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { Product, ProductVariantGroup } from '@/types/models';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { imageService } from '@/services/image.service';
 import { toast } from 'sonner';
+import { LoginModal } from '@/components/auth/LoginModal';
 
 interface ProductCardProps {
   product: Product;
@@ -13,9 +16,17 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { addItem } = useCart();
+  const { isAuthenticated } = useAuth();
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    
+    // Si no está autenticado, mostrar modal de login
+    if (!isAuthenticated) {
+      setLoginModalOpen(true);
+      return;
+    }
     
     // Si el producto tiene variantes, seleccionar la primera opción
     let variantString: string | undefined;
@@ -38,8 +49,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <Link to={`/product/${product.id}`}>
-      <Card className="group overflow-hidden border-border hover:shadow-hover transition-all duration-300">
+    <>
+      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
+      <Link to={`/product/${product.id}`}>
+        <Card className="group overflow-hidden border-border hover:shadow-hover transition-all duration-300">
         <CardContent className="p-0">
           <div className="aspect-square overflow-hidden bg-muted">
             <img
@@ -84,5 +97,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </CardFooter>
       </Card>
     </Link>
+    </>
   );
 };
