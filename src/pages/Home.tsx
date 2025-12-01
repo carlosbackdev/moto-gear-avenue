@@ -7,6 +7,8 @@ import { Product, Category } from '@/types/models';
 import { productService } from '@/services/product.service';
 import { categoryService } from '@/services/category.service';
 import { imageService } from '@/services/image.service';
+import { homeBannerService, HomeBanner } from '@/services/home-banner.service';
+import { environment } from '@/config/environment';
 import { mockProducts, mockCategories } from '@/lib/mockData';
 import heroImage from '@/assets/hero-moto.jpg';
 import heroBlackFriday from '@/assets/hero-blackfriday.jpg';
@@ -21,49 +23,66 @@ import {
 } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 
-const heroSlides = [
+// Fallback banners en caso de que falle la API
+const fallbackHeroSlides = [
   {
     image: heroBlackFridaySale,
     title: 'Black Friday\nDescuentos en Toda la Web',
     description: 'Aprovecha los mejores descuentos del año en todo nuestro catálogo de accesorios para moto',
+    linkUrl: '/catalog',
+    linkName: 'Ver Accesorios',
   },
   {
     image: heroImage,
     title: 'Equipamiento de\nAlta Velocidad',
     description: 'Accesorios premium para motoristas que buscan rendimiento, seguridad y estilo',
+    linkUrl: '/catalog',
+    linkName: 'Ver Accesorios',
   },
   {
     image: heroBlackFriday,
     title: 'Descuentos en\nAccesorios Moto',
     description: 'Ofertas especiales en cascos, guantes y equipamiento de protección premium',
+    linkUrl: '/catalog',
+    linkName: 'Ver Accesorios',
   },
   {
     image: heroSafety,
     title: 'Seguridad y\nProtección Total',
     description: 'Equipamiento certificado para tu máxima protección en cada viaje',
+    linkUrl: '/catalog',
+    linkName: 'Ver Accesorios',
   },
 ];
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [banners, setBanners] = useState<(HomeBanner | typeof fallbackHeroSlides[0])[]>(fallbackHeroSlides);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [products, cats] = await Promise.all([
+        const [products, cats, homeBanners] = await Promise.all([
           productService.getBestProducts(),
           categoryService.getCategories(),
+          homeBannerService.getHomeBanners(),
         ]);
         
         setFeaturedProducts(products.slice(0, 8));
         setCategories(cats);
+        
+        // Si hay banners del backend, usarlos; si no, mantener los fallback
+        if (homeBanners && homeBanners.length > 0) {
+          setBanners(homeBanners);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         // Fallback a datos mock si falla
         setFeaturedProducts(mockProducts.slice(0, 8));
         setCategories(mockCategories);
+        // Los banners ya tienen fallback por defecto
       } finally {
         setLoading(false);
       }
@@ -89,32 +108,42 @@ export default function Home() {
           className="w-full h-full"
         >
           <CarouselContent className="h-[600px]">
-            {heroSlides.map((slide, index) => (
-              <CarouselItem key={index} className="h-[600px]">
-                <div className="relative h-full flex items-center justify-center overflow-hidden">
-                  <img 
-                    src={slide.image} 
-                    alt={`Hero ${index + 1}`} 
-                    className="absolute inset-0 w-full h-full object-cover" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
-                  <div className="relative z-10 container mx-auto px-4 text-center text-white">
-                    <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in whitespace-pre-line">
-                      {slide.title}
-                    </h1>
-                    <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
-                      {slide.description}
-                    </p>
-                    <Link to="/catalog">
-                      <Button size="lg" variant="secondary" className="gap-2 text-lg px-8 py-6">
-                        Ver Accesorios
-                        <ArrowRight className="h-5 w-5" />
-                      </Button>
-                    </Link>
+            {banners.map((slide, index) => {
+              // Construir la URL de la imagen
+              const imageUrl = 'image' in slide 
+                ? slide.image 
+                : `${environment.imageBaseUrl}${slide.imageUrl}`;
+              
+              const linkUrl = slide.linkUrl || '/catalog';
+              const linkName = slide.linkName || 'Ver Accesorios';
+              
+              return (
+                <CarouselItem key={index} className="h-[600px]">
+                  <div className="relative h-full flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={imageUrl} 
+                      alt={slide.title} 
+                      className="absolute inset-0 w-full h-full object-cover" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
+                    <div className="relative z-10 container mx-auto px-4 text-center text-white">
+                      <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in whitespace-pre-line">
+                        {slide.title}
+                      </h1>
+                      <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+                        {slide.description}
+                      </p>
+                      <Link to={linkUrl}>
+                        <Button size="lg" variant="secondary" className="gap-2 text-lg px-8 py-6">
+                          {linkName}
+                          <ArrowRight className="h-5 w-5" />
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </CarouselItem>
-            ))}
+                </CarouselItem>
+              );
+            })}
           </CarouselContent>
           <CarouselPrevious className="left-4" />
           <CarouselNext className="right-4" />
