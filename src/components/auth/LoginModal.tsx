@@ -197,15 +197,19 @@ export function LoginModal({ open, onOpenChange, trigger }: LoginModalProps) {
             </div>
           </div>
 
-          <div className="flex justify-center p-4 bg-muted/50 rounded-lg border border-border">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useOneTap={false}
-              text="signin_with"
-              size="large"
-              width="300"
-            />
+          <div className="flex justify-center p-4 bg-muted/50 rounded-lg border border-border w-full">
+            <div className="w-full max-w-[280px]">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap={false}
+                text="signin_with"
+                size="large"
+                width="260"
+                theme="outline"
+                shape="rectangular"
+              />
+            </div>
           </div>
 
           <div className="text-center text-sm space-y-2">
