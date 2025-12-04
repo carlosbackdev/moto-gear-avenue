@@ -196,8 +196,7 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="flex justify-center p-4 bg-muted/50 rounded-lg border border-border w-full">
-            <div className="w-full max-w-[300px]">
+          <div className="flex justify-center">       
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
                 onError={handleGoogleError}
@@ -208,7 +207,6 @@ export default function Login() {
                 theme="outline"
                 shape="rectangular"
               />
-            </div>
           </div>
 
           <div className="mt-4 text-center text-sm space-y-2">
