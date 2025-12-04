@@ -214,13 +214,10 @@ export default function Login() {
                     variant="outline"
                     size="sm"
                     className="gap-2"
-                    onClick={() => {
-                      navigator.clipboard.writeText(window.location.href);
-                      toast.success('Enlace copiado. Pégalo en tu navegador.');
-                    }}
+                    onClick={() => window.open('https://motogear.es/', '_blank')}
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Copiar enlace
+                    Abrir en navegador
                   </Button>
                 </div>
               </div>
