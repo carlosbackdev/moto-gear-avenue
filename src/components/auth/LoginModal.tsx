@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -8,8 +8,14 @@ import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ExternalLink } from 'lucide-react';
 import { usersService } from '@/services/users.service';
+
+// Detectar navegadores embebidos (WebViews) de apps sociales
+const isInAppBrowser = (): boolean => {
+  const ua = navigator.userAgent || (navigator as any).vendor || '';
+  return /FBAN|FBAV|Instagram|TikTok|Snapchat|Line|Twitter|Pinterest|LinkedIn|Bytedance/i.test(ua);
+};
 
 interface LoginModalProps {
   open: boolean;
@@ -18,6 +24,7 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ open, onOpenChange, trigger }: LoginModalProps) {
+  const isWebView = useMemo(() => isInAppBrowser(), []);
   const navigate = useNavigate();
   const { login, firebaseLogin } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -198,6 +205,27 @@ export function LoginModal({ open, onOpenChange, trigger }: LoginModalProps) {
           </div>
 
           <div className="flex justify-center">
+            {isWebView ? (
+              <div className="w-full space-y-3">
+                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-center">
+                  <p className="text-sm text-amber-600 dark:text-amber-400 mb-2">
+                    Para usar Google, abre en tu navegador
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      toast.success('Enlace copiado. Pégalo en tu navegador.');
+                    }}
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Copiar enlace
+                  </Button>
+                </div>
+              </div>
+            ) : (
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
                 onError={handleGoogleError}
@@ -208,6 +236,7 @@ export function LoginModal({ open, onOpenChange, trigger }: LoginModalProps) {
                 theme="outline"
                 shape="rectangular"
               />
+            )}
           </div>
 
           <div className="text-center text-sm space-y-2">
