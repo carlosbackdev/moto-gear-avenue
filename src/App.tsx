@@ -9,6 +9,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
@@ -44,6 +45,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
+              <ScrollToTop />
               <div className="flex flex-col min-h-screen">
                 <Navbar />
                 <main className="flex-1">
