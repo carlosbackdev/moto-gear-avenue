@@ -155,7 +155,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">
-              Ofertas Destacadas <span className="text-primary">Black Friday</span>
+              <span className="text-primary">Productos Destacados</span>
             </h2>
             <Link to="/catalog">
               <Button variant="outline" className="gap-2">

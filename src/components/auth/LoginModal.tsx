@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { Eye, EyeOff, ExternalLink } from 'lucide-react';
+import { Eye, EyeOff, ExternalLink, Copy } from 'lucide-react';
 import { usersService } from '@/services/users.service';
 
 // Detectar navegadores embebidos (WebViews) de apps sociales
@@ -105,6 +105,15 @@ export function LoginModal({ open, onOpenChange, trigger }: LoginModalProps) {
 
   const handleGoogleError = () => {
     toast.error('Error al iniciar sesión con Google');
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success('Enlace copiado. Pégalo en Chrome o Safari para usar Google.');
+  };
+
+  const handleOpenExternal = () => {
+    window.open(window.location.href, '_blank');
   };
 
   const handleRecoverAccount = async (e: React.FormEvent) => {
@@ -207,19 +216,34 @@ export function LoginModal({ open, onOpenChange, trigger }: LoginModalProps) {
           <div className="flex justify-center">
             {isWebView ? (
               <div className="w-full space-y-3">
-                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-center">
-                  <p className="text-sm text-amber-600 dark:text-amber-400 mb-2">
-                    Para usar Google, abre en tu navegador
+                <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg text-center space-y-3">
+                  <p className="text-sm text-amber-600 dark:text-amber-400 font-medium">
+                    Google no permite iniciar sesión desde la app de TikTok/Instagram.
                   </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                    onClick={() => window.open('https://motogear.es/', '_blank')}
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    Abrir en navegador
-                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    Usa tu email y contraseña, o abre la web en tu navegador:
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-2 w-full"
+                      onClick={handleOpenExternal}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      Abrir fuera
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-2 w-full"
+                      onClick={handleCopyLink}
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copiar Link
+                    </Button>
+                  </div>
                 </div>
               </div>
             ) : (
