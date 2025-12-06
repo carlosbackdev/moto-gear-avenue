@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Shield, Truck, HeadphonesIcon, Heart, Package } from 'lucide-react';
+import { ArrowRight, Shield, Truck, HeadphonesIcon, Package, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/shared/ProductCard';
 import { Product, Category } from '@/types/models';
@@ -252,6 +252,48 @@ export default function Home() {
               <h3 className="text-xl font-semibold mb-2">Soporte 24/7</h3>
               <p className="text-muted-foreground">Atención personalizada siempre disponible</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Secure Payment Section */}
+      <section className="py-16 bg-gradient-to-br from-primary/10 to-primary/5">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
+              <CreditCard className="h-10 w-10 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Pago 100% Seguro con <span className="text-primary">Stripe</span>
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Tus pagos están protegidos con la tecnología de Stripe, el procesador de pagos 
+              utilizado por millones de empresas en todo el mundo. Encriptación de nivel bancario 
+              y protección antifraude incluida.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-background/80 rounded-xl p-6 border border-border">
+                <Shield className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold mb-2">Encriptación SSL</h3>
+                <p className="text-sm text-muted-foreground">Datos protegidos con encriptación de 256 bits</p>
+              </div>
+              <div className="bg-background/80 rounded-xl p-6 border border-border">
+                <CreditCard className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold mb-2">Certificado PCI DSS</h3>
+                <p className="text-sm text-muted-foreground">Cumplimos los estándares de seguridad bancaria</p>
+              </div>
+              <div className="bg-background/80 rounded-xl p-6 border border-border">
+                <Package className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold mb-2">Garantía de Compra</h3>
+                <p className="text-sm text-muted-foreground">Devolución gratuita si no estás satisfecho</p>
+              </div>
+            </div>
+            <Link to="/payment-info">
+              <Button variant="outline" className="gap-2">
+                Más información sobre pagos
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

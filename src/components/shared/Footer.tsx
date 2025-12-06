@@ -28,6 +28,7 @@ export const Footer = () => {
             <ul className="space-y-2 text-sm text-muted-foreground/80">
               <li><Link to="/shipping" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Envíos</Link></li>
               <li><Link to="/returns" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Devoluciones</Link></li>
+              <li><Link to="/payment-info" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Pagos</Link></li>
               <li><Link to="/terms" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Términos</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Contacto</Link></li>
             </ul>

@@ -27,6 +27,7 @@ import Contact from "./pages/Contact";
 import ShippingPolicy from "./pages/legal/ShippingPolicy";
 import Returns from "./pages/legal/Returns";
 import Terms from "./pages/legal/Terms";
+import PaymentInfo from "./pages/legal/PaymentInfo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ const App = () => (
                     <Route path="/shipping" element={<ShippingPolicy />} />
                     <Route path="/returns" element={<Returns />} />
                     <Route path="/terms" element={<Terms />} />
+                    <Route path="/payment-info" element={<PaymentInfo />} />
                     
                     {/* Protected Routes */}
                     <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
