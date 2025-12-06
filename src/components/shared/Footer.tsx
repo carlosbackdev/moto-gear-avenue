@@ -39,6 +39,12 @@ export const Footer = () => {
             <p className="text-sm text-muted-foreground/80 leading-relaxed">
               ¿Tienes alguna duda? Contáctanos y te ayudaremos con tu pedido.
             </p>
+            <a 
+              href="mailto:motogearspain@gmail.com" 
+              className="text-sm text-primary hover:underline inline-block"
+            >
+              motogearspain@gmail.com
+            </a>
           </div>
         </div>
  <div className="mt-8 pt-8 border-t border-border/30 text-center text-sm text-muted-foreground/80">
