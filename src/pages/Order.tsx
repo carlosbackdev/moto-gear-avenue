@@ -184,7 +184,7 @@ export default function Order() {
           <CardContent className="space-y-4">
             <div className="flex items-center gap-3 p-4 border rounded-lg bg-muted/50">
               <div className="flex-1">
-                <p className="font-semibold">Pago con Tarjeta</p>
+                <p className="font-semibold">Pago con Tarjeta, Google Pay y más.</p>
                 <p className="text-sm text-muted-foreground">
                   Procesado de forma segura por Stripe
                 </p>
@@ -208,7 +208,7 @@ export default function Order() {
                   Procesando...
                 </>
               ) : (
-                'Pagar con Tarjeta'
+                'Pagar ahora'
               )}
             </Button>
           </CardContent>
