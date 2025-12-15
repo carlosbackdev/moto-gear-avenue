@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ProductCard } from '@/components/shared/ProductCard';
 import { Product, Category } from '@/types/models';
 import { productService } from '@/services/product.service';
@@ -11,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { mockProducts, mockCategories } from '@/lib/mockData';
+import { DEFAULT_SEO } from '@/lib/seo';
 
 type SortOption = 'default' | 'price-asc' | 'price-desc' | 'discount-desc' | 'name-asc' | 'name-desc';
 
@@ -134,11 +136,30 @@ export default function Catalog() {
     }
   };
 
+  // Get current category name for SEO
+  const currentCategory = categories.find(c => c.id === selectedCategory);
+  const pageTitle = searchTerm 
+    ? `Buscar "${searchTerm}" | MotoGear` 
+    : currentCategory 
+      ? `${currentCategory.name} | MotoGear - Accesorios Moto`
+      : 'Catálogo de Accesorios | MotoGear';
+  const pageDescription = searchTerm
+    ? `Resultados de búsqueda para "${searchTerm}" en MotoGear. Encuentra los mejores accesorios para tu moto.`
+    : currentCategory
+      ? `Compra ${currentCategory.name} para moto en MotoGear. Amplio catálogo con los mejores precios. Envío rápido y devolución gratis.`
+      : 'Catálogo completo de accesorios para moto. Cascos, guantes, chaquetas, maletas y más. Los mejores precios y envío rápido.';
+
   return (
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={`${DEFAULT_SEO.siteUrl}/catalog${selectedCategory ? `?category=${selectedCategory}` : ''}`} />
+      </Helmet>
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Catálogo de Accesorios</h1>
+          <h1 className="text-4xl font-bold mb-2">{currentCategory ? currentCategory.name : 'Catálogo de Accesorios'}</h1>
           <p className="text-muted-foreground">
             {filteredProducts.length} {filteredProducts.length === 1 ? 'producto encontrado' : 'productos encontrados'}
           </p>
@@ -289,5 +310,6 @@ export default function Catalog() {
         )}
       </div>
     </div>
+    </>
   );
 }

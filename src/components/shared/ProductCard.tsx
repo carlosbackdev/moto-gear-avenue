@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { imageService } from '@/services/image.service';
 import { toast } from 'sonner';
 import { LoginModal } from '@/components/auth/LoginModal';
+import { getProductUrl } from '@/lib/seo';
 
 interface ProductCardProps {
   product: Product;
@@ -51,7 +52,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <>
       <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
-      <Link to={`/product/${product.id}`}>
+      <Link to={getProductUrl(product.id, product.name)}>
         <Card className="group overflow-hidden border-border hover:shadow-hover transition-all duration-300">
         <CardContent className="p-0">
           <div className="aspect-square overflow-hidden bg-muted">
