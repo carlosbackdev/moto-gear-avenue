@@ -30,6 +30,8 @@ import ShippingPolicy from "./pages/legal/ShippingPolicy";
 import Returns from "./pages/legal/Returns";
 import Terms from "./pages/legal/Terms";
 import PaymentInfo from "./pages/legal/PaymentInfo";
+import BlogList from "./pages/blog/BlogList";
+import BlogPostDetail from "./pages/blog/BlogPost";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,44 +49,46 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                <ScrollToTop />
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <main className="flex-1">
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/catalog" element={<Catalog />} />
-                      <Route path="/product/:id/:slug?" element={<ProductDetail />} />
-                      <Route path="/cart" element={<Cart />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/shipping" element={<ShippingPolicy />} />
-                      <Route path="/returns" element={<Returns />} />
-                      <Route path="/terms" element={<Terms />} />
-                      <Route path="/payment-info" element={<PaymentInfo />} />
-                      
-                      {/* Protected Routes */}
-                      <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-            <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-            <Route path="/order/:orderId" element={<ProtectedRoute><Order /></ProtectedRoute>} />
-            <Route path="/track/:orderId" element={<ProtectedRoute><Track /></ProtectedRoute>} />
-            <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
-                      <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-                      <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-                      
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                </div>
-              </BrowserRouter>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
-      </TooltipProvider>
-    </GoogleOAuthProvider>
+                  <ScrollToTop />
+                  <div className="flex flex-col min-h-screen">
+                    <Navbar />
+                    <main className="flex-1">
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/catalog" element={<Catalog />} />
+                        <Route path="/product/:id/:slug?" element={<ProductDetail />} />
+                        <Route path="/cart" element={<Cart />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/shipping" element={<ShippingPolicy />} />
+                        <Route path="/returns" element={<Returns />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/payment-info" element={<PaymentInfo />} />
+                        <Route path="/blog" element={<BlogList />} />
+                        <Route path="/blog/:slug" element={<BlogPostDetail />} />
+
+                        {/* Protected Routes */}
+                        <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+                        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                        <Route path="/order/:orderId" element={<ProtectedRoute><Order /></ProtectedRoute>} />
+                        <Route path="/track/:orderId" element={<ProtectedRoute><Track /></ProtectedRoute>} />
+                        <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
+                        <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+                        <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                    <Footer />
+                  </div>
+                </BrowserRouter>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </TooltipProvider>
+      </GoogleOAuthProvider>
     </QueryClientProvider>
   </HelmetProvider>
 );

@@ -68,6 +68,11 @@ export const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
+          <Link to="/blog">
+            <Button variant="ghost" className="gap-2">
+              Blog
+            </Button>
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="gap-2">
@@ -77,7 +82,7 @@ export const Navbar = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               {categories.map((category) => (
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   key={category.id}
                   onClick={() => navigate(`/catalog?category=${category.id}`)}
                   className="cursor-pointer"
@@ -179,7 +184,7 @@ export const Navbar = () => {
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-white dark:bg-background flex flex-col p-6 md:hidden shadow-xl" style={{backgroundColor: 'rgba(255,255,255,1)'}}>
+        <div className="fixed inset-0 z-50 bg-white dark:bg-background flex flex-col p-6 md:hidden shadow-xl" style={{ backgroundColor: 'rgba(255,255,255,1)' }}>
           <button
             className="self-end mb-4"
             onClick={() => setMobileMenuOpen(false)}
@@ -190,6 +195,11 @@ export const Navbar = () => {
           </button>
           <SearchBar />
           <div className="flex flex-col space-y-4 mt-6 bg-white dark:bg-background rounded-xl p-4 shadow-md">
+            <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="ghost" className="gap-2 w-full justify-start">
+                Blog
+              </Button>
+            </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="gap-2 w-full justify-start">
@@ -199,7 +209,7 @@ export const Navbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-full">
                 {categories.map((category) => (
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     key={category.id}
                     onClick={() => { navigate(`/catalog?category=${category.id}`); setMobileMenuOpen(false); }}
                     className="cursor-pointer"

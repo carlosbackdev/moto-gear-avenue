@@ -267,3 +267,19 @@ export interface ChangePasswordRequest {
 export interface ChangePasswordResponse {
   message: string;
 }
+
+/**
+ * Blog Post interface
+ */
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string; // Markdown or HTML
+  author: string;
+  date: string;
+  imageUrl: string;
+  tags: string[];
+  readTime: string;
+}
