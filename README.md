@@ -1,90 +1,119 @@
-# Welcome to your Lovable project
+# MotoGear - Tienda Online de Accesorios para Moto
 
-## Project info
+![MotoGear](https://motogear.es/icon-512.png)
 
-**URL**: https://lovable.dev/projects/d686eba8-6d30-49f8-8553-180293e0395f
+## 🏍️ Sobre el Proyecto
 
-## How can I edit this code?
+**MotoGear** es una tienda online especializada en accesorios y equipamiento premium para motociclistas. Ofrecemos una amplia gama de productos de calidad, desde cascos y guantes hasta chaquetas, maletas y protecciones.
 
-There are several ways of editing your application.
+🌐 **Web**: [https://motogear.es](https://motogear.es)
 
-**Use Lovable**
+### Características principales
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d686eba8-6d30-49f8-8553-180293e0395f) and start prompting.
+- **Catálogo completo**: Amplia selección de accesorios para moto organizados por categorías
+- **Búsqueda inteligente**: Encuentra productos fácilmente por nombre, categoría o palabras clave
+- **Carrito de compra**: Gestión completa del carrito con variantes de producto
+- **Checkout seguro**: Pagos procesados de forma segura con Stripe
+- **Seguimiento de pedidos**: Rastrea tus envíos en tiempo real
+- **Sistema de reseñas**: Opiniones verificadas de clientes
+- **Diseño responsive**: Experiencia optimizada en móvil, tablet y escritorio
+- **SEO optimizado**: URLs amigables con nombres de producto para mejor posicionamiento
 
-Changes made via Lovable will be committed automatically to this repo.
+### Servicios
 
-**Use your preferred IDE**
+- ✅ **Envío rápido**: Entrega en 2-7 días laborables
+- ✅ **Devolución gratis**: Sin coste en todos los productos
+- ✅ **Pago seguro**: Encriptación SSL y certificación PCI DSS
+- ✅ **Atención al cliente**: Soporte por email en motogearspain@gmail.com
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠️ Tecnologías
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Este proyecto está construido con tecnologías modernas:
 
-Follow these steps:
+| Frontend | Backend | Pagos |
+|----------|---------|-------|
+| React 18 | Spring Boot | Stripe |
+| TypeScript | REST API | |
+| Tailwind CSS | PostgreSQL | |
+| Vite | | |
+| shadcn/ui | | |
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Otras tecnologías utilizadas
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **React Router**: Navegación SPA
+- **React Query**: Gestión de estado y caché
+- **React Helmet Async**: SEO dinámico
+- **Lucide React**: Iconografía
+- **Sonner**: Notificaciones toast
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🚀 Instalación Local
 
-# Step 4: Configure environment variables (optional, for backend connection)
-# Copy the example file and edit as needed
+### Requisitos previos
+
+- Node.js 18+ ([instalar con nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+- npm o yarn
+
+### Pasos de instalación
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/tu-usuario/motogear.git
+
+# 2. Entrar al directorio
+cd motogear
+
+# 3. Instalar dependencias
+npm install
+
+# 4. Configurar variables de entorno
 cp .env.example .env.local
 
-# Step 5: Start the development server with auto-reloading and an instant preview.
+# 5. Editar .env.local con tus URLs de backend
+# VITE_API_BASE_URL=http://localhost:8080/api
+# VITE_IMAGE_BASE_URL=http://localhost:8080
+
+# 6. Iniciar servidor de desarrollo
 npm run dev
 ```
 
-### Backend Configuration
+La aplicación estará disponible en `http://localhost:8080`
 
-This project connects to a Spring Boot backend. To configure the connection:
+## 📁 Estructura del Proyecto
 
-1. Copy `.env.example` to `.env.local`
-2. Edit `.env.local` with your backend URLs:
-   ```env
-   VITE_API_BASE_URL=http://localhost:8080/api
-   VITE_IMAGE_BASE_URL=http://localhost:8080
-   ```
+```
+src/
+├── assets/          # Imágenes y recursos estáticos
+├── components/      # Componentes reutilizables
+│   ├── shared/      # Navbar, Footer, ProductCard...
+│   ├── ui/          # Componentes shadcn/ui
+│   └── auth/        # Componentes de autenticación
+├── contexts/        # Context providers (Auth, Cart, Wishlist)
+├── hooks/           # Custom hooks
+├── lib/             # Utilidades y datos mock
+├── pages/           # Páginas de la aplicación
+├── services/        # Servicios API
+└── types/           # Definiciones TypeScript
+```
 
-For detailed backend API documentation, see [README_BACKEND_API.md](./README_BACKEND_API.md).
+## 📖 Documentación Adicional
 
-**Edit a file directly in GitHub**
+- [Documentación de la API Backend](./doc/README_BACKEND_API.md)
+- [Configuración de Google Auth](./doc/GOOGLE_AUTH_SETUP.md)
+- [Organización del Proyecto](./doc/README_ORGANIZACION.md)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🤖 Desarrollo con IA
 
-**Use GitHub Codespaces**
+Este proyecto ha sido desarrollado con la asistencia de herramientas de Inteligencia Artificial, lo que ha permitido:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Acelerar el desarrollo de componentes UI
+- Implementar mejores prácticas de código
+- Optimizar el SEO técnico
+- Mejorar la accesibilidad y experiencia de usuario
 
-## What technologies are used for this project?
+## 📄 Licencia
 
-This project is built with:
+Este proyecto es propiedad de MotoGear. Todos los derechos reservados.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/d686eba8-6d30-49f8-8553-180293e0395f) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+**MotoGear** - Tu tienda de confianza para equipamiento de moto 🏍️
