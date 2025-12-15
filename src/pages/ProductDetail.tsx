@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, ShoppingCart, Minus, Plus, Heart, Package, Truck, Shield, Calendar } from 'lucide-react';
 import { Product, ProductVariantGroup, ProductVariantOption } from '@/types/models';
 import { productService } from '@/services/product.service';
@@ -14,9 +15,10 @@ import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductReviews } from '@/components/product/ProductReviews';
 import { toast } from 'sonner';
 import { mockProducts } from '@/lib/mockData';
+import { generateSlug, truncateDescription, DEFAULT_SEO } from '@/lib/seo';
 
 export default function ProductDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { id, slug } = useParams<{ id: string; slug?: string }>();
   const navigate = useNavigate();
   const { addItem, isInCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
@@ -50,6 +52,12 @@ export default function ProductDetail() {
         }
         
         setProduct(data);
+        
+        // Redirect to URL with slug if missing
+        const expectedSlug = generateSlug(data.name);
+        if (!slug || slug !== expectedSlug) {
+          navigate(`/product/${id}/${expectedSlug}`, { replace: true });
+        }
       } catch (error) {
         console.error('Error fetching product:', error);
         // Fallback a mock data si falla
@@ -234,7 +242,65 @@ export default function ProductDetail() {
     );
   }
 
+  // SEO meta data
+  const productSlug = generateSlug(product.name);
+  const productUrl = `${DEFAULT_SEO.siteUrl}/product/${product.id}/${productSlug}`;
+  const productImage = product.imageUrl ? imageService.getFullImageUrl(product.imageUrl) : DEFAULT_SEO.defaultImage;
+  const metaDescription = truncateDescription(
+    product.description || `Compra ${product.name} en MotoGear. ${product.brand ? `Marca: ${product.brand}.` : ''} Precio: ${product.price.toFixed(2)}€. Envío rápido y devolución gratis.`
+  );
+  const metaTitle = `${product.name} | MotoGear - Accesorios Moto`;
+
   return (
+    <>
+      <Helmet>
+        <title>{metaTitle}</title>
+        <meta name="description" content={metaDescription} />
+        <meta name="keywords" content={`${product.name}, ${product.brand || ''}, accesorios moto, ${product.keywords || ''}`} />
+        <link rel="canonical" href={productUrl} />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:image" content={productImage} />
+        <meta property="og:url" content={productUrl} />
+        <meta property="og:site_name" content="MotoGear" />
+        <meta property="product:price:amount" content={product.price.toFixed(2)} />
+        <meta property="product:price:currency" content="EUR" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        <meta name="twitter:image" content={productImage} />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product.name,
+            "description": product.description || metaDescription,
+            "image": productImage,
+            "brand": {
+              "@type": "Brand",
+              "name": product.brand || "MotoGear"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": productUrl,
+              "priceCurrency": "EUR",
+              "price": product.price.toFixed(2),
+              "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              "seller": {
+                "@type": "Organization",
+                "name": "MotoGear"
+              }
+            }
+          })}
+        </script>
+      </Helmet>
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <Button
@@ -449,5 +515,6 @@ export default function ProductDetail() {
         <ProductReviews productId={product.id} />
       </div>
     </div>
+    </>
   );
 }

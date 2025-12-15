@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Shield, Truck, HeadphonesIcon, Package, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/shared/ProductCard';
@@ -22,6 +23,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import { DEFAULT_SEO } from '@/lib/seo';
 
 // Fallback banners en caso de que falle la API
 const fallbackHeroSlides = [
@@ -92,6 +94,12 @@ export default function Home() {
   }, []);
 
   return (
+    <>
+      <Helmet>
+        <title>{DEFAULT_SEO.defaultTitle}</title>
+        <meta name="description" content={DEFAULT_SEO.defaultDescription} />
+        <link rel="canonical" href={DEFAULT_SEO.siteUrl} />
+      </Helmet>
     <div className="flex flex-col min-h-screen">
       {/* Hero Carousel Section */}
       <section className="relative h-[600px]">
@@ -298,5 +306,6 @@ export default function Home() {
         </div>
       </section>
     </div>
+    </>
   );
 }
