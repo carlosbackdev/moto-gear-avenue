@@ -54,7 +54,7 @@ export default function Wishlist() {
                   </div>
                   <div className="p-4 space-y-3">
                     <div>
-                      <p className="text-xs text-muted-foreground font-medium uppercase">
+                    <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">
                         {item.product.brand}
                       </p>
                       <h3 className="font-semibold text-sm line-clamp-2">
