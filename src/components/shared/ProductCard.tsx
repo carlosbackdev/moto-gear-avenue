@@ -65,7 +65,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </CardContent>
         <CardFooter className="flex flex-col items-start p-4 space-y-2">
           <div className="w-full">
-            <p className="text-xs text-muted-foreground font-medium uppercase">{product.brand}</p>
+            <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wide">{product.brand}</p>
             <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
               {product.name}
             </h3>
