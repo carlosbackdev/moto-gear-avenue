@@ -21,6 +21,13 @@ export interface ProductVariantGroup {
 export interface Product {
   id: number;
   name: string;
+  sku?: string;
+  slug?: string;
+  status?: 'DRAFT' | 'COMING_SOON' | 'AVAILABLE' | 'OUT_OF_STOCK' | 'ARCHIVED';
+  stockQuantity?: number;
+  lowStockThreshold?: number;
+  purchasable?: boolean;
+  lowStock?: boolean;
   details: string;
   specifications: string; // JSON string
   originalPrice: number;
@@ -39,7 +46,7 @@ export interface Product {
   // Campos calculados para compatibilidad con frontend
   price?: number; // = sellPrice
   imageUrl?: string; // = images[0] o placeholder
-  stock?: number; // Por defecto 100
+  stock?: number; // Alias UI de stockQuantity
   brand?: string; // = sellerName
   description?: string; // = details
   categoryId?: number; // = category

@@ -1,266 +1,121 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, Package, ChevronDown, Menu } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useCart } from '@/contexts/CartContext';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { SearchBar } from './SearchBar';
 import { useEffect, useState } from 'react';
-import { categoryService } from '@/services/category.service';
-import { orderService } from '@/services/order.service';
-import { Category } from '@/types/models';
+import { Link, useLocation } from 'react-router-dom';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import logoMotogear from '@/assets/logo-motogear.png';
 
+const navItems = [
+  { label: 'El producto', href: '/#producto' },
+  { label: 'Cómo funciona', href: '/#como-funciona' },
+  { label: 'Compatibilidad', href: '/#compatibilidad' },
+  { label: 'Desarrollo', href: '/#desarrollo' },
+  { label: 'FAQ', href: '/#faq' },
+];
 
 export const Navbar = () => {
-  const { user, logout, isAuthenticated } = useAuth();
-  const { totalItems } = useCart();
-  const navigate = useNavigate();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [ordersCount, setOrdersCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const cats = await categoryService.getCategories();
-        setCategories(cats);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-    fetchCategories();
-  }, []);
+    setMobileMenuOpen(false);
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      if (isAuthenticated) {
-        try {
-          const orders = await orderService.getUserOrders();
-          setOrdersCount(orders.length);
-        } catch (error) {
-          console.error('Error fetching orders:', error);
-        }
-      }
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
     };
-    fetchOrders();
-  }, [isAuthenticated]);
+  }, [mobileMenuOpen]);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-6">
-        <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
-          <img src={logoMotogear} alt="MotoGear Logo" className="h-14 w-auto" />
+    <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-[#f8f7f4]/95 backdrop-blur-xl">
+      <div className="container flex h-[72px] items-center justify-between gap-6 px-4">
+        <Link to="/" className="flex items-center gap-3" aria-label="MotoGear - Inicio">
+          <img src={logoMotogear} alt="MotoGear" className="h-10 w-auto sm:h-11" />
+          <span className="hidden border-l border-black/15 pl-3 text-[10px] font-semibold uppercase leading-tight tracking-[0.12em] text-black/45 xl:block">
+            Ordenador<br />de a bordo
+          </span>
         </Link>
 
-        {/* Desktop SearchBar */}
-        <div className="flex-1 max-w-2xl hidden md:block">
-          <SearchBar />
-        </div>
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegación principal">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-[13px] font-semibold text-black/58 transition-colors hover:text-primary"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
-          <Link to="/blog">
-            <Button variant="ghost" className="gap-2">
-              Blog
-            </Button>
-          </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-2">
-                Categorías
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
-              {categories.map((category) => (
-                <DropdownMenuItem
-                  key={category.id}
-                  onClick={() => navigate(`/catalog?category=${category.id}`)}
-                  className="cursor-pointer"
-                >
-                  {category.name}
-                </DropdownMenuItem>
-              ))}
-              {categories.length === 0 && (
-                <DropdownMenuItem disabled>
-                  No hay categorías disponibles
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {isAuthenticated && (
-            <>
-              <Link to="/orders" className="relative">
-                <Button variant="ghost" size="icon">
-                  <Package className="h-5 w-5" />
-                  {ordersCount > 0 && (
-                    <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                      {ordersCount}
-                    </Badge>
-                  )}
-                </Button>
-              </Link>
-              <Link to="/cart" className="relative">
-                <Button variant="ghost" size="icon">
-                  <ShoppingCart className="h-5 w-5" />
-                  {totalItems > 0 && (
-                    <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                      {totalItems}
-                    </Badge>
-                  )}
-                </Button>
-              </Link>
-            </>
-          )}
-          {isAuthenticated ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.photoUrl || ''} alt={user?.name || 'Usuario'} />
-                    <AvatarFallback>
-                      {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link to="/account" className="flex items-center cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    Mi Cuenta
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/orders" className="flex items-center cursor-pointer">
-                    <Package className="mr-2 h-4 w-4" />
-                    Mis Pedidos
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/cart" className="flex items-center cursor-pointer">
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Mi Carrito
-                    {totalItems > 0 && (
-                      <Badge variant="default" className="ml-auto">
-                        {totalItems}
-                      </Badge>
-                    )}
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="cursor-pointer">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Cerrar Sesión
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Link to="/login">
-              <Button variant="default" size="sm">
-                Iniciar Sesión
-              </Button>
+        <div className="hidden items-center gap-4 lg:flex">
+          <span className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.13em] text-black/40">
+            <span className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_0_4px_rgba(251,191,36,0.12)]" />
+            En desarrollo
+          </span>
+          <Button asChild className="rounded-full px-5">
+            <Link to="/contact?subject=compatibility">
+              Consultar mi moto
+              <ArrowUpRight className="ml-2 h-4 w-4" />
             </Link>
-          )}
+          </Button>
         </div>
 
-        {/* Mobile Hamburger */}
         <button
-          className="md:hidden flex items-center"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          type="button"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white lg:hidden"
+          onClick={() => setMobileMenuOpen(true)}
+          aria-label="Abrir menú"
+          aria-expanded={mobileMenuOpen}
         >
-          <Menu className="h-8 w-8" />
+          <Menu className="h-5 w-5" />
         </button>
       </div>
 
-      {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-white dark:bg-background flex flex-col p-6 md:hidden shadow-xl" style={{ backgroundColor: 'rgba(255,255,255,1)' }}>
-          <button
-            className="self-end mb-4"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <SearchBar />
-          <div className="flex flex-col space-y-4 mt-6 bg-white dark:bg-background rounded-xl p-4 shadow-md">
-            <Link to="/blog" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="gap-2 w-full justify-start">
-                Blog
-              </Button>
+        <div className="fixed inset-0 z-[60] min-h-screen overflow-y-auto bg-[#0a0b0b] text-white lg:hidden">
+          <div className="flex h-[72px] items-center justify-between border-b border-white/10 px-5">
+            <Link to="/" className="font-display text-lg font-semibold tracking-tight">
+              Moto<span className="text-primary">Gear</span>
             </Link>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="gap-2 w-full justify-start">
-                  Categorías
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-full">
-                {categories.map((category) => (
-                  <DropdownMenuItem
-                    key={category.id}
-                    onClick={() => { navigate(`/catalog?category=${category.id}`); setMobileMenuOpen(false); }}
-                    className="cursor-pointer"
-                  >
-                    {category.name}
-                  </DropdownMenuItem>
-                ))}
-                {categories.length === 0 && (
-                  <DropdownMenuItem disabled>
-                    No hay categorías disponibles
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {isAuthenticated && (
-              <>
-                <Button variant="ghost" className="w-full justify-start" onClick={() => { navigate('/orders'); setMobileMenuOpen(false); }}>
-                  <Package className="h-5 w-5 mr-2" /> Mis Pedidos
-                  {ordersCount > 0 && (
-                    <Badge variant="default" className="ml-auto">
-                      {ordersCount}
-                    </Badge>
-                  )}
-                </Button>
-                <Button variant="ghost" className="w-full justify-start" onClick={() => { navigate('/cart'); setMobileMenuOpen(false); }}>
-                  <ShoppingCart className="h-5 w-5 mr-2" /> Mi Carrito
-                  {totalItems > 0 && (
-                    <Badge variant="default" className="ml-auto">
-                      {totalItems}
-                    </Badge>
-                  )}
-                </Button>
-              </>
-            )}
-            {isAuthenticated ? (
-              <Button variant="ghost" className="w-full justify-start" onClick={() => { navigate('/account'); setMobileMenuOpen(false); }}>
-                <User className="h-5 w-5 mr-2" /> Mi Cuenta
-              </Button>
-            ) : (
-              <Button variant="default" className="w-full justify-start" onClick={() => { navigate('/login'); setMobileMenuOpen(false); }}>
-                Iniciar Sesión
-              </Button>
-            )}
-            {isAuthenticated && (
-              <Button variant="ghost" className="w-full justify-start" onClick={() => { logout(); setMobileMenuOpen(false); }}>
-                <LogOut className="h-5 w-5 mr-2" /> Cerrar Sesión
-              </Button>
-            )}
+            <button
+              type="button"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Cerrar menú"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <nav className="flex flex-col px-5 py-10" aria-label="Navegación móvil">
+            {navItems.map((item, index) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between border-b border-white/10 py-5 font-display text-2xl font-semibold tracking-tight"
+              >
+                <span>{item.label}</span>
+                <span className="text-xs font-medium text-white/25">0{index + 1}</span>
+              </a>
+            ))}
+          </nav>
+
+          <div className="px-5 pb-10">
+            <Button asChild size="lg" className="h-14 w-full rounded-full text-base">
+              <Link to="/contact?subject=compatibility">
+                Consultar compatibilidad
+                <ArrowUpRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+            <p className="mt-5 text-center text-[10px] font-semibold uppercase tracking-[0.15em] text-white/35">
+              Primera plataforma · Kawasaki
+            </p>
           </div>
         </div>
       )}
-    </nav>
+    </header>
   );
 };

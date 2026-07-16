@@ -39,7 +39,7 @@ export function truncateDescription(text: string, maxLength: number = 155): stri
 export const DEFAULT_SEO = {
   siteName: 'MotoGear',
   siteUrl: 'https://motogear.es',
-  defaultTitle: 'MotoGear - Accesorios Premium para Motoristas',
-  defaultDescription: 'Tienda online de accesorios y equipamiento premium para motos. Cascos, guantes, chaquetas, maletas y más. Envío en 2-7 días. Devolución gratis.',
+  defaultTitle: 'Ordenador de a bordo para Kawasaki | MotoGear',
+  defaultDescription: 'Ordenador de a bordo MotoGear para Kawasaki: telemetría de la ECU, lectura de averías y diagnóstico local en un único dispositivo. Producto en desarrollo.',
   defaultImage: 'https://motogear.es/icon-512.png',
 };

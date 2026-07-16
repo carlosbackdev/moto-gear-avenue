@@ -14,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductReviews } from '@/components/product/ProductReviews';
 import { toast } from 'sonner';
-import { mockProducts } from '@/lib/mockData';
 import { generateSlug, truncateDescription, DEFAULT_SEO } from '@/lib/seo';
 
 export default function ProductDetail() {
@@ -41,14 +40,15 @@ export default function ProductDetail() {
       try {
         const data = await productService.getProductById(Number(id));
         
-        // Obtener TODAS las imágenes del producto
-        const allImages = await imageService.getProductImages(Number(id));
-        
-        if (allImages && allImages.length > 0) {
-          // Procesar todas las imágenes con la URL completa
-          const processedImages = allImages.map(img => imageService.getFullImageUrl(img.imageUrl));
-          data.images = processedImages;
-          data.imageUrl = processedImages[0];
+        try {
+          const allImages = await imageService.getProductImages(Number(id));
+          if (allImages && allImages.length > 0) {
+            const processedImages = allImages.map(img => imageService.getFullImageUrl(img.imageUrl));
+            data.images = processedImages;
+            data.imageUrl = processedImages[0];
+          }
+        } catch (imageError) {
+          console.warn('No se han podido cargar imágenes adicionales:', imageError);
         }
         
         setProduct(data);
@@ -60,17 +60,15 @@ export default function ProductDetail() {
         }
       } catch (error) {
         console.error('Error fetching product:', error);
-        // Fallback a mock data si falla
-        const foundProduct = mockProducts.find(p => p.id === Number(id));
-        setProduct(foundProduct || null);
-        toast.error('Error al cargar el producto desde el backend');
+        setProduct(null);
+        toast.error('Este producto no está publicado');
       } finally {
         setLoading(false);
       }
     };
     
     fetchProduct();
-  }, [id]);
+  }, [id, navigate, slug]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -214,7 +212,7 @@ export default function ProductDetail() {
   const cleanedSpecs = cleanSpecifications();
 
   const incrementQuantity = () => {
-    if (product && quantity < product.stock) {
+    if (product && quantity < (product.stock ?? 0)) {
       setQuantity(quantity + 1);
     }
   };
@@ -237,19 +235,21 @@ export default function ProductDetail() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <p className="text-xl text-muted-foreground mb-4">Producto no encontrado</p>
-        <Button onClick={() => navigate('/catalog')}>Volver al catálogo</Button>
+        <Button onClick={() => navigate('/')}>Volver a MotoGear</Button>
       </div>
     );
   }
 
   // SEO meta data
+  const displayPrice = product.price ?? product.sellPrice ?? 0;
+  const canPurchase = product.purchasable === true && (product.stock ?? 0) > 0;
   const productSlug = generateSlug(product.name);
   const productUrl = `${DEFAULT_SEO.siteUrl}/product/${product.id}/${productSlug}`;
   const productImage = product.imageUrl ? imageService.getFullImageUrl(product.imageUrl) : DEFAULT_SEO.defaultImage;
   const metaDescription = truncateDescription(
-    product.description || `Compra ${product.name} en MotoGear. ${product.brand ? `Marca: ${product.brand}.` : ''} Precio: ${product.price.toFixed(2)}€. Envío rápido y devolución gratis.`
+    product.description || `${product.name} de MotoGear. ${product.brand ? `Marca: ${product.brand}.` : ''}`
   );
-  const metaTitle = `${product.name} | MotoGear - Accesorios Moto`;
+  const metaTitle = `${product.name} | MotoGear`;
 
   return (
     <>
@@ -266,8 +266,8 @@ export default function ProductDetail() {
         <meta property="og:image" content={productImage} />
         <meta property="og:url" content={productUrl} />
         <meta property="og:site_name" content="MotoGear" />
-        <meta property="product:price:amount" content={product.price.toFixed(2)} />
-        <meta property="product:price:currency" content="EUR" />
+        {displayPrice > 0 && <meta property="product:price:amount" content={displayPrice.toFixed(2)} />}
+        <meta property="product:price:currency" content={product.currency || 'EUR'} />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -287,17 +287,17 @@ export default function ProductDetail() {
               "@type": "Brand",
               "name": product.brand || "MotoGear"
             },
-            "offers": {
+            ...(displayPrice > 0 ? { "offers": {
               "@type": "Offer",
               "url": productUrl,
-              "priceCurrency": "EUR",
-              "price": product.price.toFixed(2),
-              "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              "priceCurrency": product.currency || "EUR",
+              "price": displayPrice.toFixed(2),
+              "availability": canPurchase ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
               "seller": {
                 "@type": "Organization",
                 "name": "MotoGear"
               }
-            }
+            }} : {})
           })}
         </script>
       </Helmet>
@@ -367,34 +367,47 @@ export default function ProductDetail() {
                 {product.brand}
               </p>
               <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-              <p className="text-5xl font-bold text-primary mb-4">
-                {product.price.toFixed(2)}€
-              </p>
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <p className="text-5xl font-bold text-primary">
+                  {displayPrice > 0 ? `${displayPrice.toFixed(2)}€` : 'Precio pendiente'}
+                </p>
+                <Badge variant={canPurchase ? 'default' : 'secondary'}>
+                  {canPurchase
+                    ? 'Disponible'
+                    : product.status === 'OUT_OF_STOCK'
+                      ? 'Sin stock'
+                      : 'Próximamente'}
+                </Badge>
+              </div>
+              {product.lowStock && canPurchase && (
+                <p className="text-sm font-medium text-amber-600">Últimas {product.stockQuantity} unidades</p>
+              )}
             </div>
 
             {/* Delivery Info - Destacado */}
-            <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <Calendar className="h-6 w-6 text-primary" />
-                  <div>
-                    <p className="text-sm font-medium">Fecha estimada de entrega</p>
-                    <p className="text-lg font-bold text-primary">{deliveryDateRange}</p>
+            {deliveryDateRange && (
+              <Card className="bg-primary/5 border-primary/20">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-6 w-6 text-primary" />
+                    <div>
+                      <p className="text-sm font-medium">Fecha estimada de entrega</p>
+                      <p className="text-lg font-bold text-primary">{deliveryDateRange}</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
 
             {product.keywords && (
               <div>
                 <h3 className="text-sm font-semibold mb-2">Relacionado</h3>
                 <div className="flex flex-wrap gap-1">
                   {product.keywords.split(',').slice(0, 6).map((keyword, idx) => (
-                    <Badge 
+                    <Badge
                       key={idx} 
                       variant="outline" 
-                      className="text-xs cursor-pointer hover:bg-primary/10 transition-colors"
-                      onClick={() => navigate(`/catalog?search=${encodeURIComponent(keyword.trim())}`)}
+                      className="text-xs"
                     >
                       {keyword.trim()}
                     </Badge>
@@ -462,7 +475,7 @@ export default function ProductDetail() {
                     variant="ghost"
                     size="icon"
                     onClick={incrementQuantity}
-                    disabled={quantity >= product.stock}
+                    disabled={!canPurchase || quantity >= (product.stock ?? 0)}
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -476,16 +489,19 @@ export default function ProductDetail() {
                     size="lg"
                     className="flex-1 gap-2"
                     onClick={handleAddToCart}
-                    disabled={product.stock === 0}
+                    disabled={!canPurchase}
                   >
                     <ShoppingCart className="h-5 w-5" />
-                    {product.stock === 0 ? 'Sin Stock' : (isInCart(product.id) ? 'Añadir más al Carrito' : 'Añadir al Carrito')}
+                    {!canPurchase
+                      ? product.status === 'OUT_OF_STOCK' ? 'Sin stock' : 'Todavía no disponible'
+                      : (isInCart(product.id) ? 'Añadir más al carrito' : 'Añadir al carrito')}
                   </Button>
                 </div>
                 
                 {isInCart(product.id) && (
-                  <div className="text-sm text-green-600 bg-green-50 dark:bg-green-950/20 p-2 rounded-lg text-center font-medium">
-                    ✓ Este producto ya está en tu carrito
+                  <div className="flex items-center justify-between gap-3 rounded-lg bg-green-50 p-2 text-sm font-medium text-green-600 dark:bg-green-950/20">
+                    <span>✓ Este producto ya está en tu carrito</span>
+                    <Button size="sm" variant="outline" onClick={() => navigate('/cart')}>Ver carrito</Button>
                   </div>
                 )}
               </div>
@@ -493,17 +509,21 @@ export default function ProductDetail() {
               {/* Trust Badges */}
               <Card>
                 <CardContent className="p-4 space-y-3">
-                  <div className="flex items-center gap-3 text-sm">
-                    <Package className="h-5 w-5 text-primary" />
-                    <span>Envío: {product.shippingCost?.toFixed(2)}€ (Gratis en pedidos +50€)</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
-                    <Truck className="h-5 w-5 text-primary" />
-                    <span>Entrega estimada: {deliveryDateRange}</span>
-                  </div>
+                  {product.shippingCost != null && (
+                    <div className="flex items-center gap-3 text-sm">
+                      <Package className="h-5 w-5 text-primary" />
+                      <span>Envío: {product.shippingCost.toFixed(2)}€</span>
+                    </div>
+                  )}
+                  {deliveryDateRange && (
+                    <div className="flex items-center gap-3 text-sm">
+                      <Truck className="h-5 w-5 text-primary" />
+                      <span>Entrega estimada: {deliveryDateRange}</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-3 text-sm">
                     <Shield className="h-5 w-5 text-primary" />
-                    <span>Devolución Gratis - Devoluciones sin coste en todos los productos</span>
+                    <span>Garantía y condiciones definitivas visibles antes de confirmar la compra</span>
                   </div>
                 </CardContent>
               </Card>

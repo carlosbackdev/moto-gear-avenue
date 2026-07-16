@@ -1,95 +1,79 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { HelmetProvider } from "react-helmet-async";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { CartProvider } from "@/contexts/CartContext";
-import { WishlistProvider } from "@/contexts/WishlistContext";
-import { Navbar } from "@/components/shared/Navbar";
-import { Footer } from "@/components/shared/Footer";
-import { ScrollToTop } from "@/components/ScrollToTop";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import Home from "./pages/Home";
-import Catalog from "./pages/Catalog";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Account from "./pages/Account";
-import Orders from "./pages/Orders";
-import Order from "./pages/Order";
-import Track from "./pages/Track";
-import Success from "./pages/Success";
-import Wishlist from "./pages/Wishlist";
-import Contact from "./pages/Contact";
-import ShippingPolicy from "./pages/legal/ShippingPolicy";
-import Returns from "./pages/legal/Returns";
-import Terms from "./pages/legal/Terms";
-import PaymentInfo from "./pages/legal/PaymentInfo";
-import BlogList from "./pages/blog/BlogList";
-import BlogPostDetail from "./pages/blog/BlogPost";
-import NotFound from "./pages/NotFound";
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+import { Navbar } from '@/components/shared/Navbar';
+import { Footer } from '@/components/shared/Footer';
+import { ScrollToTop } from '@/components/ScrollToTop';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
+import Home from '@/pages/Home';
+import Contact from '@/pages/Contact';
+import Terms from '@/pages/legal/Terms';
+import NotFound from '@/pages/NotFound';
 
-const queryClient = new QueryClient();
+const CommerceProviders = lazy(() => import('@/components/commerce/CommerceProviders'));
+const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
+const Cart = lazy(() => import('@/pages/Cart'));
+const Checkout = lazy(() => import('@/pages/Checkout'));
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const Account = lazy(() => import('@/pages/Account'));
+const Orders = lazy(() => import('@/pages/Orders'));
+const Order = lazy(() => import('@/pages/Order'));
+const Track = lazy(() => import('@/pages/Track'));
+const Success = lazy(() => import('@/pages/Success'));
+const Wishlist = lazy(() => import('@/pages/Wishlist'));
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const pausedStoreRoutes = [
+  '/catalog',
+  '/shipping',
+  '/returns',
+  '/payment-info',
+  '/blog',
+  '/blog/:slug',
+];
+
+const loadingFallback = (
+  <div className="flex min-h-[50vh] items-center justify-center bg-background">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+  </div>
+);
 
 const App = () => (
   <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <TooltipProvider>
-          <AuthProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <ScrollToTop />
-                  <div className="flex flex-col min-h-screen">
-                    <Navbar />
-                    <main className="flex-1">
-                      <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/catalog" element={<Catalog />} />
-                        <Route path="/product/:id/:slug?" element={<ProductDetail />} />
-                        <Route path="/cart" element={<Cart />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/shipping" element={<ShippingPolicy />} />
-                        <Route path="/returns" element={<Returns />} />
-                        <Route path="/terms" element={<Terms />} />
-                        <Route path="/payment-info" element={<PaymentInfo />} />
-                        <Route path="/blog" element={<BlogList />} />
-                        <Route path="/blog/:slug" element={<BlogPostDetail />} />
+    <BrowserRouter>
+      <ScrollToTop />
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/terms" element={<Terms />} />
 
-                        {/* Protected Routes */}
-                        <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-                        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-                        <Route path="/order/:orderId" element={<ProtectedRoute><Order /></ProtectedRoute>} />
-                        <Route path="/track/:orderId" element={<ProtectedRoute><Track /></ProtectedRoute>} />
-                        <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
-                        <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-                        <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+            <Route element={<Suspense fallback={loadingFallback}><CommerceProviders /></Suspense>}>
+              <Route path="/product/:id/:slug?" element={<ProductDetail />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+              <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+              <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+              <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+              <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+              <Route path="/order/:orderId" element={<ProtectedRoute><Order /></ProtectedRoute>} />
+              <Route path="/track/:orderId" element={<ProtectedRoute><Track /></ProtectedRoute>} />
+              <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
+            </Route>
 
-                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </main>
-                    <Footer />
-                  </div>
-                </BrowserRouter>
-              </WishlistProvider>
-            </CartProvider>
-          </AuthProvider>
-        </TooltipProvider>
-      </GoogleOAuthProvider>
-    </QueryClientProvider>
+            {pausedStoreRoutes.map((path) => (
+              <Route key={path} path={path} element={<Navigate to="/" replace />} />
+            ))}
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
   </HelmetProvider>
 );
 
