@@ -1,30 +1,28 @@
-# MotoGear - Tienda Online de Accesorios para Moto
+# MotoGear - Ordenador de a bordo para moto
 
 ![MotoGear](https://motogear.es/icon-512.png)
 
 ## 🏍️ Sobre el Proyecto
 
-**MotoGear** es una tienda online especializada en accesorios y equipamiento premium para motociclistas. Ofrecemos una amplia gama de productos de calidad, desde cascos y guantes hasta chaquetas, maletas y protecciones.
+**MotoGear** se está reconvirtiendo en la web del ordenador de a bordo MotoGear:
+telemetría y diagnóstico local para motocicletas Kawasaki. La primera versión
+está en desarrollo y la compatibilidad se comunica únicamente cuando está
+validada.
+
+La portada consulta la ficha `ordenador-bordo-kawasaki` en el backend. El estado,
+precio y stock configurados desde `admin-front` deciden si muestra
+**Próximamente**, **Sin stock** o el acceso a compra.
 
 🌐 **Web**: [https://motogear.es](https://motogear.es)
 
 ### Características principales
 
-- **Catálogo completo**: Amplia selección de accesorios para moto organizados por categorías
-- **Búsqueda inteligente**: Encuentra productos fácilmente por nombre, categoría o palabras clave
-- **Carrito de compra**: Gestión completa del carrito con variantes de producto
-- **Checkout seguro**: Pagos procesados de forma segura con Stripe
-- **Seguimiento de pedidos**: Rastrea tus envíos en tiempo real
-- **Sistema de reseñas**: Opiniones verificadas de clientes
+- **Landing del producto**: propuesta, funcionamiento y estado real del desarrollo
+- **Ficha conectada**: precio, disponibilidad y stock procedentes del backend
+- **Compra condicionada**: carrito y checkout solo se activan cuando el producto está disponible
+- **Flujo de lanzamiento**: estados de borrador, próximamente, disponible y sin stock
 - **Diseño responsive**: Experiencia optimizada en móvil, tablet y escritorio
-- **SEO optimizado**: URLs amigables con nombres de producto para mejor posicionamiento
-
-### Servicios
-
-- ✅ **Envío rápido**: Entrega en 2-7 días laborables
-- ✅ **Devolución gratis**: Sin coste en todos los productos
-- ✅ **Pago seguro**: Encriptación SSL y certificación PCI DSS
-- ✅ **Atención al cliente**: Soporte por email en motogearspain@gmail.com
+- **SEO del producto**: metadatos y datos estructurados según el estado comercial
 
 ## 🛠️ Tecnologías
 
@@ -34,7 +32,7 @@ Este proyecto está construido con tecnologías modernas:
 |----------|---------|-------|
 | React 18 | Spring Boot | Stripe |
 | TypeScript | REST API | |
-| Tailwind CSS | PostgreSQL | |
+| Tailwind CSS | MySQL | |
 | Vite | | |
 | shadcn/ui | | |
 

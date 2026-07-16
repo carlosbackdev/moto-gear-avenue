@@ -46,7 +46,7 @@ class ProductService {
       price: product.sellPrice,
       imageUrl: processedImages[0], // Primera imagen como imagen principal
       images: processedImages, // Todas las imágenes procesadas
-      stock: 100, // Por defecto, el backend no devuelve stock
+      stock: product.stockQuantity ?? 0,
       brand: product.sellerName,
       description: product.details,
       categoryId: product.category,
@@ -76,6 +76,14 @@ class ProductService {
    */
   async getProductById(id: number): Promise<Product> {
     const product = await apiService.get<Product>(`/products/${id}`);
+    return this.normalizeProduct(product);
+  }
+
+  /**
+   * Obtiene la ficha pública estable usada por la landing del ordenador de a bordo.
+   */
+  async getProductBySlug(slug: string): Promise<Product> {
+    const product = await apiService.get<Product>(`/products/slug/${encodeURIComponent(slug)}`);
     return this.normalizeProduct(product);
   }
 

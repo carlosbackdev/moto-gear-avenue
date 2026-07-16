@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
@@ -20,6 +21,9 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DEFAULT_SEO } from '@/lib/seo';
+import { getProductUrl } from '@/lib/seo';
+import { productService } from '@/services/product.service';
+import { Product } from '@/types/models';
 
 const features = [
   {
@@ -173,6 +177,24 @@ function DashboardPreview() {
 }
 
 export default function Home() {
+  const [showcaseProduct, setShowcaseProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    productService
+      .getProductBySlug('ordenador-bordo-kawasaki')
+      .then(setShowcaseProduct)
+      .catch(() => setShowcaseProduct(null));
+  }, []);
+
+  const formattedPrice = showcaseProduct?.sellPrice
+    ? new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: showcaseProduct.currency || 'EUR',
+      }).format(showcaseProduct.sellPrice)
+    : null;
+  const isAvailable = showcaseProduct?.status === 'AVAILABLE' && showcaseProduct.purchasable;
+  const isOutOfStock = showcaseProduct?.status === 'OUT_OF_STOCK';
+
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -180,7 +202,16 @@ export default function Home() {
     description: DEFAULT_SEO.defaultDescription,
     brand: { '@type': 'Brand', name: 'MotoGear' },
     category: 'Electrónica para motocicletas',
-    releaseDate: 'En desarrollo',
+    ...(formattedPrice && showcaseProduct ? {
+      offers: {
+        '@type': 'Offer',
+        price: showcaseProduct.sellPrice,
+        priceCurrency: showcaseProduct.currency || 'EUR',
+        availability: isAvailable
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+      },
+    } : {}),
   };
 
   return (
@@ -206,7 +237,11 @@ export default function Home() {
           <div className="border-b border-white/10 bg-white/[0.025]">
             <div className="container flex min-h-10 items-center justify-center gap-2 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60 sm:text-xs">
               <CircleDot className="h-3.5 w-3.5 text-primary" />
-              Producto en desarrollo · Primera plataforma: Kawasaki
+              {isAvailable
+                ? 'Disponible para comprar · Primera plataforma: Kawasaki'
+                : isOutOfStock
+                  ? 'Temporalmente sin stock · Primera plataforma: Kawasaki'
+                  : 'Producto en desarrollo · Primera plataforma: Kawasaki'}
             </div>
           </div>
 
@@ -227,13 +262,42 @@ export default function Home() {
                 entender tu moto y detectar averías.
               </p>
 
+              {showcaseProduct && (
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <span className={`rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${
+                    isAvailable
+                      ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-400'
+                      : isOutOfStock
+                        ? 'border-red-400/30 bg-red-400/10 text-red-300'
+                        : 'border-amber-300/30 bg-amber-300/10 text-amber-300'
+                  }`}>
+                    {isAvailable ? 'Disponible' : isOutOfStock ? 'Sin stock' : 'Próximamente'}
+                  </span>
+                  {formattedPrice && (
+                    <span className="font-display text-xl font-semibold text-white">{formattedPrice}</span>
+                  )}
+                  {showcaseProduct.lowStock && isAvailable && (
+                    <span className="text-xs text-amber-300">Últimas {showcaseProduct.stockQuantity} unidades</span>
+                  )}
+                </div>
+              )}
+
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg" className="h-[52px] rounded-full px-7 text-base font-semibold shadow-[0_12px_35px_rgba(255,78,0,0.25)]">
-                  <Link to="/contact?subject=compatibility">
-                    Consultar compatibilidad
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
+                {isAvailable && showcaseProduct ? (
+                  <Button asChild size="lg" className="h-[52px] rounded-full px-7 text-base font-semibold shadow-[0_12px_35px_rgba(255,78,0,0.25)]">
+                    <Link to={getProductUrl(showcaseProduct.id, showcaseProduct.name)}>
+                      Comprar {formattedPrice}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button asChild size="lg" className="h-[52px] rounded-full px-7 text-base font-semibold shadow-[0_12px_35px_rgba(255,78,0,0.25)]">
+                    <Link to="/contact?subject=compatibility">
+                      {isOutOfStock ? 'Avisarme cuando vuelva' : 'Consultar compatibilidad'}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                )}
                 <Button asChild size="lg" variant="outline" className="h-[52px] rounded-full border-white/20 bg-white/5 px-7 text-base text-white hover:bg-white/10 hover:text-white">
                   <a href="#como-funciona">Ver cómo funciona</a>
                 </Button>
