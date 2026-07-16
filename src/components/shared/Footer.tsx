@@ -1,57 +1,66 @@
 import { Link } from 'react-router-dom';
+import { ArrowUpRight, Github, Mail } from 'lucide-react';
 
 export const Footer = () => {
   return (
-    <footer className="relative bg-gradient-to-br from-secondary via-secondary/95 to-secondary/90 text-secondary-foreground mt-auto overflow-hidden">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxIDAgNiAyLjY5IDYgNnMtMi42OSA2LTYgNi02LTIuNjktNi02IDIuNjktNiA2LTZ6IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwLjAzIi8+PC9nPjwvc3ZnPg==')] opacity-30"></div>
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold mb-4 gradient-text">MotoGear</h3>
-            <p className="text-sm text-muted-foreground/80 leading-relaxed">
-              Tu tienda especializada en accesorios y equipamiento para motoristas.
+    <footer className="relative overflow-hidden bg-[#080909] text-white">
+      <div className="absolute inset-0 circuit-grid opacity-15" />
+      <div className="container relative px-4 py-16 sm:py-20">
+        <div className="grid gap-12 border-b border-white/10 pb-14 lg:grid-cols-[1.3fr_0.7fr_0.7fr]">
+          <div className="max-w-md">
+            <Link to="/" className="font-display text-3xl font-semibold tracking-[-0.04em]">
+              Moto<span className="text-primary">Gear</span>
+            </Link>
+            <p className="mt-5 text-sm leading-relaxed text-white/45">
+              Tecnología para entender tu moto: telemetría, diagnóstico y datos de la ECU en un único dispositivo.
             </p>
+            <div className="mt-7 flex items-center gap-3">
+              <a
+                href="mailto:motogearspain@gmail.com"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 text-white/55 transition hover:border-primary/50 hover:text-primary"
+                aria-label="Enviar email a MotoGear"
+              >
+                <Mail className="h-4 w-4" />
+              </a>
+              <a
+                href="https://github.com/carlosbackdev"
+                target="_blank"
+                rel="noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 text-white/55 transition hover:border-primary/50 hover:text-primary"
+                aria-label="GitHub de Carlos Backdev"
+              >
+                <Github className="h-4 w-4" />
+              </a>
+            </div>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-white">Categorías</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground/80">
-              <li><Link to="/catalog" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Cascos</Link></li>
-              <li><Link to="/catalog" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Guantes</Link></li>
-              <li><Link to="/catalog" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Chaquetas</Link></li>
-              <li><Link to="/catalog" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Maletas</Link></li>
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/30">Producto</h3>
+            <ul className="mt-5 space-y-3 text-sm text-white/55">
+              <li><a href="/#producto" className="transition hover:text-primary">Funciones</a></li>
+              <li><a href="/#como-funciona" className="transition hover:text-primary">Cómo funciona</a></li>
+              <li><a href="/#compatibilidad" className="transition hover:text-primary">Compatibilidad</a></li>
+              <li><a href="/#desarrollo" className="transition hover:text-primary">Estado del desarrollo</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-white">Información</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground/80">
-              <li><Link to="/shipping" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Envíos</Link></li>
-              <li><Link to="/returns" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Devoluciones</Link></li>
-              <li><Link to="/payment-info" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Pagos</Link></li>
-              <li><Link to="/terms" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Términos</Link></li>
-              <li><Link to="/contact" className="hover:text-primary transition-all hover:translate-x-1 inline-block">Contacto</Link></li>
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/30">MotoGear</h3>
+            <ul className="mt-5 space-y-3 text-sm text-white/55">
+              <li><Link to="/contact" className="transition hover:text-primary">Contacto</Link></li>
+              <li><Link to="/terms" className="transition hover:text-primary">Términos y condiciones</Link></li>
+              <li>
+                <a href="mailto:motogearspain@gmail.com" className="inline-flex items-center transition hover:text-primary">
+                  Escribirnos <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
+                </a>
+              </li>
             </ul>
           </div>
+        </div>
 
-          <div className="space-y-4">
-            <h4 className="font-semibold mb-4 text-white">Atención al Cliente</h4>
-            <p className="text-sm text-muted-foreground/80 leading-relaxed">
-              ¿Tienes alguna duda? Contáctanos y te ayudaremos con tu pedido.
-            </p>
-            <a 
-              href="mailto:motogearspain@gmail.com" 
-              className="text-sm text-primary hover:underline inline-block"
-            >
-              motogearspain@gmail.com
-            </a>
-          </div>
-        </div>
- <div className="mt-8 pt-8 border-t border-border/30 text-center text-sm text-muted-foreground/80">
-          <p> Todos los productos están homologados por la normativa europea (UE).</p>
-        </div>
-        <div className="mt-8 pt-8 border-t border-border/30 text-center text-sm text-muted-foreground/80">
-          <p>&copy; 2024 MotoGear. Todos los derechos reservados.</p>
+        <div className="flex flex-col gap-4 pt-7 text-[11px] text-white/30 sm:flex-row sm:items-center sm:justify-between">
+          <p>&copy; {new Date().getFullYear()} MotoGear. Todos los derechos reservados.</p>
+          <p>Producto en desarrollo · No disponible todavía para compra</p>
         </div>
       </div>
     </footer>

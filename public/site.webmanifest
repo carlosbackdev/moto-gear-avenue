@@ -1,14 +1,14 @@
 {
-  "name": "MotoGear - Accesorios Premium para Motoristas",
+  "name": "MotoGear - Ordenador de a bordo para Kawasaki",
   "short_name": "MotoGear",
-  "description": "Tienda online especializada en accesorios y equipamiento premium para motocicletas",
+  "description": "Telemetría y diagnóstico de la ECU Kawasaki en un único dispositivo para la moto",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#FF6B35",
+  "background_color": "#080909",
+  "theme_color": "#ff4d00",
   "lang": "es",
   "orientation": "portrait-primary",
-  "categories": ["shopping", "lifestyle"],
+  "categories": ["automotive", "utilities"],
   "icons": [
     {
       "src": "/favicon.png",
