@@ -27,6 +27,7 @@ export interface Product {
   stockQuantity?: number;
   lowStockThreshold?: number;
   purchasable?: boolean;
+  dropshipping?: boolean;
   lowStock?: boolean;
   details: string;
   specifications: string; // JSON string

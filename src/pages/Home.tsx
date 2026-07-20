@@ -17,7 +17,6 @@ import {
   Stethoscope,
   Thermometer,
   Wrench,
-  Store,
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -384,38 +383,30 @@ export default function Home() {
           </div>
         </section>
 
+        {otherProducts.length > 0 && (
         <section id="tienda" className="scroll-mt-24 border-y border-black/8 bg-white py-20 sm:py-24">
           <div className="container px-4">
             <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
               <div className="max-w-2xl">
                 <span className="eyebrow">La tienda MotoGear</span>
                 <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
-                  Otros productos para tu moto.
+                  Equipamiento y accesorios seleccionados.
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  Recuperamos el catálogo original junto al nuevo ordenador de a bordo. Solo aparecen productos publicados con stock real.
+                  Completa tu experiencia en carretera con más productos disponibles en MotoGear.
                 </p>
               </div>
               <Button asChild variant="outline" className="rounded-full">
-                <Link to="/catalog">Ver toda la tienda <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                <Link to="/catalog">Explorar catálogo <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
             </div>
 
-            {otherProducts.length > 0 ? (
-              <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {otherProducts.map((product) => <ProductCard key={product.id} product={product} />)}
-              </div>
-            ) : (
-              <div className="mt-12 flex flex-col items-center rounded-[1.5rem] border border-dashed border-black/15 bg-[#f4f3f0] px-6 py-12 text-center">
-                <Store className="h-8 w-8 text-primary" />
-                <h3 className="mt-4 font-display text-xl font-semibold">Catálogo preparado</h3>
-                <p className="mt-2 max-w-lg text-sm text-muted-foreground">
-                  En cuanto marques los productos anteriores como disponibles y les asignes stock en el admin, aparecerán aquí automáticamente.
-                </p>
-              </div>
-            )}
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {otherProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+            </div>
           </div>
         </section>
+        )}
 
         <section id="como-funciona" className="scroll-mt-24 bg-white py-24 sm:py-32">
           <div className="container grid items-center gap-16 px-4 lg:grid-cols-2">

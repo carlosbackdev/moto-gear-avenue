@@ -20,7 +20,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const displayPrice = product.sellPrice ?? product.price ?? 0;
   const originalPrice = product.originalPrice ?? displayPrice;
-  const canPurchase = product.purchasable === true && (product.stock ?? product.stockQuantity ?? 0) > 0;
+  const canPurchase = product.purchasable === true;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

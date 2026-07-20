@@ -124,7 +124,7 @@ export default function Cart() {
                             variant="ghost"
                             size="icon"
                             onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.variant)}
-                            disabled={item.quantity >= (item.product.stock ?? item.product.stockQuantity ?? 0)}
+                            disabled={item.quantity >= (item.product.dropshipping ? 99 : (item.product.stock ?? item.product.stockQuantity ?? 0))}
                           >
                             <Plus className="h-4 w-4" />
                           </Button>

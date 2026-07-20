@@ -169,7 +169,8 @@ export default function ProductDetail() {
   const cleanedSpecs = cleanSpecifications();
 
   const incrementQuantity = () => {
-    if (product && quantity < (product.stock ?? 0)) {
+    const maximumQuantity = product?.dropshipping ? 99 : (product?.stock ?? 0);
+    if (product && quantity < maximumQuantity) {
       setQuantity(quantity + 1);
     }
   };
@@ -199,7 +200,7 @@ export default function ProductDetail() {
 
   // SEO meta data
   const displayPrice = product.price ?? product.sellPrice ?? 0;
-  const canPurchase = product.purchasable === true && (product.stock ?? 0) > 0;
+  const canPurchase = product.purchasable === true;
   const productSlug = generateSlug(product.name);
   const productUrl = `${DEFAULT_SEO.siteUrl}/product/${product.id}/${productSlug}`;
   const productImage = product.imageUrl ? imageService.getFullImageUrl(product.imageUrl) : DEFAULT_SEO.defaultImage;
@@ -432,7 +433,7 @@ export default function ProductDetail() {
                     variant="ghost"
                     size="icon"
                     onClick={incrementQuantity}
-                    disabled={!canPurchase || quantity >= (product.stock ?? 0)}
+                    disabled={!canPurchase || quantity >= (product.dropshipping ? 99 : (product.stock ?? 0))}
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
