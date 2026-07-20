@@ -37,16 +37,22 @@ export const Footer = () => {
           <div>
             <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/30">Producto</h3>
             <ul className="mt-5 space-y-3 text-sm text-white/55">
+              <li><Link to="/catalog" className="transition hover:text-primary">Tienda y otros productos</Link></li>
               <li><a href="/#producto" className="transition hover:text-primary">Funciones</a></li>
               <li><a href="/#como-funciona" className="transition hover:text-primary">Cómo funciona</a></li>
               <li><a href="/#compatibilidad" className="transition hover:text-primary">Compatibilidad</a></li>
-              <li><a href="/#desarrollo" className="transition hover:text-primary">Estado del desarrollo</a></li>
+              <li><Link to="/blog" className="transition hover:text-primary">Blog y desarrollo</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/30">MotoGear</h3>
             <ul className="mt-5 space-y-3 text-sm text-white/55">
+              <li><Link to="/account" className="transition hover:text-primary">Mi cuenta</Link></li>
+              <li><Link to="/orders" className="transition hover:text-primary">Pedidos y seguimiento</Link></li>
+              <li><Link to="/shipping" className="transition hover:text-primary">Envíos</Link></li>
+              <li><Link to="/returns" className="transition hover:text-primary">Devoluciones</Link></li>
+              <li><Link to="/payment-info" className="transition hover:text-primary">Pagos</Link></li>
               <li><Link to="/contact" className="transition hover:text-primary">Contacto</Link></li>
               <li><Link to="/terms" className="transition hover:text-primary">Términos y condiciones</Link></li>
               <li>
@@ -60,7 +66,7 @@ export const Footer = () => {
 
         <div className="flex flex-col gap-4 pt-7 text-[11px] text-white/30 sm:flex-row sm:items-center sm:justify-between">
           <p>&copy; {new Date().getFullYear()} MotoGear. Todos los derechos reservados.</p>
-          <p>Producto en desarrollo · No disponible todavía para compra</p>
+          <p>Pago seguro · Área de cliente · Seguimiento de pedidos</p>
         </div>
       </div>
     </footer>

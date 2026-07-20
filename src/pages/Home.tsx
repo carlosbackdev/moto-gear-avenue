@@ -17,9 +17,11 @@ import {
   Stethoscope,
   Thermometer,
   Wrench,
+  Store,
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ProductCard } from '@/components/shared/ProductCard';
 import { DEFAULT_SEO } from '@/lib/seo';
 import { getProductUrl } from '@/lib/seo';
 import { productService } from '@/services/product.service';
@@ -178,12 +180,22 @@ function DashboardPreview() {
 
 export default function Home() {
   const [showcaseProduct, setShowcaseProduct] = useState<Product | null>(null);
+  const [otherProducts, setOtherProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     productService
       .getProductBySlug('ordenador-bordo-kawasaki')
       .then(setShowcaseProduct)
       .catch(() => setShowcaseProduct(null));
+
+    productService
+      .getProducts(0, 8)
+      .then((products) => setOtherProducts(
+        products
+          .filter((product) => product.slug !== 'ordenador-bordo-kawasaki')
+          .slice(0, 4)
+      ))
+      .catch(() => setOtherProducts([]));
   }, []);
 
   const formattedPrice = showcaseProduct?.sellPrice
@@ -194,6 +206,9 @@ export default function Home() {
     : null;
   const isAvailable = showcaseProduct?.status === 'AVAILABLE' && showcaseProduct.purchasable;
   const isOutOfStock = showcaseProduct?.status === 'OUT_OF_STOCK';
+  const displayedFaqs = faqs.map((faq, index) => index === 0 && isAvailable
+    ? { ...faq, answer: 'Sí. Cuando la ficha indica “Disponible”, puedes añadirlo al carrito, pagar de forma segura y seguir el pedido desde tu cuenta.' }
+    : faq);
 
   const productSchema = {
     '@context': 'https://schema.org',
@@ -369,6 +384,39 @@ export default function Home() {
           </div>
         </section>
 
+        <section id="tienda" className="scroll-mt-24 border-y border-black/8 bg-white py-20 sm:py-24">
+          <div className="container px-4">
+            <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+              <div className="max-w-2xl">
+                <span className="eyebrow">La tienda MotoGear</span>
+                <h2 className="mt-5 font-display text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
+                  Otros productos para tu moto.
+                </h2>
+                <p className="mt-4 text-muted-foreground">
+                  Recuperamos el catálogo original junto al nuevo ordenador de a bordo. Solo aparecen productos publicados con stock real.
+                </p>
+              </div>
+              <Button asChild variant="outline" className="rounded-full">
+                <Link to="/catalog">Ver toda la tienda <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              </Button>
+            </div>
+
+            {otherProducts.length > 0 ? (
+              <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {otherProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+              </div>
+            ) : (
+              <div className="mt-12 flex flex-col items-center rounded-[1.5rem] border border-dashed border-black/15 bg-[#f4f3f0] px-6 py-12 text-center">
+                <Store className="h-8 w-8 text-primary" />
+                <h3 className="mt-4 font-display text-xl font-semibold">Catálogo preparado</h3>
+                <p className="mt-2 max-w-lg text-sm text-muted-foreground">
+                  En cuanto marques los productos anteriores como disponibles y les asignes stock en el admin, aparecerán aquí automáticamente.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
         <section id="como-funciona" className="scroll-mt-24 bg-white py-24 sm:py-32">
           <div className="container grid items-center gap-16 px-4 lg:grid-cols-2">
             <div className="relative order-2 lg:order-1">
@@ -529,7 +577,7 @@ export default function Home() {
               </h2>
             </div>
             <div className="divide-y divide-black/10 border-y border-black/10">
-              {faqs.map((faq) => (
+              {displayedFaqs.map((faq) => (
                 <details key={faq.question} className="group py-6">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-6 font-display text-lg font-semibold [&::-webkit-details-marker]:hidden">
                     {faq.question}
@@ -560,7 +608,9 @@ export default function Home() {
             </div>
             <div className="mt-12 flex items-center gap-3 border-t border-white/25 pt-6 text-xs text-white/65">
               <ShieldCheck className="h-4 w-4" />
-              No se aceptarán pagos ni reservas hasta que el producto esté validado para venta.
+              {isAvailable
+                ? 'Producto publicado con precio y stock real. El pago y el seguimiento se gestionan desde tu cuenta.'
+                : 'No se aceptarán pagos ni reservas hasta que el producto esté validado para venta.'}
             </div>
           </div>
         </section>

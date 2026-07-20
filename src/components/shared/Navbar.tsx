@@ -1,20 +1,32 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, LogIn, LogOut, Menu, PackageSearch, ShoppingCart, UserRound, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import logoMotogear from '@/assets/logo-motogear.png';
 
 const navItems = [
   { label: 'El producto', href: '/#producto' },
   { label: 'Cómo funciona', href: '/#como-funciona' },
   { label: 'Compatibilidad', href: '/#compatibilidad' },
-  { label: 'Desarrollo', href: '/#desarrollo' },
-  { label: 'FAQ', href: '/#faq' },
+  { label: 'Tienda', href: '/catalog' },
+  { label: 'Blog', href: '/blog' },
 ];
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, isAuthenticated, logout, loading: authLoading } = useAuth();
+  const { totalItems } = useCart();
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -49,17 +61,43 @@ export const Navbar = () => {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-4 lg:flex">
-          <span className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.13em] text-black/40">
-            <span className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_0_4px_rgba(251,191,36,0.12)]" />
-            En desarrollo
-          </span>
-          <Button asChild className="rounded-full px-5">
-            <Link to="/contact?subject=compatibility">
-              Consultar mi moto
-              <ArrowUpRight className="ml-2 h-4 w-4" />
+        <div className="hidden items-center gap-2 lg:flex">
+          <Button asChild variant="ghost" size="icon" className="relative rounded-full" aria-label="Ver carrito">
+            <Link to="/cart">
+              <ShoppingCart className="h-5 w-5" />
+              {totalItems > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
+              )}
             </Link>
           </Button>
+
+          {!authLoading && (isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="rounded-full border-black/10 bg-white px-4">
+                  <UserRound className="mr-2 h-4 w-4" />
+                  <span className="max-w-28 truncate">{user?.name || user?.fullName || 'Mi cuenta'}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">{user?.email}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild><Link to="/account"><UserRound className="mr-2 h-4 w-4" />Mi cuenta</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/orders"><PackageSearch className="mr-2 h-4 w-4" />Pedidos y seguimiento</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/cart"><ShoppingCart className="mr-2 h-4 w-4" />Carrito</Link></DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={logout} className="text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />Cerrar sesión
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild className="rounded-full px-5">
+              <Link to="/login"><LogIn className="mr-2 h-4 w-4" />Iniciar sesión</Link>
+            </Button>
+          ))}
         </div>
 
         <button
@@ -104,6 +142,28 @@ export const Navbar = () => {
           </nav>
 
           <div className="px-5 pb-10">
+            <div className="mb-4 grid grid-cols-2 gap-3">
+              <Button asChild variant="outline" className="h-12 border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+                <Link to="/cart"><ShoppingCart className="mr-2 h-4 w-4" />Carrito ({totalItems})</Link>
+              </Button>
+              {isAuthenticated ? (
+                <Button asChild variant="outline" className="h-12 border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+                  <Link to="/orders"><PackageSearch className="mr-2 h-4 w-4" />Mis pedidos</Link>
+                </Button>
+              ) : (
+                <Button asChild variant="outline" className="h-12 border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+                  <Link to="/login"><LogIn className="mr-2 h-4 w-4" />Entrar</Link>
+                </Button>
+              )}
+            </div>
+            {isAuthenticated && (
+              <div className="mb-5 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 text-sm">
+                <Link to="/account" className="min-w-0 truncate text-white/70">{user?.email}</Link>
+                <button type="button" onClick={logout} className="ml-3 shrink-0 text-white/50 hover:text-primary" aria-label="Cerrar sesión">
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            )}
             <Button asChild size="lg" className="h-14 w-full rounded-full text-base">
               <Link to="/contact?subject=compatibility">
                 Consultar compatibilidad

@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Search, SlidersHorizontal } from 'lucide-react';
-import { mockProducts, mockCategories } from '@/lib/mockData';
 import { DEFAULT_SEO } from '@/lib/seo';
 
 type SortOption = 'default' | 'price-asc' | 'price-desc' | 'discount-desc' | 'name-asc' | 'name-desc';
@@ -21,6 +20,7 @@ export default function Catalog() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(
     searchParams.get('category') ? Number(searchParams.get('category')) : null
   );
@@ -51,7 +51,7 @@ export default function Catalog() {
         setCategories(cats);
       } catch (error) {
         console.error('Error fetching categories:', error);
-        setCategories(mockCategories); // Fallback a mock
+        setCategories([]);
       }
     };
     
@@ -62,6 +62,7 @@ export default function Catalog() {
     setLoading(true);
     const fetchProducts = async () => {
       try {
+        setLoadError(false);
         let data: Product[];
         
         // Si hay término de búsqueda, usar el endpoint de búsqueda
@@ -77,7 +78,8 @@ export default function Catalog() {
         setAllProducts(data);
       } catch (error) {
         console.error('Error fetching products:', error);
-        setAllProducts(mockProducts); // Fallback a mock
+        setAllProducts([]);
+        setLoadError(true);
       } finally {
         setLoading(false);
       }
@@ -97,20 +99,24 @@ export default function Catalog() {
     }
 
     // Filtro por precio
-    filtered = filtered.filter(p => p.price <= priceRange[0]);
+    filtered = filtered.filter(p => (p.sellPrice ?? p.price ?? 0) <= priceRange[0]);
 
     // Ordenar
     switch (sortBy) {
       case 'price-asc':
-        filtered.sort((a, b) => a.price - b.price);
+        filtered.sort((a, b) => (a.sellPrice ?? a.price ?? 0) - (b.sellPrice ?? b.price ?? 0));
         break;
       case 'price-desc':
-        filtered.sort((a, b) => b.price - a.price);
+        filtered.sort((a, b) => (b.sellPrice ?? b.price ?? 0) - (a.sellPrice ?? a.price ?? 0));
         break;
       case 'discount-desc':
         filtered.sort((a, b) => {
-          const discountA = ((a.originalPrice || a.price) - a.price) / (a.originalPrice || a.price) * 100;
-          const discountB = ((b.originalPrice || b.price) - b.price) / (b.originalPrice || b.price) * 100;
+          const priceA = a.sellPrice ?? a.price ?? 0;
+          const priceB = b.sellPrice ?? b.price ?? 0;
+          const originalA = a.originalPrice || priceA;
+          const originalB = b.originalPrice || priceB;
+          const discountA = originalA > 0 ? ((originalA - priceA) / originalA) * 100 : 0;
+          const discountB = originalB > 0 ? ((originalB - priceB) / originalB) * 100 : 0;
           return discountB - discountA;
         });
         break;
@@ -282,6 +288,12 @@ export default function Catalog() {
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="h-80 bg-muted animate-pulse rounded-lg" />
             ))}
+          </div>
+        ) : loadError ? (
+          <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-6 py-12 text-center">
+            <p className="text-xl font-semibold">No hemos podido cargar la tienda</p>
+            <p className="mt-2 text-muted-foreground">Comprueba que el backend esté disponible y vuelve a intentarlo.</p>
+            <Button className="mt-5" variant="outline" onClick={() => window.location.reload()}>Reintentar</Button>
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12">

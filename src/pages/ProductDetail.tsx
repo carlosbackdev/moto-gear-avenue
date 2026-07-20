@@ -70,7 +70,7 @@ export default function ProductDetail() {
     fetchProduct();
   }, [id, navigate, slug]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product) return;
     
     const parsedVariants = parseVariants();
@@ -93,8 +93,7 @@ export default function ProductDetail() {
       .join(', ');
     
     setVariantError(null);
-    addItem(product, quantity, variantString || undefined);
-    toast.success(`${quantity} ${quantity === 1 ? 'producto añadido' : 'productos añadidos'} al carrito`);
+    await addItem(product, quantity, variantString || undefined);
   };
 
   const handleToggleWishlist = () => {
@@ -138,53 +137,11 @@ export default function ProductDetail() {
     }
   };
 
-    const parseDeliveryDates = (): string => {
+  const formatDeliveryEstimate = (): string => {
     if (!product) return '';
-
-    const { deliveryMinDate, deliveryMaxDate, deliveryEstimateDays } = product;
-
-    // 1) Si tenemos fechas ISO del backend, usamos esas
-    if (deliveryMinDate && deliveryMaxDate) {
-      const minDate = new Date(deliveryMinDate);
-      const maxDate = new Date(deliveryMaxDate);
-
-      if (isNaN(minDate.getTime()) || isNaN(maxDate.getTime())) {
-        // Si algo viene mal, usamos el string antiguo si existe
-        return deliveryEstimateDays || '';
-      }
-
-      const dayMin = minDate.getDate();
-      const dayMax = maxDate.getDate();
-
-      const monthMin = minDate.toLocaleString('es-ES', { month: 'long' });
-      const monthMax = maxDate.toLocaleString('es-ES', { month: 'long' });
-
-      const yearMin = minDate.getFullYear();
-      const yearMax = maxDate.getFullYear();
-
-      // Mismo mes y año → "19-23 de noviembre"
-      if (monthMin === monthMax && yearMin === yearMax) {
-        return `${dayMin}-${dayMax} de ${monthMin}`;
-      }
-
-      // Mes o año distinto → "30 de noviembre - 3 de diciembre"
-      return `${dayMin} de ${monthMin} - ${dayMax} de ${monthMax}`;
-    }
-
-    // 2) Compatibilidad: si no hay fechas ISO, usamos el formato viejo "19-23 días"
-    if (deliveryEstimateDays) {
-      const match = deliveryEstimateDays.match(/(\d+)-(\d+)\s*días/);
-      if (!match) return deliveryEstimateDays;
-
-      const [, startDay, endDay] = match;
-      const today = new Date();
-      const currentMonth = today.toLocaleString('es-ES', { month: 'long' });
-
-      return `${startDay}-${endDay} de ${currentMonth}`;
-    }
-
-    // 3) No hay info
-    return '';
+    const estimate = product.deliveryEstimateDays?.trim();
+    if (!estimate) return '';
+    return /d[ií]as?/i.test(estimate) ? estimate : `${estimate} días`;
   };
 
 
@@ -208,7 +165,7 @@ export default function ProductDetail() {
     : [product?.imageUrl || '/placeholder.svg'];
 
   const variants = parseVariants();
-  const deliveryDateRange = parseDeliveryDates();
+  const deliveryEstimate = formatDeliveryEstimate();
   const cleanedSpecs = cleanSpecifications();
 
   const incrementQuantity = () => {
@@ -385,14 +342,14 @@ export default function ProductDetail() {
             </div>
 
             {/* Delivery Info - Destacado */}
-            {deliveryDateRange && (
+            {deliveryEstimate && (
               <Card className="bg-primary/5 border-primary/20">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-6 w-6 text-primary" />
                     <div>
-                      <p className="text-sm font-medium">Fecha estimada de entrega</p>
-                      <p className="text-lg font-bold text-primary">{deliveryDateRange}</p>
+                      <p className="text-sm font-medium">Plazo estimado de entrega</p>
+                      <p className="text-lg font-bold text-primary">{deliveryEstimate}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -515,10 +472,10 @@ export default function ProductDetail() {
                       <span>Envío: {product.shippingCost.toFixed(2)}€</span>
                     </div>
                   )}
-                  {deliveryDateRange && (
+                  {deliveryEstimate && (
                     <div className="flex items-center gap-3 text-sm">
                       <Truck className="h-5 w-5 text-primary" />
-                      <span>Entrega estimada: {deliveryDateRange}</span>
+                      <span>Entrega estimada: {deliveryEstimate}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-3 text-sm">
