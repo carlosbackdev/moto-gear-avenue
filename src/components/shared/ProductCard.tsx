@@ -7,7 +7,6 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { imageService } from '@/services/image.service';
-import { toast } from 'sonner';
 import { LoginModal } from '@/components/auth/LoginModal';
 import { getProductUrl } from '@/lib/seo';
 
@@ -19,9 +18,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { addItem } = useCart();
   const { isAuthenticated } = useAuth();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const displayPrice = product.sellPrice ?? product.price ?? 0;
+  const originalPrice = product.originalPrice ?? displayPrice;
+  const canPurchase = product.purchasable === true && (product.stock ?? product.stockQuantity ?? 0) > 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+
+    if (!canPurchase) return;
 
     // Si no está autenticado, mostrar modal de login
     if (!isAuthenticated) {
@@ -46,7 +50,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     }
 
     addItem(product, 1, variantString);
-    toast.success('Producto añadido al carrito');
   };
 
   return (
@@ -73,16 +76,18 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <div className="flex items-center justify-between w-full">
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-primary">{product.sellPrice.toFixed(2)}€</span>
+                  <span className="text-xl font-bold text-primary">
+                    {displayPrice > 0 ? `${displayPrice.toFixed(2)}€` : 'Precio pendiente'}
+                  </span>
                   {product.discount > 0 && (
                     <span className="text-xs font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded">
                       -{product.discount}%
                     </span>
                   )}
                 </div>
-                {product.discount > 0 && (
+                {product.discount > 0 && originalPrice > 0 && (
                   <span className="text-sm text-muted-foreground line-through">
-                    {product.originalPrice.toFixed(2)}€
+                    {originalPrice.toFixed(2)}€
                   </span>
                 )}
               </div>
@@ -90,9 +95,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 size="sm"
                 onClick={handleAddToCart}
                 className="gap-2"
+                disabled={!canPurchase}
               >
                 <ShoppingCart className="h-4 w-4" />
-                Añadir
+                {canPurchase
+                  ? 'Añadir'
+                  : product.status === 'OUT_OF_STOCK'
+                    ? 'Sin stock'
+                    : 'Próximamente'}
               </Button>
             </div>
           </CardFooter>
