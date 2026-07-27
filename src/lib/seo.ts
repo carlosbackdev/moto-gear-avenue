@@ -2,44 +2,33 @@
  * Utility functions for SEO
  */
 
-/**
- * Generates a URL-friendly slug from a string
- */
 export function generateSlug(text: string): string {
   return text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-    .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
-    .substring(0, 80); // Limit length
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 80);
 }
 
-/**
- * Generates a product URL with slug
- */
 export function getProductUrl(id: number, name: string): string {
   const slug = generateSlug(name);
   return `/product/${id}/${slug}`;
 }
 
-/**
- * Truncate text for meta descriptions (max 160 characters)
- */
 export function truncateDescription(text: string, maxLength: number = 155): string {
   if (!text || text.length <= maxLength) return text;
   return text.substring(0, maxLength - 3).trim() + '...';
 }
 
-/**
- * Default SEO values
- */
 export const DEFAULT_SEO = {
   siteName: 'MotoGear',
   siteUrl: 'https://motogear.es',
-  defaultTitle: 'Ordenador de a bordo para Kawasaki | MotoGear',
-  defaultDescription: 'Ordenador de a bordo MotoGear para Kawasaki: telemetría de la ECU, lectura de averías y diagnóstico local en un único dispositivo. Producto en desarrollo.',
-  defaultImage: 'https://motogear.es/icon-512.png',
+  defaultTitle: 'Ordenador de a bordo Kawasaki con pantalla | MotoGear',
+  defaultDescription:
+    'Ordenador de a bordo MotoGear con pantalla integrada para Kawasaki ER-6n, ER-6f y Z750: marcha, telemetría, batería, temperaturas, avisos DTC y app complementaria.',
+  defaultImage: 'https://motogear.es/onboard-computer-prototype.svg',
 };
