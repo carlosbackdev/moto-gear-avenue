@@ -13,6 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductReviews } from '@/components/product/ProductReviews';
+import { OnboardComputerSpecs, ONBOARD_COMPUTER_SLUG } from '@/components/product/OnboardComputerSpecs';
+import { LeadCaptureModal } from '@/components/shared/LeadCaptureModal';
 import { toast } from 'sonner';
 import { generateSlug, truncateDescription, DEFAULT_SEO } from '@/lib/seo';
 
@@ -27,6 +29,7 @@ export default function ProductDetail() {
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [variantError, setVariantError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
 
   // Scroll to top when entering product page
   useEffect(() => {
@@ -278,6 +281,8 @@ export default function ProductDetail() {
             productName={product.name}
             initialIndex={currentImageIndex}
           />
+
+          {product.slug === ONBOARD_COMPUTER_SLUG && <OnboardComputerSpecs />}
           
           {/* Specifications and Details Tabs */}
           {((cleanedSpecs && Object.keys(cleanedSpecs).length > 0) || product.description) && (
@@ -446,13 +451,14 @@ export default function ProductDetail() {
                   <Button
                     size="lg"
                     className="flex-1 gap-2"
-                    onClick={handleAddToCart}
-                    disabled={!canPurchase}
+                    onClick={canPurchase ? handleAddToCart : () => setLeadModalOpen(true)}
                   >
                     <ShoppingCart className="h-5 w-5" />
-                    {!canPurchase
-                      ? product.status === 'OUT_OF_STOCK' ? 'Sin stock' : 'Todavía no disponible'
-                      : (isInCart(product.id) ? 'Añadir más al carrito' : 'Añadir al carrito')}
+                    {canPurchase
+                      ? (isInCart(product.id) ? 'Añadir más al carrito' : 'Añadir al carrito')
+                      : product.status === 'OUT_OF_STOCK'
+                        ? 'Avisarme cuando vuelva'
+                        : 'Reservar mi plaza en el lanzamiento'}
                   </Button>
                 </div>
                 
@@ -493,6 +499,13 @@ export default function ProductDetail() {
         <ProductReviews productId={product.id} />
       </div>
     </div>
+
+    <LeadCaptureModal
+      open={leadModalOpen}
+      onOpenChange={setLeadModalOpen}
+      source="EARLY_ACCESS"
+      productSlug={product.slug}
+    />
     </>
   );
 }

@@ -117,7 +117,9 @@ export default function Contact() {
                 <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Tu moto</span>
                 <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em]">Consultar compatibilidad</h2>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Al enviar, se abrirá tu aplicación de correo con el mensaje preparado. La web no guarda tus datos.
+                  Al enviar, se abrirá tu aplicación de correo con el mensaje preparado. Si solo quieres que te avisemos
+                  del lanzamiento o consultar la compatibilidad de tu moto, es más rápido usar el botón "Consultar
+                  compatibilidad" de la portada: ese sí queda registrado y te contestamos sin que tengas que enviar nada.
                 </p>
               </div>
 
