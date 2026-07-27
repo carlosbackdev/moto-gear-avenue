@@ -21,10 +21,14 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/shared/ProductCard';
+import { LeadCaptureModal } from '@/components/shared/LeadCaptureModal';
 import { DEFAULT_SEO } from '@/lib/seo';
 import { getProductUrl } from '@/lib/seo';
 import { productService } from '@/services/product.service';
 import { Product } from '@/types/models';
+import { LeadSource } from '@/types/lead';
+
+const ONBOARD_COMPUTER_SLUG = 'ordenador-bordo-kawasaki';
 
 const features = [
   {
@@ -180,6 +184,13 @@ function DashboardPreview() {
 export default function Home() {
   const [showcaseProduct, setShowcaseProduct] = useState<Product | null>(null);
   const [otherProducts, setOtherProducts] = useState<Product[]>([]);
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
+  const [leadSource, setLeadSource] = useState<LeadSource>('EARLY_ACCESS');
+
+  const openLeadModal = (source: LeadSource) => {
+    setLeadSource(source);
+    setLeadModalOpen(true);
+  };
 
   useEffect(() => {
     productService
@@ -305,11 +316,13 @@ export default function Home() {
                     </Link>
                   </Button>
                 ) : (
-                  <Button asChild size="lg" className="h-[52px] rounded-full px-7 text-base font-semibold shadow-[0_12px_35px_rgba(255,78,0,0.25)]">
-                    <Link to="/contact?subject=compatibility">
-                      {isOutOfStock ? 'Avisarme cuando vuelva' : 'Consultar compatibilidad'}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
+                  <Button
+                    size="lg"
+                    className="h-[52px] rounded-full px-7 text-base font-semibold shadow-[0_12px_35px_rgba(255,78,0,0.25)]"
+                    onClick={() => openLeadModal(isOutOfStock ? 'EARLY_ACCESS' : 'COMPATIBILITY')}
+                  >
+                    {isOutOfStock ? 'Avisarme cuando vuelva' : 'Consultar compatibilidad'}
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 )}
                 <Button asChild size="lg" variant="outline" className="h-[52px] rounded-full border-white/20 bg-white/5 px-7 text-base text-white hover:bg-white/10 hover:text-white">
@@ -478,8 +491,12 @@ export default function Home() {
                   Kawasaki reutiliza parte del protocolo entre modelos, pero eso no significa que todos compartan mapas,
                   conectores o fórmulas. La compatibilidad se publicará por modelo y año, con evidencia.
                 </p>
-                <Button asChild variant="outline" className="mt-8 rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">
-                  <Link to="/contact?subject=compatibility">Consultar mi Kawasaki <ChevronRight className="ml-1 h-4 w-4" /></Link>
+                <Button
+                  variant="outline"
+                  className="mt-8 rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                  onClick={() => openLeadModal('COMPATIBILITY')}
+                >
+                  Consultar mi Kawasaki <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
 
@@ -590,11 +607,13 @@ export default function Home() {
                   Cuéntanos el modelo y el año. Puede ayudarnos a decidir qué validar después.
                 </h2>
               </div>
-              <Button asChild size="lg" className="h-14 shrink-0 rounded-full bg-black px-8 text-base text-white hover:bg-black/85">
-                <Link to="/contact?subject=early-access">
-                  Quiero seguir el proyecto
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+              <Button
+                size="lg"
+                className="h-14 shrink-0 rounded-full bg-black px-8 text-base text-white hover:bg-black/85"
+                onClick={() => openLeadModal('EARLY_ACCESS')}
+              >
+                Reservar mi plaza en el lanzamiento
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
             <div className="mt-12 flex items-center gap-3 border-t border-white/25 pt-6 text-xs text-white/65">
@@ -606,6 +625,13 @@ export default function Home() {
           </div>
         </section>
       </div>
+
+      <LeadCaptureModal
+        open={leadModalOpen}
+        onOpenChange={setLeadModalOpen}
+        source={leadSource}
+        productSlug={showcaseProduct?.slug ?? ONBOARD_COMPUTER_SLUG}
+      />
     </>
   );
 }
