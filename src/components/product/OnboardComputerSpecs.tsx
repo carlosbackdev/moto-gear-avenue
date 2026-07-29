@@ -16,10 +16,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 export const ONBOARD_COMPUTER_SLUG = 'ordenador-bordo-kawasaki';
 
 const SPEC_ROWS: Array<[string, string]> = [
-  ['Conexión', 'Directa al conector de diagnóstico Kawasaki de 4 pines, sin cortar cables ni modificar la instalación.'],
-  ['Procesador', 'ESP32-S3 con WiFi para la conexión local con la app complementaria.'],
-  ['Pantalla', 'Pantalla integrada de 1,47 pulgadas para perfiles de conducción y avisos.'],
-  ['Protocolo', 'Kawasaki KDS / KWP2000 sobre K-Line.'],
+  ['Conexión', 'Directa al conector de diagnóstico Kawasaki de 4 pines, plug & play.'],
+  ['Procesador', 'ESP32-S3 con WiFi y pantalla integrada.'],
+  ['Pantalla', 'Pantalla TFT con alto brillo de 1,9 pulgadas para perfiles de telemetria.'],
+  ['Protocolo', 'Lectura ECU: Kawasaki KDS / KWP2000 sobre K-Line.'],
   ['Alimentación', 'Desde la propia moto a través del conector de diagnóstico.'],
   ['Protección eléctrica', 'Fusible, diodo y supresor TVS para el entorno eléctrico de una motocicleta.'],
   ['Respaldo', 'Supercondensador para reducir reinicios ante microcaídas de tensión durante el arranque.'],
@@ -74,7 +74,7 @@ export function OnboardComputerSpecs() {
       <Card className="overflow-hidden border-black/8 bg-[#101111] text-white">
         <div className="grid lg:grid-cols-[1.08fr_0.92fr]">
           <img
-            src="/onboard-computer-prototype.svg"
+            src="/onboard-computer-prototype.png"
             alt="Render 3D del prototipo actual del ordenador de a bordo MotoGear"
             className="h-full min-h-[320px] w-full object-cover"
           />
@@ -109,7 +109,7 @@ export function OnboardComputerSpecs() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Gauge className="h-5 w-5 text-primary" />
-            Mucho más que un indicador de marcha
+            Obtiene todos los datos de tu moto
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             La marcha es una de las funciones; el producto reúne telemetría, avisos y valores calculados en la propia moto.

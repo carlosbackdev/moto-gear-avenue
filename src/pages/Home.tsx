@@ -293,13 +293,13 @@ export default function Home() {
               </div>
 
               <h1 className="font-display text-5xl font-semibold leading-[0.95] tracking-[-0.055em] sm:text-6xl lg:text-[5.15rem]">
-                Mucho más que
-                <span className="mt-2 block text-primary">un indicador de marcha.</span>
+               El verdadero cerebro
+                <span className="mt-2 block text-primary">de tu Kawasaki.</span>
               </h1>
 
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-white/62 sm:text-xl">
-                Un ordenador de a bordo autónomo para tu Kawasaki: muestra telemetría, perfiles de conducción y avisos de
-                avería directamente en su pantalla. El móvil solo amplía lo que ya funciona en la moto.
+                Toma el control absoluto. Telemetría en tiempo real, diagnóstico instantáneo de fallos (DTC) y perfiles de conducción en una pantalla 100% autónoma.
+                 Con aplicacion móvil para diagnósticos avanzados.
               </p>
 
               {showcaseProduct && (
@@ -356,13 +356,13 @@ export default function Home() {
 
               <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-xs font-medium uppercase tracking-[0.12em] text-white/45">
                 <span className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" /> Funciona sin móvil
+                  <Check className="h-4 w-4 text-primary" /> Plug & Play
                 </span>
                 <span className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" /> Sin suscripción
+                  <Check className="h-4 w-4 text-primary" /> Lectura directa de ECU
                 </span>
                 <span className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" /> Conexión local
+                  <Check className="h-4 w-4 text-primary" /> Escáner de averías FI
                 </span>
               </div>
             </div>
@@ -373,10 +373,10 @@ export default function Home() {
           <div className="border-y border-white/10 bg-white/[0.025]">
             <div className="container grid grid-cols-2 gap-px bg-white/10 px-0 sm:grid-cols-4">
               {[
-                ['Pantalla integrada', 'Producto principal'],
-                ['KDS / KWP2000', 'Protocolo'],
+                ['Pantalla integrada', '1,9" TFT'],
+                ['Lector ECU', 'KWP2000'],
                 ['ESP32-S3', 'Procesamiento'],
-                ['WiFi local', 'App opcional'],
+                ['WiFi', 'App gratuita'],
               ].map(([value, label]) => (
                 <div key={label} className="bg-[#0b0c0c] px-5 py-6 text-center">
                   <div className="font-display text-lg font-semibold text-white sm:text-xl">{value}</div>
@@ -402,7 +402,7 @@ export default function Home() {
               <div>
                 <span className="eyebrow">El producto real</span>
                 <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.03] tracking-[-0.045em] sm:text-5xl lg:text-6xl">
-                  Un dispositivo en la moto. No una app disfrazada.
+                  Un dispositivo NUEVO para tu Kawasaki.
                 </h2>
                 <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
                   El equipo se conecta al diagnóstico Kawasaki, lee la ECU, procesa los datos y los muestra en su propia
@@ -456,11 +456,11 @@ export default function Home() {
             <div>
               <span className="eyebrow">App complementaria</span>
               <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-5xl">
-                El móvil amplía el producto. No lo sustituye.
+                Aplicacion movil gratuita para acedder a los diagnósticos y mucho mas.
               </h2>
               <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-                La pantalla integrada se ocupa de lo necesario durante la conducción. Cuando quieres más detalle, conectas
-                la app por WiFi local, sin cuenta obligatoria ni depender de servidores externos.
+                La pantalla integrada se ocupa de lo necesario durante la conducción. Cuando quieres más detalles, conectas
+                la app por WiFi, obteniendo acceso a diagnósticos, configuración, mantenimiento y mas.
               </p>
 
               <ul className="mt-8 space-y-4">
@@ -477,7 +477,7 @@ export default function Home() {
               <div className="absolute -inset-12 rounded-full bg-primary/5 blur-3xl" />
               <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-[#0a0b0b] p-6 text-white shadow-[0_30px_90px_rgba(0,0,0,0.17)] sm:p-9">
                 <div className="mb-10 flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">Arquitectura local</span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">Arquitectura del Producto</span>
                   <span className="flex items-center gap-2 text-xs text-emerald-400">
                     <span className="h-2 w-2 rounded-full bg-emerald-400" /> Sin nube
                   </span>
@@ -516,11 +516,11 @@ export default function Home() {
               <div>
                 <span className="eyebrow text-primary">Compatibilidad confirmada</span>
                 <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-5xl">
-                  Modelos probados, no una lista genérica.
+                  Modelos probados.
                 </h2>
                 <p className="mt-6 leading-relaxed text-white/50">
                   Publicamos como compatible únicamente lo que ya se ha comprobado con el protocolo Kawasaki KDS /
-                  KWP2000. Para otros modelos, primero validamos conector, PIDs, fórmulas y diagnóstico.
+                  KWP2000. Para otros modelos, primero validamos con ingeniería inversa.
                 </p>
                 <Button
                   variant="outline"
@@ -572,8 +572,7 @@ export default function Home() {
                     Equipamiento y accesorios seleccionados.
                   </h2>
                   <p className="mt-4 text-muted-foreground">
-                    El ordenador de a bordo es el producto propio de MotoGear. El resto del catálogo continúa integrado con
-                    el mismo backend, stock y proceso de compra.
+                    Compra nuestro ordenador de a bordo de MotoGear. O explora mas productos de nuestra tienda.
                   </p>
                 </div>
                 <Button asChild variant="outline" className="rounded-full">
@@ -600,8 +599,7 @@ export default function Home() {
                 Del protocolo validado a una primera serie fiable.
               </h2>
               <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-                Diferenciamos lo que ya funciona de lo que todavía está en integración para no vender una promesa como si
-                fuera un producto terminado.
+                Diferenciamos lo que ya funciona de lo que todavía está en integración para no vender una promesa.
               </p>
             </div>
 
