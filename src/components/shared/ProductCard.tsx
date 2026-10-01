@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { imageService } from '@/services/image.service';
 import { LoginModal } from '@/components/auth/LoginModal';
 import { getProductUrl } from '@/lib/seo';
+import { getDiscountDetails } from '@/lib/pricing';
 
 interface ProductCardProps {
   product: Product;
@@ -20,6 +21,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const displayPrice = product.sellPrice ?? product.price ?? 0;
   const originalPrice = product.originalPrice ?? displayPrice;
+  const discount = getDiscountDetails(originalPrice, displayPrice);
   const canPurchase = product.purchasable === true;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -79,13 +81,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                   <span className="text-xl font-bold text-primary">
                     {displayPrice > 0 ? `${displayPrice.toFixed(2)}€` : 'Precio pendiente'}
                   </span>
-                  {product.discount > 0 && (
+                  {discount && (
                     <span className="text-xs font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded">
-                      -{product.discount}%
+                      -{discount.percentage}%
                     </span>
                   )}
                 </div>
-                {product.discount > 0 && originalPrice > 0 && (
+                {discount && (
                   <span className="text-sm text-muted-foreground line-through">
                     {originalPrice.toFixed(2)}€
                   </span>
