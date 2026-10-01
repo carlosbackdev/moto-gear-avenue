@@ -70,8 +70,8 @@ function FeatureList({ items }: { items: string[] }) {
 
 export function OnboardComputerSpecs() {
   return (
-    <div className="space-y-6">
-      <Card className="overflow-hidden border-black/8 bg-[#101111] text-white">
+    <>
+      <Card className="overflow-hidden border-black/8 bg-[#101111] text-white lg:col-span-2">
         <div className="grid lg:grid-cols-[1.08fr_0.92fr]">
           <img
             src="/onboard-computer-prototype.png"
@@ -116,7 +116,7 @@ export function OnboardComputerSpecs() {
           </p>
         </CardHeader>
         <CardContent className="space-y-7">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 2xl:grid-cols-4">
             {HIGHLIGHTS.map((item) => (
               <div key={item.label} className="rounded-xl border border-black/8 bg-white p-3 text-center">
                 <item.icon className="mx-auto h-5 w-5 text-primary" />
@@ -126,7 +126,7 @@ export function OnboardComputerSpecs() {
             ))}
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid gap-5 2xl:grid-cols-2">
             <div className="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-primary">
@@ -238,6 +238,6 @@ export function OnboardComputerSpecs() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }
