@@ -17,6 +17,7 @@ import { OnboardComputerSpecs, ONBOARD_COMPUTER_SLUG } from '@/components/produc
 import { LeadCaptureModal } from '@/components/shared/LeadCaptureModal';
 import { toast } from 'sonner';
 import { generateSlug, truncateDescription, DEFAULT_SEO } from '@/lib/seo';
+import { getDiscountDetails } from '@/lib/pricing';
 
 export default function ProductDetail() {
   const { id, slug } = useParams<{ id: string; slug?: string }>();
@@ -203,6 +204,7 @@ export default function ProductDetail() {
 
   // SEO meta data
   const displayPrice = product.price ?? product.sellPrice ?? 0;
+  const discount = getDiscountDetails(product.originalPrice ?? 0, displayPrice);
   const canPurchase = product.purchasable === true;
   const productSlug = generateSlug(product.name);
   const productUrl = `${DEFAULT_SEO.siteUrl}/product/${product.id}/${productSlug}`;
@@ -211,6 +213,34 @@ export default function ProductDetail() {
     product.description || `${product.name} de MotoGear. ${product.brand ? `Marca: ${product.brand}.` : ''}`
   );
   const metaTitle = `${product.name} | MotoGear`;
+  const informationCard = ((cleanedSpecs && Object.keys(cleanedSpecs).length > 0) || product.description) && (
+    <Card>
+      <CardHeader><CardTitle>Información del Producto</CardTitle></CardHeader>
+      <CardContent>
+        <Tabs defaultValue="details" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="details">Detalles</TabsTrigger>
+            <TabsTrigger value="specifications">Especificaciones</TabsTrigger>
+          </TabsList>
+          <TabsContent value="specifications" className="mt-4">
+            {cleanedSpecs && Object.keys(cleanedSpecs).length > 0 ? (
+              <dl className="space-y-2">
+                {Object.entries(cleanedSpecs).map(([key, value]) => (
+                  <div key={key} className="flex justify-between gap-3 border-b border-border py-2 last:border-0">
+                    <dt className="font-medium text-muted-foreground">{key}</dt>
+                    <dd className="text-foreground">{String(value)}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : <p className="text-sm text-muted-foreground">No hay especificaciones disponibles</p>}
+          </TabsContent>
+          <TabsContent value="details" className="mt-4">
+            <div className="text-muted-foreground leading-relaxed">{product.description || 'No hay detalles disponibles'}</div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <>
@@ -282,45 +312,7 @@ export default function ProductDetail() {
             initialIndex={currentImageIndex}
           />
 
-          {product.slug === ONBOARD_COMPUTER_SLUG && <OnboardComputerSpecs />}
-          
-          {/* Specifications and Details Tabs */}
-          {((cleanedSpecs && Object.keys(cleanedSpecs).length > 0) || product.description) && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Información del Producto</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="details" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="details">Detalles</TabsTrigger>
-                    <TabsTrigger value="specifications">Especificaciones</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="specifications" className="mt-4">
-                    {cleanedSpecs && Object.keys(cleanedSpecs).length > 0 ? (
-                      <dl className="space-y-2">
-                        {Object.entries(cleanedSpecs).map(([key, value], index) => (
-                          <div key={index} className="flex justify-between py-2 border-b border-border last:border-0">
-                            <dt className="font-medium text-muted-foreground">{key}</dt>
-                            <dd className="text-foreground">{String(value)}</dd>
-                          </div>
-                        ))}
-                      </dl>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No hay especificaciones disponibles</p>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="details" className="mt-4">
-                    <div className="text-muted-foreground leading-relaxed">
-                      {product.description || 'No hay detalles disponibles'}
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-          )}
+          {product.slug !== ONBOARD_COMPUTER_SLUG && informationCard}
         </div>
 
           {/* Product Info */}
@@ -342,6 +334,13 @@ export default function ProductDetail() {
                       : 'Próximamente'}
                 </Badge>
               </div>
+              {discount && (
+                <div className="mb-4 flex flex-wrap items-center gap-3 text-sm">
+                  <span className="text-muted-foreground line-through">Antes {product.originalPrice.toFixed(2)}€</span>
+                  <Badge variant="destructive">-{discount.percentage}%</Badge>
+                  <span className="font-medium text-green-700">Ahorras {discount.savings.toFixed(2)}€</span>
+                </div>
+              )}
               {product.lowStock && canPurchase && (
                 <p className="text-sm font-medium text-amber-600">Últimas {product.stockQuantity} unidades</p>
               )}
@@ -494,6 +493,13 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
+
+        {product.slug === ONBOARD_COMPUTER_SLUG && (
+          <div className="mb-12 grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+            <OnboardComputerSpecs />
+            {informationCard}
+          </div>
+        )}
 
         {/* Reviews Section */}
         <ProductReviews productId={product.id} />
