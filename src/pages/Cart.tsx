@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useEffect } from 'react';
+import { getDiscountDetails } from '@/lib/pricing';
 
 export default function Cart() {
   const { cart, removeItem, updateQuantity, clearCart, totalAmount, totalItems, totalSavings } = useCart();
@@ -52,9 +53,9 @@ export default function Cart() {
             {cart.map((item, index) => {
               const originalPrice = item.product.originalPrice || item.product.price || 0;
               const sellPrice = item.product.sellPrice || item.product.price || 0;
-              const unitSavings = originalPrice - sellPrice;
-              const totalSavingsPerItem = unitSavings * item.quantity;
-              const hasDiscount = originalPrice > sellPrice;
+              const discount = getDiscountDetails(originalPrice, sellPrice);
+              const totalSavingsPerItem = (discount?.savings ?? 0) * item.quantity;
+              const hasDiscount = discount !== null;
               
               return (
                 <Card key={`${item.product.id}-${item.variant || 'no-variant'}-${index}`}>
@@ -93,7 +94,7 @@ export default function Cart() {
                           </p>
                           {hasDiscount && (
                             <Badge variant="destructive" className="text-xs">
-                              -{item.product.discount}%
+                              -{discount?.percentage}%
                             </Badge>
                           )}
                         </div>
