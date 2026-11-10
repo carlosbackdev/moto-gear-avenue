@@ -31,6 +31,7 @@ const Track = lazy(() => import('@/pages/Track'));
 const Success = lazy(() => import('@/pages/Success'));
 const Wishlist = lazy(() => import('@/pages/Wishlist'));
 const ShippingPolicy = lazy(() => import('@/pages/legal/ShippingPolicy'));
+const Privacy = lazy(() => import('@/pages/legal/Privacy'));
 const Returns = lazy(() => import('@/pages/legal/Returns'));
 const PaymentInfo = lazy(() => import('@/pages/legal/PaymentInfo'));
 const BlogList = lazy(() => import('@/pages/blog/BlogList'));
@@ -64,6 +65,7 @@ const App = () => (
                           <Route path="/contact" element={<Contact />} />
                           <Route path="/terms" element={<Terms />} />
                           <Route path="/shipping" element={<ShippingPolicy />} />
+                          <Route path="/privacy" element={<Privacy />} />
                           <Route path="/returns" element={<Returns />} />
                           <Route path="/payment-info" element={<PaymentInfo />} />
                           <Route path="/catalog" element={<Catalog />} />
@@ -100,3 +102,4 @@ const App = () => (
 );
 
 export default App;
+

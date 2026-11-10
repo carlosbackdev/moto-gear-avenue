@@ -1,3 +1,4 @@
+import { PrivacyNotice } from '@/components/legal/PrivacyNotice';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
@@ -293,6 +294,7 @@ export default function Checkout() {
                       {loading ? 'Guardando...' : 'Guardar y Pagar'}
                     </Button>
                   </div>
+                <PrivacyNotice purpose="gestionar el pedido, el envío y la atención posventa" basis="la ejecución del contrato y las obligaciones legales" />
                 </form>
               </CardContent>
             </Card>
@@ -362,3 +364,4 @@ export default function Checkout() {
     </div>
   );
 }
+

@@ -1,3 +1,4 @@
+import { PrivacyNotice } from '@/components/legal/PrivacyNotice';
 import { useState } from 'react';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import {
@@ -26,10 +27,10 @@ interface LeadCaptureModalProps {
 
 const COPY: Record<LeadSource, { title: string; description: string; cta: string }> = {
   EARLY_ACCESS: {
-    title: 'Reserva tu plaza en el lanzamiento',
+    title: 'Avísame cuando haya unidades',
     description:
-      'Te avisamos en cuanto el ordenador de a bordo esté validado y disponible para comprar. Sin pagos ni compromiso ahora.',
-    cta: 'Reservar mi plaza',
+      'Déjanos tu email y tu modelo de moto para avisarte de la disponibilidad. No realizas una compra ni pagas una reserva.',
+    cta: 'Solicitar aviso',
   },
   COMPATIBILITY: {
     title: 'Consultar compatibilidad de mi Kawasaki',
@@ -180,8 +181,9 @@ export function LeadCaptureModal({ open, onOpenChange, source, productSlug }: Le
               </Button>
 
               <p className="text-center text-xs leading-relaxed text-muted-foreground">
-                No se aceptan pagos ni reservas de compra. Solo guardamos tus datos para avisarte.
+                Esta solicitud no es una reserva de compra y no requiere ningún pago.
               </p>
+            <PrivacyNotice purpose={source === 'EARLY_ACCESS' ? 'enviarte el aviso de disponibilidad solicitado' : 'responder a tu consulta de compatibilidad'} basis={source === 'EARLY_ACCESS' ? 'tu consentimiento al solicitar el aviso, que puedes retirar por email' : 'las medidas precontractuales solicitadas'} />
             </form>
           </>
         )}
@@ -189,3 +191,4 @@ export function LeadCaptureModal({ open, onOpenChange, source, productSlug }: Le
     </Dialog>
   );
 }
+

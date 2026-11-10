@@ -1,3 +1,4 @@
+import { PrivacyNotice } from '@/components/legal/PrivacyNotice';
 import { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
@@ -28,7 +29,7 @@ export default function Contact() {
     event.preventDefault();
 
     const subject = querySubject === 'early-access'
-      ? 'Quiero seguir el desarrollo del ordenador de a bordo'
+      ? 'Consulta sobre disponibilidad de MotoGear'
       : `Consulta de compatibilidad · ${formData.motorcycle || 'Kawasaki'}`;
     const body = [
       `Nombre: ${formData.name}`,
@@ -36,7 +37,7 @@ export default function Contact() {
       `Moto: ${formData.motorcycle}`,
       `Año: ${formData.year || 'No indicado'}`,
       '',
-      formData.message || 'Quiero recibir información sobre el proyecto y la compatibilidad de mi moto.',
+      formData.message || 'Quiero recibir información sobre el producto y la compatibilidad de mi moto.',
     ].join('\n');
 
     window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -55,7 +56,7 @@ export default function Contact() {
         <title>Compatibilidad y contacto | MotoGear</title>
         <meta
           name="description"
-          content="Consulta la compatibilidad de tu Kawasaki con el ordenador de a bordo MotoGear y sigue el desarrollo del producto."
+          content="Consulta la compatibilidad de tu Kawasaki con el ordenador de a bordo MotoGear y resuelve tus dudas de compra, instalación o pedidos."
         />
         <link rel="canonical" href="https://motogear.es/contact" />
       </Helmet>
@@ -64,9 +65,9 @@ export default function Contact() {
         <section className="relative overflow-hidden bg-[#0a0b0b] py-20 text-white sm:py-24">
           <div className="absolute inset-0 circuit-grid opacity-25" />
           <div className="container relative px-4">
-            <span className="eyebrow text-primary">Compatibilidad y acceso temprano</span>
+            <span className="eyebrow text-primary">Te ayudamos con tu MotoGear</span>
             <h1 className="mt-5 max-w-4xl font-display text-5xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-6xl">
-              Ayúdanos a saber qué Kawasaki deberíamos validar después.
+              ¿Encaja en tu moto? Hablemos.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/55">
               Dinos el modelo y el año de tu moto. Te responderemos con el estado real de compatibilidad, sin asumir que dos modelos usan exactamente los mismos datos.
@@ -81,9 +82,9 @@ export default function Contact() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black text-primary">
                   <Radio className="h-5 w-5" />
                 </div>
-                <h2 className="mt-7 font-display text-2xl font-semibold tracking-tight">Punto de partida</h2>
+                <h2 className="mt-7 font-display text-2xl font-semibold tracking-tight">Trato directo</h2>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  La ER-6n es la plataforma de desarrollo actual. El protocolo Kawasaki KDS/KWP2000 ya se comunica en laboratorio; el equipo final directo por K-Line continúa en integración.
+                  Soy Carlos, creador de MotoGear. El dispositivo ya funciona en mi Kawasaki ER-6n. Puedo ayudarte a comprobar tu versión, entender el montaje y resolver dudas sobre tu pedido.
                 </p>
               </div>
 
@@ -91,9 +92,9 @@ export default function Contact() {
                 <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-black/35">Qué haremos con tu mensaje</h3>
                 <ul className="mt-6 space-y-4">
                   {[
-                    'Registrar el interés por modelo y año.',
+                    'Comprobar tu modelo, año y conector.',
                     'Responder con el estado real conocido.',
-                    'Avisarte cuando haya novedades relevantes.',
+                    'Ayudarte con el uso o con tu pedido.',
                   ].map((item) => (
                     <li key={item} className="flex gap-3 text-sm leading-relaxed text-black/65">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -118,7 +119,7 @@ export default function Contact() {
                 <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em]">Consultar compatibilidad</h2>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                   Al enviar, se abrirá tu aplicación de correo con el mensaje preparado. Si solo quieres que te avisemos
-                  del lanzamiento o consultar la compatibilidad de tu moto, es más rápido usar el botón "Consultar
+                  cuando haya unidades o consultar la compatibilidad de tu moto, es más rápido usar el botón "Consultar
                   compatibilidad" de la portada: ese sí queda registrado y te contestamos sin que tengas que enviar nada.
                 </p>
               </div>
@@ -199,9 +200,10 @@ export default function Contact() {
 
                 <div className="flex gap-3 border-t border-black/8 pt-5 text-xs leading-relaxed text-muted-foreground">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                  No solicitamos pagos ni reservas mientras el producto siga en fase de validación.
+                  Si tu consulta es sobre una compra, incluye el número de pedido. Nunca envíes datos completos de tu tarjeta por correo.
                 </div>
-              </form>
+              <PrivacyNotice purpose="responder a tu consulta" basis="las medidas precontractuales o la gestión de tu solicitud" />
+                </form>
             </div>
           </div>
         </section>
@@ -209,3 +211,4 @@ export default function Contact() {
     </>
   );
 }
+

@@ -29,6 +29,7 @@ export const DEFAULT_SEO = {
   siteUrl: 'https://motogear.es',
   defaultTitle: 'Ordenador de a bordo Kawasaki con pantalla | MotoGear',
   defaultDescription:
-    'Ordenador de a bordo MotoGear con pantalla integrada para Kawasaki ER-6n, ER-6f y Z750: marcha, telemetría, batería, temperaturas, avisos DTC y app complementaria.',
+    'Ordenador de a bordo MotoGear con pantalla integrada para Kawasaki: marcha, telemetría, batería, temperaturas, diagnóstico y app complementaria. Consulta la compatibilidad de tu modelo y año.',
   defaultImage: 'https://motogear.es/onboard-computer-prototype.png',
 };
+
