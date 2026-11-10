@@ -18,7 +18,7 @@ export const ONBOARD_COMPUTER_SLUG = 'ordenador-bordo-kawasaki';
 const SPEC_ROWS: Array<[string, string]> = [
   ['Conexión', 'Directa al conector de diagnóstico Kawasaki de 4 pines, plug & play.'],
   ['Procesador', 'ESP32-S3 con WiFi y pantalla integrada.'],
-  ['Pantalla', 'Pantalla TFT con alto brillo de 1,9 pulgadas para perfiles de telemetria.'],
+  ['Pantalla', 'Pantalla TFT en color con distintas vistas de telemetría.'],
   ['Protocolo', 'Lectura ECU: Kawasaki KDS / KWP2000 sobre K-Line.'],
   ['Alimentación', 'Desde la propia moto a través del conector de diagnóstico.'],
   ['Protección eléctrica', 'Fusible, diodo y supresor TVS para el entorno eléctrico de una motocicleta.'],
@@ -37,8 +37,8 @@ const DEVICE_FUNCTIONS = [
   'Perfiles de marcha y telemetría configurados para distintos usos.',
   'Marcha engranada, RPM, velocidad, voltaje de batería y acelerador.',
   'Temperatura de refrigerante, admisión y otros sensores disponibles.',
-  'Valores calculados como consumo estimado, sin bloquear las peticiones a la ECU.',
-  'Aviso visible cuando la ECU tiene códigos de avería almacenados.',
+  'Valores calculados como consumo estimado, como referencia orientativa, no como medición directa del combustible.',
+  'Indicador de averías según el último escaneo de la ECU.',
 ];
 
 const APP_FUNCTIONS = [
@@ -50,9 +50,9 @@ const APP_FUNCTIONS = [
 ];
 
 const COMPATIBILITY = [
-  ['Kawasaki ER-6n', 'Todos los años', 'Confirmada'],
-  ['Kawasaki ER-6f', 'Todos los años', 'Confirmada'],
-  ['Kawasaki Z750', 'Compatibilidad de plataforma', 'Confirmada'],
+  ['Kawasaki ER-6n', 'Verificar año y conector', 'Consultar versión'],
+  ['Kawasaki ER-6f', 'Consultar antes de comprar', 'Consultar versión'],
+  ['Kawasaki Z750', 'Consultar antes de comprar', 'Consultar versión'],
 ];
 
 function FeatureList({ items }: { items: string[] }) {
@@ -75,7 +75,7 @@ export function OnboardComputerSpecs() {
         <div className="grid lg:grid-cols-[1.08fr_0.92fr]">
           <img
             src="/onboard-computer-prototype.png"
-            alt="Render 3D del prototipo actual del ordenador de a bordo MotoGear"
+            alt="Ilustración del diseño del ordenador de a bordo MotoGear"
             className="h-full min-h-[320px] w-full object-cover"
           />
           <div className="flex flex-col justify-center p-7 sm:p-9">
@@ -98,8 +98,7 @@ export function OnboardComputerSpecs() {
               ))}
             </div>
             <p className="mt-6 text-[11px] leading-relaxed text-white/35">
-              Render generado desde el STL actual. El diseño exterior y la posición final del botón pueden recibir pequeños
-              ajustes antes de fabricación.
+              Ilustración del diseño. Revisa las características y el contenido de esta ficha antes de comprar.
             </p>
           </div>
         </div>
@@ -109,7 +108,7 @@ export function OnboardComputerSpecs() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Gauge className="h-5 w-5 text-primary" />
-            Obtiene todos los datos de tu moto
+            Los datos que importan en tu moto
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             La marcha es una de las funciones; el producto reúne telemetría, avisos y valores calculados en la propia moto.
@@ -170,10 +169,10 @@ export function OnboardComputerSpecs() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Stethoscope className="h-5 w-5 text-primary" />
-            Compatibilidad confirmada
+            Comprueba tu compatibilidad
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Solo se anuncian modelos después de validar el protocolo, los datos y las funciones de diagnóstico.
+            El año, la ECU y el conector determinan la compatibilidad. Consulta tu versión antes de realizar el pedido.
           </p>
         </CardHeader>
         <CardContent>
@@ -207,10 +206,10 @@ export function OnboardComputerSpecs() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Wrench className="h-5 w-5 text-primary" />
-            Ficha técnica del prototipo
+            Características del dispositivo
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Datos del diseño actual, no especificaciones genéricas importadas del catálogo.
+            Conexión, alimentación y funcionamiento del equipo.
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -225,9 +224,9 @@ export function OnboardComputerSpecs() {
 
           <div className="grid gap-3 sm:grid-cols-3">
             {[
-              { icon: Zap, title: 'Telemetría', text: 'Lectura continua sin bloquear diagnóstico o app.' },
+              { icon: Zap, title: 'Telemetría', text: 'Datos en pantalla sin depender del teléfono.' },
               { icon: Stethoscope, title: 'Diagnóstico', text: 'DTC, contexto, borrado y confirmación.' },
-              { icon: Smartphone, title: 'Conexión local', text: 'Sin cuenta ni nube obligatoria en la V1.' },
+              { icon: Smartphone, title: 'Conexión local', text: 'Conexión WiFi local, sin cuenta para usar el lector.' },
             ].map((item) => (
               <div key={item.title} className="rounded-xl border border-black/8 bg-[#f4f3f0] p-4">
                 <item.icon className="h-5 w-5 text-primary" />
@@ -241,3 +240,4 @@ export function OnboardComputerSpecs() {
     </>
   );
 }
+

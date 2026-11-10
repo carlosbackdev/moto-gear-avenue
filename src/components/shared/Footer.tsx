@@ -54,7 +54,8 @@ export const Footer = () => {
               <li><Link to="/returns" className="transition hover:text-primary">Devoluciones</Link></li>
               <li><Link to="/payment-info" className="transition hover:text-primary">Pagos</Link></li>
               <li><Link to="/contact" className="transition hover:text-primary">Contacto</Link></li>
-              <li><Link to="/terms" className="transition hover:text-primary">Términos y condiciones</Link></li>
+              <li><Link to="/terms" className="transition hover:text-primary">Aviso legal y condiciones</Link></li>
+              <li><Link to="/privacy" className="transition hover:text-primary">Privacidad</Link></li>
               <li>
                 <a href="mailto:motogearspain@gmail.com" className="inline-flex items-center transition hover:text-primary">
                   Escribirnos <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
@@ -72,3 +73,4 @@ export const Footer = () => {
     </footer>
   );
 };
+

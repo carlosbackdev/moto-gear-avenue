@@ -17,7 +17,6 @@ import {
   Smartphone,
   Stethoscope,
   Thermometer,
-  Wrench,
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,9 +33,9 @@ const deviceFeatures = [
   {
     icon: LayoutDashboard,
     number: '01',
-    title: 'Pantalla propia y perfiles de marcha',
+    title: 'La información que quieres, de un vistazo',
     description:
-      'El ESP32 lleva su propia pantalla. Puedes cambiar entre perfiles para priorizar marcha, RPM, temperaturas, batería o una vista equilibrada.',
+      'Consulta la marcha, la temperatura del refrigerante y el voltaje de la batería en una pantalla dedicada. Cambia de vista con el botón del dispositivo.',
     note: 'Funciona aunque no conectes el móvil.',
   },
   {
@@ -50,9 +49,9 @@ const deviceFeatures = [
   {
     icon: Stethoscope,
     number: '03',
-    title: 'Avisa cuando la ECU guarda una avería',
+    title: 'Consulta si hay averías registradas',
     description:
-      'La pantalla puede indicar que existen DTC almacenados para que sepas que la moto necesita una revisión, incluso sin abrir la app.',
+      'El indicador de averías muestra el resultado del último escaneo de la ECU. Con la app puedes consultar los códigos y orientar el diagnóstico.',
     note: 'La lectura detallada y el borrado se realizan desde la app.',
   },
 ];
@@ -67,53 +66,36 @@ const appFeatures = [
 ];
 
 const compatibleModels = [
-  { model: 'Kawasaki ER-6n', years: 'Todos los años', detail: 'Telemetría y diagnóstico confirmados' },
-  { model: 'Kawasaki ER-6f', years: 'Todos los años', detail: 'Telemetría y diagnóstico confirmados' },
-  { model: 'Kawasaki Z750', years: 'Compatibilidad confirmada', detail: 'Plataforma Kawasaki KDS / KWP2000' },
+  { model: 'Kawasaki ER-6n', years: 'Consulta tu año y conector', detail: 'Dispositivo probado en ER-6n' },
+  { model: 'Kawasaki ER-6f', years: 'Consultar antes de comprar', detail: 'Verificamos la versión de tu moto' },
+  { model: 'Kawasaki Z750', years: 'Consultar antes de comprar', detail: 'Indícanos año y tipo de conector' },
 ];
 
-const developmentSteps = [
-  {
-    status: 'validated',
-    label: 'Validado',
-    title: 'Comunicación directa Kawasaki KDS',
-    description: 'Fast-init K-Line, sesión KWP2000 y lectura estable de datos sin depender de un ELM327.',
-  },
-  {
-    status: 'validated',
-    label: 'Validado',
-    title: 'Telemetría, DTC y borrado',
-    description: 'Marcha, RPM, velocidad, sensores, lectura de averías, freeze frames y borrado comprobado.',
-  },
-  {
-    status: 'progress',
-    label: 'En integración',
-    title: 'ESP32, pantalla y carcasa final',
-    description: 'Integración del firmware, perfiles de pantalla, electrónica protegida y diseño mecánico del producto.',
-  },
-  {
-    status: 'next',
-    label: 'Siguiente fase',
-    title: 'Preserie y validación de fabricación',
-    description: 'Pruebas térmicas, eléctricas, de montaje y uso continuado antes de abrir la primera serie.',
-  },
+const ownershipSteps = [
+  { title: 'Comprueba tu modelo', description: 'Indícanos el modelo, el año y el conector de tu Kawasaki para confirmar el kit adecuado antes de comprar.' },
+  { title: 'Conecta y coloca la pantalla', description: 'El dispositivo se alimenta desde la moto. Revisa las instrucciones de montaje y coloca el cable sin interferir con la dirección ni los mandos.' },
+  { title: 'Disfruta de la información', description: 'Usa la pantalla sin depender del teléfono. La app complementa el equipo con diagnóstico y configuración cuando la moto está detenida.' },
 ];
 
 const faqs = [
   {
-    question: '¿Ya se puede comprar?',
+    question: '¿Dónde consigo la app?',
+    answer: 'La publicación en Google Play y App Store está pendiente. Antes de comprar, consúltanos el acceso disponible para tu teléfono. La pantalla del dispositivo funciona de forma autónoma; el diagnóstico detallado y la configuración desde el móvil requieren la app.',
+  },
+  {
+    question: '¿Cómo puedo comprarlo?',
     answer:
-      'Todavía no. El producto sigue en integración del hardware final y no se aceptarán pedidos hasta validar el dispositivo completo sobre la moto.',
+      'Consulta el precio y la disponibilidad en la ficha del producto. Si no hay unidades, puedes pedir un aviso de reposición. Confirma primero la compatibilidad con tu moto.',
   },
   {
     question: '¿Con qué motos es compatible?',
     answer:
-      'La compatibilidad está confirmada para Kawasaki ER-6n y ER-6f de todos los años, además de Kawasaki Z750. Otros modelos se publicarán únicamente después de probar conexión, PIDs y comportamiento real.',
+      'El equipo se ha probado en Kawasaki ER-6n. El año, la ECU y el conector importan: consúltanos tu versión antes de comprar. Para ER-6f y Z750 comprobamos cada consulta antes de confirmar compatibilidad.',
   },
   {
     question: '¿Necesita el móvil para funcionar?',
     answer:
-      'No. El producto principal es el dispositivo con ESP32 y pantalla integrada. La telemetría y los perfiles de marcha funcionan de forma autónoma; la app amplía el diagnóstico, la configuración y el mantenimiento.',
+      'No. El producto principal es el dispositivo con pantalla integrada. La telemetría y los perfiles de marcha funcionan de forma autónoma; la app amplía el diagnóstico, la configuración y el mantenimiento.',
   },
   {
     question: '¿Es solo un indicador de marcha?',
@@ -121,9 +103,9 @@ const faqs = [
       'No. La marcha es solo uno de los datos. También puede mostrar RPM, velocidad, batería, temperaturas, acelerador, avisos de DTC y valores calculados como el consumo estimado.',
   },
   {
-    question: '¿Hay suscripción o necesito crear una cuenta?',
+    question: '¿Necesito una cuenta para usar el dispositivo?',
     answer:
-      'La V1 está planteada sin suscripción, sin nube y sin cuenta obligatoria. La comunicación con la app se realiza de forma local.',
+      'El dispositivo funciona sin cuenta y sin suscripción. La app se conecta por WiFi local. La cuenta de la tienda sirve para gestionar compras y pedidos; es independiente del uso del lector.',
   },
 ];
 
@@ -184,7 +166,7 @@ function ScreenPreview() {
       </div>
       <div className="relative mx-auto mt-4 flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">
         <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-        Pantalla del dispositivo · no es la app
+        Vista ilustrativa de los datos
       </div>
     </div>
   );
@@ -223,12 +205,12 @@ export default function Home() {
     : null;
   const isAvailable = showcaseProduct?.status === 'AVAILABLE' && showcaseProduct.purchasable;
   const isOutOfStock = showcaseProduct?.status === 'OUT_OF_STOCK';
-  const displayedFaqs = faqs.map((faq, index) =>
-    index === 0 && isAvailable
+  const displayedFaqs = faqs.map((faq) =>
+    faq.question === '¿Cómo puedo comprarlo?' && isAvailable
       ? {
           ...faq,
           answer:
-            'Sí. Cuando la ficha indica “Disponible”, puedes añadirlo al carrito, pagar de forma segura y seguir el pedido desde tu cuenta.',
+            'Cuando la ficha indica “Disponible”, puedes añadirlo al carrito, pagar de forma segura y seguir el pedido desde tu cuenta.',
         }
       : faq,
   );
@@ -278,10 +260,10 @@ export default function Home() {
             <div className="container flex min-h-10 items-center justify-center gap-2 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60 sm:text-xs">
               <CircleDot className="h-3.5 w-3.5 text-primary" />
               {isAvailable
-                ? 'Disponible · ER-6n / ER-6f / Z750'
+                ? 'Disponible · comprueba la compatibilidad con tu Kawasaki'
                 : isOutOfStock
-                  ? 'Temporalmente sin stock · ER-6n / ER-6f / Z750'
-                  : 'Producto en desarrollo · compatibilidad Kawasaki confirmada'}
+                  ? 'Temporalmente sin stock · solicita un aviso de reposición'
+                  : 'MotoGear para Kawasaki · pantalla autónoma y diagnóstico'}
             </div>
           </div>
 
@@ -293,13 +275,12 @@ export default function Home() {
               </div>
 
               <h1 className="font-display text-5xl font-semibold leading-[0.95] tracking-[-0.055em] sm:text-6xl lg:text-[5.15rem]">
-               El verdadero cerebro
-                <span className="mt-2 block text-primary">de tu Kawasaki.</span>
+               Conoce mejor
+                <span className="mt-2 block text-primary">tu Kawasaki.</span>
               </h1>
 
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-white/62 sm:text-xl">
-                Toma el control absoluto. Telemetría en tiempo real, diagnóstico instantáneo de fallos (DTC) y perfiles de conducción en una pantalla 100% autónoma.
-                 Con aplicacion móvil para diagnósticos avanzados.
+                Marcha engranada, temperatura y batería en una pantalla que funciona sin el móvil. Y, cuando necesitas más información, diagnóstico de averías y configuración desde la app complementaria.
               </p>
 
               {showcaseProduct && (
@@ -313,7 +294,7 @@ export default function Home() {
                           : 'border-amber-300/30 bg-amber-300/10 text-amber-300'
                     }`}
                   >
-                    {isAvailable ? 'Disponible' : isOutOfStock ? 'Sin stock' : 'Próximamente'}
+                    {isAvailable ? 'Disponible' : isOutOfStock ? 'Sin stock' : 'Consultar disponibilidad'}
                   </span>
                   {formattedPrice && <span className="font-display text-xl font-semibold text-white">{formattedPrice}</span>}
                   {showcaseProduct.lowStock && isAvailable && (
@@ -373,10 +354,10 @@ export default function Home() {
           <div className="border-y border-white/10 bg-white/[0.025]">
             <div className="container grid grid-cols-2 gap-px bg-white/10 px-0 sm:grid-cols-4">
               {[
-                ['Pantalla integrada', '1,9" TFT'],
+                ['Pantalla integrada', 'TFT en color'],
                 ['Lector ECU', 'KWP2000'],
                 ['ESP32-S3', 'Procesamiento'],
-                ['WiFi', 'App gratuita'],
+                ['WiFi local', 'App complementaria'],
               ].map(([value, label]) => (
                 <div key={label} className="bg-[#0b0c0c] px-5 py-6 text-center">
                   <div className="font-display text-lg font-semibold text-white sm:text-xl">{value}</div>
@@ -393,16 +374,16 @@ export default function Home() {
               <div className="overflow-hidden rounded-[2rem] border border-black/10 bg-[#101111] shadow-[0_30px_90px_rgba(0,0,0,0.16)]">
                 <img
                   src="/onboard-computer-prototype.png"
-                  alt="Render 3D del prototipo actual del ordenador de a bordo MotoGear"
+                  alt="Ilustración del diseño del ordenador de a bordo MotoGear"
                   className="h-auto w-full"
                   loading="eager"
                 />
               </div>
 
               <div>
-                <span className="eyebrow">El producto real</span>
+                <span className="eyebrow">Diseñado para tu Kawasaki</span>
                 <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.03] tracking-[-0.045em] sm:text-5xl lg:text-6xl">
-                  Un dispositivo NUEVO para tu Kawasaki.
+                  Más información en tu cuadro.
                 </h2>
                 <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
                   El equipo se conecta al diagnóstico Kawasaki, lee la ECU, procesa los datos y los muestra en su propia
@@ -424,8 +405,7 @@ export default function Home() {
                 </div>
 
                 <p className="mt-5 text-xs leading-relaxed text-black/45">
-                  Render generado a partir del STL actual del prototipo. La forma exterior, el botón y pequeños detalles de
-                  fabricación pueden cambiar antes de la versión comercial.
+                  Ilustración del diseño del dispositivo. Consulta las características y el contenido del kit en la ficha del producto.
                 </p>
               </div>
             </div>
@@ -456,7 +436,7 @@ export default function Home() {
             <div>
               <span className="eyebrow">App complementaria</span>
               <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-5xl">
-                Aplicacion movil gratuita para acedder a los diagnósticos y mucho mas.
+                Entiende los códigos de avería. Configura tu pantalla.
               </h2>
               <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
                 La pantalla integrada se ocupa de lo necesario durante la conducción. Cuando quieres más detalles, conectas
@@ -477,7 +457,7 @@ export default function Home() {
               <div className="absolute -inset-12 rounded-full bg-primary/5 blur-3xl" />
               <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-[#0a0b0b] p-6 text-white shadow-[0_30px_90px_rgba(0,0,0,0.17)] sm:p-9">
                 <div className="mb-10 flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">Arquitectura del Producto</span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">Así funciona</span>
                   <span className="flex items-center gap-2 text-xs text-emerald-400">
                     <span className="h-2 w-2 rounded-full bg-emerald-400" /> Sin nube
                   </span>
@@ -514,13 +494,12 @@ export default function Home() {
           <div className="container px-4">
             <div className="grid gap-12 lg:grid-cols-[0.7fr_1.3fr]">
               <div>
-                <span className="eyebrow text-primary">Compatibilidad confirmada</span>
+                <span className="eyebrow text-primary">Compatibilidad</span>
                 <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-5xl">
-                  Modelos probados.
+                  Tu modelo y tu año importan.
                 </h2>
                 <p className="mt-6 leading-relaxed text-white/50">
-                  Publicamos como compatible únicamente lo que ya se ha comprobado con el protocolo Kawasaki KDS /
-                  KWP2000. Para otros modelos, primero validamos con ingeniería inversa.
+                  Antes de pedir tu equipo, confirma la versión de tu moto. Te ayudamos a comprobar el año, el conector y las funciones disponibles para evitar una compra equivocada.
                 </p>
                 <Button
                   variant="outline"
@@ -548,14 +527,13 @@ export default function Home() {
                         <div className="mt-1 text-xs text-white/35">{item.detail}</div>
                       </div>
                       <span className="w-fit rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-emerald-400">
-                        Confirmada
+                        Consultar
                       </span>
                     </div>
                   ))}
                 </div>
                 <div className="border-t border-white/10 px-6 py-4 text-xs leading-relaxed text-white/35 sm:px-7">
-                  ER-6n y ER-6f: compatibilidad confirmada para todos los años. Z750: plataforma confirmada; la ficha del
-                  pedido podrá solicitar el año para verificar el conector del kit.
+                  Envíanos el modelo, el año y, si puedes, una foto del conector. No damos por compatibles todos los años de una familia sin comprobar la versión.
                 </div>
               </div>
             </div>
@@ -591,62 +569,20 @@ export default function Home() {
           </section>
         )}
 
-        <section id="desarrollo" className="scroll-mt-24 bg-[#f4f3f0] py-24 sm:py-32">
+        <section id="como-funciona" className="scroll-mt-24 bg-[#f4f3f0] py-24">
           <div className="container px-4">
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="eyebrow">Estado del proyecto</span>
-              <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.05] tracking-[-0.045em] sm:text-5xl">
-                Del protocolo validado a una primera serie fiable.
-              </h2>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-                Diferenciamos lo que ya funciona de lo que todavía está en integración para no vender una promesa.
-              </p>
-            </div>
-
-            <div className="mx-auto mt-16 max-w-4xl">
-              {developmentSteps.map((step, index) => (
-                <div
-                  key={step.title}
-                  className="relative grid gap-4 pb-10 pl-12 sm:grid-cols-[150px_1fr] sm:gap-8 sm:pl-16"
-                >
-                  {index < developmentSteps.length - 1 && (
-                    <div className="absolute left-[15px] top-8 h-[calc(100%-8px)] w-px bg-black/12 sm:left-[23px]" />
-                  )}
-                  <span
-                    className={`absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full border sm:h-12 sm:w-12 ${
-                      step.status === 'validated'
-                        ? 'border-emerald-500/30 bg-emerald-500 text-white'
-                        : step.status === 'progress'
-                          ? 'border-primary/30 bg-primary text-white shadow-[0_0_0_8px_rgba(255,78,0,0.08)]'
-                          : 'border-black/15 bg-white text-black/35'
-                    }`}
-                  >
-                    {step.status === 'validated' ? (
-                      <Check className="h-4 w-4 sm:h-5 sm:w-5" />
-                    ) : step.status === 'progress' ? (
-                      <Wrench className="h-4 w-4 sm:h-5 sm:w-5" />
-                    ) : (
-                      <span className="h-2 w-2 rounded-full bg-current" />
-                    )}
-                  </span>
-                  <div
-                    className={`pt-1 text-[10px] font-semibold uppercase tracking-[0.16em] sm:pt-4 ${
-                      step.status === 'validated'
-                        ? 'text-emerald-600'
-                        : step.status === 'progress'
-                          ? 'text-primary'
-                          : 'text-black/35'
-                    }`}
-                  >
-                    {step.label}
-                  </div>
-                  <div className="rounded-2xl border border-black/8 bg-white p-6 sm:p-7">
-                    <h3 className="font-display text-xl font-semibold">{step.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
-                  </div>
-                </div>
+            <span className="eyebrow">De la compra a tu moto</span>
+            <h2 className="mt-5 font-display text-4xl font-semibold">Sabes qué compras. Sabes cómo empezar.</h2>
+            <div className="mt-10 grid gap-6 md:grid-cols-3">
+              {ownershipSteps.map((step, index) => (
+                <article key={step.title} className="rounded-2xl border border-black/10 bg-white p-7">
+                  <span className="text-sm font-semibold text-primary">0{index + 1}</span>
+                  <h3 className="mt-4 font-display text-xl font-semibold">{step.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
+                </article>
               ))}
             </div>
+            <p className="mt-8 text-sm text-muted-foreground">¿Tienes dudas antes o después de comprar? <Link to="/contact" className="font-semibold text-primary underline">Contacta directamente con MotoGear.</Link></p>
           </div>
         </section>
 
@@ -679,26 +615,27 @@ export default function Home() {
             <div className="flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
               <div className="max-w-3xl">
                 <div className="text-xs font-semibold uppercase tracking-[0.18em] text-white/65">
-                  ER-6n, ER-6f o Z750
+                  Para tu Kawasaki
                 </div>
                 <h2 className="mt-5 font-display text-4xl font-semibold leading-[1.02] tracking-[-0.045em] sm:text-5xl lg:text-6xl">
-                  Apúntate al lanzamiento del ordenador de a bordo MotoGear.
+                  Dale a tu Kawasaki una nueva forma de mostrarte lo que pasa.
                 </h2>
               </div>
-              <Button
-                size="lg"
-                className="h-14 shrink-0 rounded-full bg-black px-8 text-base text-white hover:bg-black/85"
-                onClick={() => openLeadModal('EARLY_ACCESS')}
-              >
-                Avisarme del lanzamiento
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              {isAvailable && showcaseProduct ? (
+                <Button asChild size="lg" className="h-14 shrink-0 rounded-full bg-black px-8 text-base text-white hover:bg-black/85">
+                  <Link to={getProductUrl(showcaseProduct.id, showcaseProduct.name)}>Comprar {formattedPrice}<ArrowRight className="ml-2 h-5 w-5" /></Link>
+                </Button>
+              ) : (
+                <Button size="lg" className="h-14 shrink-0 rounded-full bg-black px-8 text-base text-white hover:bg-black/85" onClick={() => openLeadModal('EARLY_ACCESS')}>
+                  Avisarme cuando haya unidades<ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              )}
             </div>
             <div className="mt-12 flex items-center gap-3 border-t border-white/25 pt-6 text-xs text-white/65">
               <ShieldCheck className="h-4 w-4" />
               {isAvailable
-                ? 'Producto publicado con precio y stock real. El pago y el seguimiento se gestionan desde tu cuenta.'
-                : 'No se aceptarán pagos ni reservas hasta que el producto esté validado para venta.'}
+                ? 'Consulta tu pedido desde tu cuenta. Tienes información de envío, devoluciones y contacto a tu disposición.'
+                : 'El aviso de disponibilidad no implica una compra ni requiere un pago.'}
             </div>
           </div>
         </section>
@@ -713,3 +650,4 @@ export default function Home() {
     </>
   );
 }
+

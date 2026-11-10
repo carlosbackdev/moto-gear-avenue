@@ -1,3 +1,4 @@
+import { PrivacyNotice } from '@/components/legal/PrivacyNotice';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -167,7 +168,8 @@ export default function Register() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
             </Button>
-          </form>
+          <PrivacyNotice purpose="crear tu cuenta y gestionar compras y soporte" basis="la relación contractual" />
+                </form>
 
           <div className="relative my-4">
             <Separator />
@@ -199,3 +201,4 @@ export default function Register() {
     </div>
   );
 }
+
