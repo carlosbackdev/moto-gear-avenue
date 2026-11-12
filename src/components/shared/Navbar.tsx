@@ -15,6 +15,7 @@ import { useCart } from '@/contexts/CartContext';
 import logoMotogear from '@/assets/logo-motogear.png';
 
 const navItems = [
+  { label: 'Ordenador a bordo', href: 'https://motogear.es/product/85/ordenador-de-a-bordo-motogear', isCta: true },
   { label: 'El producto', href: '/#producto' },
   { label: 'Cómo funciona', href: '/#como-funciona' },
   { label: 'Compatibilidad', href: '/#compatibilidad' },
@@ -54,7 +55,11 @@ export const Navbar = () => {
             <a
               key={item.href}
               href={item.href}
-              className="text-[13px] font-semibold text-black/58 transition-colors hover:text-primary"
+              className={
+                item.isCta
+                  ? 'rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-primary/85'
+                  : 'text-[13px] font-semibold text-black/58 transition-colors hover:text-primary'
+              }
             >
               {item.label}
             </a>
@@ -133,7 +138,11 @@ export const Navbar = () => {
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between border-b border-white/10 py-5 font-display text-2xl font-semibold tracking-tight"
+                className={
+                  item.isCta
+                    ? 'flex items-center justify-between border-b border-primary/30 py-5 font-display text-2xl font-semibold tracking-tight text-primary'
+                    : 'flex items-center justify-between border-b border-white/10 py-5 font-display text-2xl font-semibold tracking-tight'
+                }
               >
                 <span>{item.label}</span>
                 <span className="text-xs font-medium text-white/25">0{index + 1}</span>

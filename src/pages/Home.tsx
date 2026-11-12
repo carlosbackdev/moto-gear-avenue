@@ -64,9 +64,9 @@ const appFeatures = [
 ];
 
 const compatibleModels = [
-  { model: 'Kawasaki ER-6n', years: 'Consulta tu año y conector', detail: 'Dispositivo probado en ER-6n' },
-  { model: 'Kawasaki ER-6f', years: 'Consultar antes de comprar', detail: 'Verificamos la versión de tu moto' },
-  { model: 'Kawasaki Z750', years: 'Consultar antes de comprar', detail: 'Indícanos año y tipo de conector' },
+  { model: 'Kawasaki ER-6n', years: 'Todos los años', detail: 'Confirma el tipo de conector' },
+  { model: 'Kawasaki ER-6f', years: 'Todos los años', detail: 'Confirma el tipo de conector' },
+  { model: 'Kawasaki Z750', years: 'Modelos 2005-2012', detail: 'Confirma el tipo de conector' },
 ];
 
 const ownershipSteps = [
@@ -88,7 +88,7 @@ const faqs = [
   {
     question: '¿Con qué motos es compatible?',
     answer:
-      'El equipo se ha probado en Kawasaki ER-6n. El año, la ECU y el conector importan: consúltanos tu versión antes de comprar. Para ER-6f y Z750 comprobamos cada consulta antes de confirmar compatibilidad.',
+      'El equipo es compatible con Kawasaki ER-6n y ER-6f de todos los años, y con Kawasaki Z750 de los modelos 2005 a 2012. Confirma el tipo de conector antes de comprar.',
   },
   {
     question: '¿Necesita el móvil para funcionar?',
@@ -103,7 +103,7 @@ const faqs = [
   {
     question: '¿Necesito una cuenta para usar el dispositivo?',
     answer:
-      'El dispositivo funciona sin cuenta y sin suscripción. La app se conecta por WiFi local. La cuenta de la tienda sirve para gestionar compras y pedidos; es independiente del uso del lector.',
+      'El dispositivo funciona sin cuenta y sin suscripción. La app se conecta por WiFi o Bluetooth. La cuenta de la tienda sirve para gestionar compras y pedidos; es independiente del uso del lector.',
   },
 ];
 
@@ -118,7 +118,7 @@ function ProductPhoto() {
           width={1774}
           height={887}
           fetchPriority="high"
-          className="aspect-[6/5] w-full object-cover object-[85%_center]"
+          className="aspect-[6/5] w-full object-cover object-[72%_center]"
         />
       </div>
       <figcaption className="relative mt-5 flex items-center justify-center gap-2 text-xs font-medium tracking-wide text-white/60">
@@ -217,7 +217,7 @@ export default function Home() {
             <div className="container flex min-h-10 items-center justify-center gap-2 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60 sm:text-xs">
               <CircleDot className="h-3.5 w-3.5 text-primary" />
               {isAvailable
-                ? 'Disponible · comprueba la compatibilidad con tu Kawasaki'
+                ? 'Disponible · Nuevo lanzamiento para tu Moto'
                 : isOutOfStock
                   ? 'Temporalmente sin stock · solicita un aviso de reposición'
                   : 'MotoGear para Kawasaki · pantalla autónoma y diagnóstico'}
@@ -314,7 +314,7 @@ export default function Home() {
                 ['Pantalla integrada', 'TFT en color'],
                 ['Lector ECU', 'KWP2000'],
                 ['ESP32-S3', 'Procesamiento'],
-                ['WiFi local', 'App complementaria'],
+                ['Conexión WiFi / Bluetooth', 'App complementaria'],
               ].map(([value, label]) => (
                 <div key={label} className="bg-[#0b0c0c] px-5 py-6 text-center">
                   <div className="font-display text-lg font-semibold text-white sm:text-xl">{value}</div>
@@ -342,7 +342,7 @@ export default function Home() {
                 </video>
                 <div className="flex items-center gap-2 border-t border-white/10 px-5 py-4 text-xs text-white/60">
                   <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  Dispositivo y app en acción · Demostración sin audio
+                  Dispositivo y app en acción
                 </div>
               </div>
 
@@ -499,7 +499,7 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="border-t border-white/10 px-6 py-4 text-xs leading-relaxed text-white/35 sm:px-7">
-                  Envíanos el modelo, el año y, si puedes, una foto del conector. No damos por compatibles todos los años de una familia sin comprobar la versión.
+                  Envíanos el modelo y, si puedes, una foto del conector para confirmar el cableado adecuado.
                 </div>
               </div>
             </div>
@@ -616,4 +616,3 @@ export default function Home() {
     </>
   );
 }
-

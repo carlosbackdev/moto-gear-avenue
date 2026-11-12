@@ -18,7 +18,7 @@ export const ONBOARD_COMPUTER_SLUG = 'ordenador-bordo-kawasaki';
 
 const SPEC_ROWS: Array<[string, string]> = [
   ['Conexión', 'Directa al conector de diagnóstico Kawasaki de 4 pines, plug & play.'],
-  ['Procesador', 'ESP32-S3 con WiFi y pantalla integrada.'],
+  ['Procesador', 'ESP32-S3 con WiFi / Bluetooth y pantalla integrada.'],
   ['Pantalla', 'Pantalla TFT en color con distintas vistas de telemetría.'],
   ['Protocolo', 'Lectura ECU: Kawasaki KDS / KWP2000 sobre K-Line.'],
   ['Alimentación', 'Desde la propia moto a través del conector de diagnóstico.'],
@@ -51,9 +51,9 @@ const APP_FUNCTIONS = [
 ];
 
 const COMPATIBILITY = [
-  ['Kawasaki ER-6n', 'Verificar año y conector', 'Consultar versión'],
-  ['Kawasaki ER-6f', 'Consultar antes de comprar', 'Consultar versión'],
-  ['Kawasaki Z750', 'Consultar antes de comprar', 'Consultar versión'],
+  ['Kawasaki ER-6n', 'Todos los años', 'Compatible'],
+  ['Kawasaki ER-6f', 'Todos los años', 'Compatible'],
+  ['Kawasaki Z750', 'Modelos 2005-2012', 'Compatible'],
 ];
 
 function FeatureList({ items }: { items: string[] }) {
@@ -171,7 +171,7 @@ export function OnboardComputerSpecs() {
             Comprueba tu compatibilidad
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            El año, la ECU y el conector determinan la compatibilidad. Consulta tu versión antes de realizar el pedido.
+            La compatibilidad está confirmada para estas versiones. Consulta el conector antes de realizar el pedido.
           </p>
         </CardHeader>
         <CardContent>
@@ -195,8 +195,8 @@ export function OnboardComputerSpecs() {
             ))}
           </div>
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            Para la Z750 se solicitará el año en el pedido o consulta de compatibilidad para entregar el cableado adecuado
-            al conector de la unidad.
+            Para entregar el cableado adecuado, confirma el tipo de conector de tu unidad en el pedido o en la consulta de
+            compatibilidad.
           </p>
         </CardContent>
       </Card>
@@ -225,7 +225,7 @@ export function OnboardComputerSpecs() {
             {[
               { icon: Zap, title: 'Telemetría', text: 'Datos en pantalla sin depender del teléfono.' },
               { icon: Stethoscope, title: 'Diagnóstico', text: 'DTC, contexto, borrado y confirmación.' },
-              { icon: Smartphone, title: 'Conexión local', text: 'Conexión WiFi local, sin cuenta para usar el lector.' },
+              { icon: Smartphone, title: 'Conexión local', text: 'Conexión WiFi o Bluetooth, sin cuenta para usar el lector.' },
             ].map((item) => (
               <div key={item.title} className="rounded-xl border border-black/8 bg-[#f4f3f0] p-4">
                 <item.icon className="h-5 w-5 text-primary" />
@@ -239,4 +239,3 @@ export function OnboardComputerSpecs() {
     </>
   );
 }
-
