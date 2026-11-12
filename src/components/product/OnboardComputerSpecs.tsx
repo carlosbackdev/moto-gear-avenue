@@ -11,6 +11,7 @@ import {
   Wrench,
   Zap,
 } from 'lucide-react';
+import { DeviceVideo } from '@/components/product/DeviceVideo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const ONBOARD_COMPUTER_SLUG = 'ordenador-bordo-kawasaki';
@@ -73,11 +74,9 @@ export function OnboardComputerSpecs() {
     <>
       <Card className="overflow-hidden border-black/8 bg-[#101111] text-white lg:col-span-2">
         <div className="grid lg:grid-cols-[1.08fr_0.92fr]">
-          <img
-            src="/onboard-computer-prototype.png"
-            alt="Ilustración del diseño del ordenador de a bordo MotoGear"
-            className="h-full min-h-[320px] w-full object-cover"
-          />
+          <div className="flex items-center justify-center bg-black px-5 py-6 sm:px-8">
+            <DeviceVideo />
+          </div>
           <div className="flex flex-col justify-center p-7 sm:p-9">
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Producto autónomo</div>
             <h2 className="mt-4 font-display text-3xl font-semibold leading-tight">
@@ -98,7 +97,7 @@ export function OnboardComputerSpecs() {
               ))}
             </div>
             <p className="mt-6 text-[11px] leading-relaxed text-white/35">
-              Ilustración del diseño. Revisa las características y el contenido de esta ficha antes de comprar.
+              Vídeo del dispositivo instalado en una Kawasaki. Revisa las características y el contenido del kit antes de comprar.
             </p>
           </div>
         </div>

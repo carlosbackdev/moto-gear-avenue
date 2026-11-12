@@ -30,6 +30,6 @@ export const DEFAULT_SEO = {
   defaultTitle: 'Ordenador de a bordo Kawasaki con pantalla | MotoGear',
   defaultDescription:
     'Ordenador de a bordo MotoGear con pantalla integrada para Kawasaki: marcha, telemetría, batería, temperaturas, diagnóstico y app complementaria. Consulta la compatibilidad de tu modelo y año.',
-  defaultImage: 'https://motogear.es/onboard-computer-prototype.png',
+  defaultImage: 'https://motogear.es/media/motogear-producto.webp',
 };
 
