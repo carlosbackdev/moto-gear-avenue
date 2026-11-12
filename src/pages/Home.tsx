@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
-  Activity,
   ArrowRight,
   Cable,
   Check,
@@ -16,7 +15,6 @@ import {
   ShieldCheck,
   Smartphone,
   Stethoscope,
-  Thermometer,
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -109,66 +107,25 @@ const faqs = [
   },
 ];
 
-function ScreenPreview() {
+function ProductPhoto() {
   return (
-    <div className="relative mx-auto w-full max-w-[590px] lg:ml-auto">
-      <div className="absolute -inset-8 rounded-full bg-primary/20 blur-[90px]" />
-      <div className="relative overflow-hidden rounded-[2.4rem] border border-white/15 bg-[#171818] p-3 shadow-[0_35px_90px_rgba(0,0,0,0.55)] sm:p-4">
-        <div className="overflow-hidden rounded-[1.85rem] border border-white/10 bg-[#070909] p-4 sm:p-6">
-          <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45 sm:text-xs">
-            <span>MotoGear / Ruta</span>
-            <span className="flex items-center gap-2 text-emerald-400">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-              ECU conectada
-            </span>
-          </div>
-
-          <div className="grid grid-cols-[1.25fr_0.75fr] gap-3 sm:gap-4">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 sm:p-5">
-              <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-white/40 sm:text-xs">
-                <span>Motor</span>
-                <Activity className="h-4 w-4 text-primary" />
-              </div>
-              <div className="font-display text-[3.4rem] font-semibold leading-none tracking-[-0.08em] text-white sm:text-[5.25rem]">
-                4280
-              </div>
-              <div className="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-primary">rpm</div>
-              <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full w-[48%] rounded-full bg-gradient-to-r from-primary to-amber-300" />
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-primary/25 bg-primary/[0.07] p-3 text-center">
-              <span className="text-[10px] uppercase tracking-[0.18em] text-white/45 sm:text-xs">Marcha</span>
-              <span className="font-display text-6xl font-semibold leading-none text-primary sm:text-7xl">4</span>
-              <span className="mt-2 text-[9px] uppercase tracking-[0.16em] text-emerald-400 sm:text-[10px]">Perfil ruta</span>
-            </div>
-          </div>
-
-          <div className="mt-3 grid grid-cols-3 gap-2 sm:mt-4 sm:gap-4">
-            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3 sm:p-4">
-              <Thermometer className="mb-3 h-4 w-4 text-sky-400" />
-              <div className="font-display text-xl font-semibold text-white sm:text-2xl">86°</div>
-              <div className="mt-1 text-[9px] uppercase tracking-[0.12em] text-white/35 sm:text-[10px]">Refrigerante</div>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3 sm:p-4">
-              <Zap className="mb-3 h-4 w-4 text-amber-300" />
-              <div className="font-display text-xl font-semibold text-white sm:text-2xl">14.2</div>
-              <div className="mt-1 text-[9px] uppercase tracking-[0.12em] text-white/35 sm:text-[10px]">Batería</div>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3 sm:p-4">
-              <Gauge className="mb-3 h-4 w-4 text-primary" />
-              <div className="font-display text-xl font-semibold text-white sm:text-2xl">4.8</div>
-              <div className="mt-1 text-[9px] uppercase tracking-[0.12em] text-white/35 sm:text-[10px]">l/100 km est.</div>
-            </div>
-          </div>
-        </div>
+    <figure className="relative mx-auto w-full max-w-[650px] lg:ml-auto">
+      <div className="absolute inset-8 rounded-full bg-primary/15 blur-[80px]" />
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#151414] shadow-[0_35px_90px_rgba(0,0,0,0.4)]">
+        <img
+          src="/media/motogear-producto.webp"
+          alt="Ordenador de a bordo MotoGear con carcasa negra y pantalla de marcha, voltaje y temperatura"
+          width={1774}
+          height={887}
+          fetchPriority="high"
+          className="aspect-[6/5] w-full object-cover object-[85%_center]"
+        />
       </div>
-      <div className="relative mx-auto mt-4 flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">
-        <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-        Vista ilustrativa de los datos
-      </div>
-    </div>
+      <figcaption className="relative mt-5 flex items-center justify-center gap-2 text-xs font-medium tracking-wide text-white/60">
+        <CheckCircle2 className="h-4 w-4 text-primary" />
+        MotoGear. Pantalla propia, información al instante.
+      </figcaption>
+    </figure>
   );
 }
 
@@ -220,7 +177,7 @@ export default function Home() {
     '@type': 'Product',
     name: 'Ordenador de a bordo MotoGear para Kawasaki',
     description: DEFAULT_SEO.defaultDescription,
-    image: `${DEFAULT_SEO.siteUrl}/onboard-computer-prototype.svg`,
+    image: `${DEFAULT_SEO.siteUrl}/media/motogear-producto.webp`,
     brand: { '@type': 'Brand', name: 'MotoGear' },
     category: 'Electrónica para motocicletas',
     ...(formattedPrice && showcaseProduct
@@ -247,7 +204,7 @@ export default function Home() {
         <link rel="canonical" href={DEFAULT_SEO.siteUrl} />
         <meta property="og:title" content={DEFAULT_SEO.defaultTitle} />
         <meta property="og:description" content={DEFAULT_SEO.defaultDescription} />
-        <meta property="og:image" content={`${DEFAULT_SEO.siteUrl}/onboard-computer-prototype.png`} />
+        <meta property="og:image" content={`${DEFAULT_SEO.siteUrl}/media/motogear-producto.webp`} />
         <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
       </Helmet>
 
@@ -348,7 +305,7 @@ export default function Home() {
               </div>
             </div>
 
-            <ScreenPreview />
+            <ProductPhoto />
           </div>
 
           <div className="border-y border-white/10 bg-white/[0.025]">
@@ -372,12 +329,21 @@ export default function Home() {
           <div className="container px-4">
             <div className="grid items-center gap-14 lg:grid-cols-[1.08fr_0.92fr]">
               <div className="overflow-hidden rounded-[2rem] border border-black/10 bg-[#101111] shadow-[0_30px_90px_rgba(0,0,0,0.16)]">
-                <img
-                  src="/onboard-computer-prototype.png"
-                  alt="Ilustración del diseño del ordenador de a bordo MotoGear"
-                  className="h-auto w-full"
-                  loading="eager"
-                />
+                <video
+                  controls
+                  playsInline
+                  preload="none"
+                  poster="/media/motogear-demo-poster.webp"
+                  aria-label="Demostración de MotoGear y su app en una Kawasaki"
+                  className="aspect-video w-full bg-black object-contain"
+                >
+                  <source src="/media/motogear-demo.mp4" type="video/mp4" />
+                  <a href="/media/motogear-demo.mp4">Ver la demostración de MotoGear</a>
+                </video>
+                <div className="flex items-center gap-2 border-t border-white/10 px-5 py-4 text-xs text-white/60">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  Dispositivo y app en acción · Demostración sin audio
+                </div>
               </div>
 
               <div>
@@ -405,7 +371,7 @@ export default function Home() {
                 </div>
 
                 <p className="mt-5 text-xs leading-relaxed text-black/45">
-                  Ilustración del diseño del dispositivo. Consulta las características y el contenido del kit en la ficha del producto.
+                  Mira cómo funciona en una Kawasaki real. Consulta las características y el contenido del kit en la ficha del producto.
                 </p>
               </div>
             </div>
