@@ -118,7 +118,7 @@ function ProductPhoto() {
           width={1774}
           height={887}
           fetchPriority="high"
-          className="aspect-[6/5] w-full object-cover object-[72%_center]"
+          className="aspect-[6/5] w-full object-cover object-[100%_center]"
         />
       </div>
       <figcaption className="relative mt-5 flex items-center justify-center gap-2 text-xs font-medium tracking-wide text-white/60">
