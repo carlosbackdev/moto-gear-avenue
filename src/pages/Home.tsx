@@ -20,12 +20,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/shared/ProductCard';
 import { LeadCaptureModal } from '@/components/shared/LeadCaptureModal';
-import { DEFAULT_SEO, getProductUrl } from '@/lib/seo';
+import { DEFAULT_SEO } from '@/lib/seo';
 import { productService } from '@/services/product.service';
 import { Product } from '@/types/models';
 import { LeadSource } from '@/types/lead';
 
-const ONBOARD_COMPUTER_SLUG = 'ordenador-bordo-kawasaki';
+import { ONBOARD_COMPUTER_PATH, ONBOARD_COMPUTER_SLUG } from '@/lib/onboard-computer';
 
 const deviceFeatures = [
   {
@@ -267,7 +267,7 @@ export default function Home() {
                     size="lg"
                     className="h-[52px] rounded-full px-7 text-base font-semibold shadow-[0_12px_35px_rgba(255,78,0,0.25)]"
                   >
-                    <Link to={getProductUrl(showcaseProduct.id, showcaseProduct.name)}>
+                    <Link to={ONBOARD_COMPUTER_PATH}>
                       Comprar {formattedPrice}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -589,7 +589,7 @@ export default function Home() {
               </div>
               {isAvailable && showcaseProduct ? (
                 <Button asChild size="lg" className="h-14 shrink-0 rounded-full bg-black px-8 text-base text-white hover:bg-black/85">
-                  <Link to={getProductUrl(showcaseProduct.id, showcaseProduct.name)}>Comprar {formattedPrice}<ArrowRight className="ml-2 h-5 w-5" /></Link>
+                  <Link to={ONBOARD_COMPUTER_PATH}>Comprar {formattedPrice}<ArrowRight className="ml-2 h-5 w-5" /></Link>
                 </Button>
               ) : (
                 <Button size="lg" className="h-14 shrink-0 rounded-full bg-black px-8 text-base text-white hover:bg-black/85" onClick={() => openLeadModal('EARLY_ACCESS')}>

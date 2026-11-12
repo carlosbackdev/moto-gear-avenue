@@ -14,7 +14,7 @@ import {
 import { DeviceVideo } from '@/components/product/DeviceVideo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export const ONBOARD_COMPUTER_SLUG = 'ordenador-bordo-kawasaki';
+export { ONBOARD_COMPUTER_SLUG } from '@/lib/onboard-computer';
 
 const SPEC_ROWS: Array<[string, string]> = [
   ['Conexión', 'Directa al conector de diagnóstico Kawasaki de 4 pines, plug & play.'],

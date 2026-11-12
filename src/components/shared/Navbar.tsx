@@ -12,16 +12,23 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { ONBOARD_COMPUTER_PATH } from '@/lib/onboard-computer';
 import logoMotogear from '@/assets/logo-motogear.png';
 
 const navItems = [
-  { label: 'Ordenador a bordo', href: 'https://motogear.es/product/85/ordenador-de-a-bordo-motogear', isCta: true },
+  { label: 'Ordenador a bordo', href: ONBOARD_COMPUTER_PATH, isCta: true },
   { label: 'El producto', href: '/#producto' },
   { label: 'Cómo funciona', href: '/#como-funciona' },
   { label: 'Compatibilidad', href: '/#compatibilidad' },
   { label: 'Tienda', href: '/catalog' },
   { label: 'Blog', href: '/blog' },
 ];
+
+// Native hash navigation also scrolls correctly when returning from another page.
+const NavItemLink = ({ to, ...props }: React.ComponentProps<typeof Link>) =>
+  typeof to === 'string' && to.includes('#')
+    ? <a href={to} {...props} />
+    : <Link to={to} {...props} />;
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -52,9 +59,9 @@ export const Navbar = () => {
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegación principal">
           {navItems.map((item) => (
-            <a
+            <NavItemLink
               key={item.href}
-              href={item.href}
+              to={item.href}
               className={
                 item.isCta
                   ? 'rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-primary/85'
@@ -62,7 +69,7 @@ export const Navbar = () => {
               }
             >
               {item.label}
-            </a>
+            </NavItemLink>
           ))}
         </nav>
 
@@ -134,9 +141,9 @@ export const Navbar = () => {
 
           <nav className="flex flex-col px-5 py-10" aria-label="Navegación móvil">
             {navItems.map((item, index) => (
-              <a
+              <NavItemLink
                 key={item.href}
-                href={item.href}
+                to={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={
                   item.isCta
@@ -146,7 +153,7 @@ export const Navbar = () => {
               >
                 <span>{item.label}</span>
                 <span className="text-xs font-medium text-white/25">0{index + 1}</span>
-              </a>
+              </NavItemLink>
             ))}
           </nav>
 
