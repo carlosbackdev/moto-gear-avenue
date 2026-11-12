@@ -14,6 +14,8 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import Home from '@/pages/Home';
+import OnboardComputer from '@/pages/OnboardComputer';
+import { ONBOARD_COMPUTER_PATH } from '@/lib/onboard-computer';
 import Contact from '@/pages/Contact';
 import Terms from '@/pages/legal/Terms';
 import NotFound from '@/pages/NotFound';
@@ -62,6 +64,7 @@ const App = () => (
                       <Suspense fallback={loadingFallback}>
                         <Routes>
                           <Route path="/" element={<Home />} />
+                          <Route path={ONBOARD_COMPUTER_PATH} element={<OnboardComputer />} />
                           <Route path="/contact" element={<Contact />} />
                           <Route path="/terms" element={<Terms />} />
                           <Route path="/shipping" element={<ShippingPolicy />} />
